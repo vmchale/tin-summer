@@ -1,0 +1,13 @@
+[package]
+name = "file-sniffer"
+version = "0.1.0"
+authors = ["Vanessa McHale <vamchale@gmail.com>"]
+
+[dependencies]
+colored = "1.5"
+clap = "2.24"
+pad = "0.1"
+
+[[bin]]
+path = "src/main.rs"
+name = "sniff"
