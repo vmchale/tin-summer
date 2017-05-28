@@ -37,6 +37,12 @@ fn main() {
                 Some(2)
             };
 
+        // don't print warnings
+        let silent = match matches.occurrences_of("v") {
+            0 => true,
+            _ => false,
+        };
+
         // set regex for exclusions
         let regex = 
             if let Some(n) = command.value_of("excludes") {
@@ -62,10 +68,10 @@ fn main() {
         // decide what to print
         let v = if let Some(r) = regex {
                 let re = Regex::new(r).unwrap();
-                read_files_regex(&init_dir, 0, Some(min_bytes), &re)
+                read_files_regex(&init_dir, 0, Some(min_bytes), &re, silent)
             }
             else {
-                read_files(&init_dir, 0, Some(min_bytes))
+                read_files(&init_dir, 0, Some(min_bytes), silent)
             };
         let mut v_filtered = v.filtered(depth);
 
@@ -102,6 +108,12 @@ fn main() {
                 Some(2)
             };
 
+        // don't print warnings
+        let silent = match matches.occurrences_of("v") {
+            0 => true,
+            _ => false,
+        };
+
         // set path to dir
         let path_read = command.value_of("dir");
         let init_dir = 
@@ -126,10 +138,10 @@ fn main() {
 
         let v = if let Some(r) = regex {
                 let re = Regex::new(r).unwrap();
-                read_files_regex(&init_dir, 0, min_bytes, &re)
+                read_files_regex(&init_dir, 0, min_bytes, &re, silent)
             }
             else {
-                read_files(&init_dir, 0, min_bytes)
+                read_files(&init_dir, 0, min_bytes, silent)
             };
         let mut v_sorted = v.sort(Some(num_int), depth);
 

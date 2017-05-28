@@ -24,6 +24,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - silent:
+                short: s
+                long: silent
+                help: Don't print warnings.
             - threshhold:
                 short: t
                 long: threshhold
@@ -41,6 +45,10 @@ subcommands:
                 takes_value: true
                 value_name: M|G
                 help: Specify a threshhold to search by, rather than sorting (default M)
+            - silent:
+                short: s
+                long: silent
+                help: Don't print warnings.
             - excludes:
                 short: e
                 long: exclude

@@ -18,7 +18,7 @@ fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
     regex.is_match(path_str)
 }
 
-pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> FileTree {
+pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, silent: bool) -> FileTree {
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
 
@@ -44,7 +44,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
 
                 // otherwise, go deeper
                 else if metadata.is_dir() {
-                    let mut subtree = read_files(&path, depth + 1, min_bytes);
+                    let mut subtree = read_files(&path, depth + 1, min_bytes, silent);
                     let dir_size = subtree.file_size;
                     if let Some(b) = min_bytes {
                         if dir_size >= FileSize::new(b) {
@@ -57,18 +57,18 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
                     total_size.add(dir_size);
                 }
             }
-            else {
+            else if !silent {
                 println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display());
             }
         }
     }
-    else {
+    else if !silent {
         println!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
     }
     tree
 }
 
-pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: &Regex) -> FileTree {
+pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: &Regex, silent: bool) -> FileTree {
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
 
@@ -96,7 +96,7 @@ pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, r
 
                     // otherwise, go deeper
                     else if metadata.is_dir() {
-                        let mut subtree = read_files_regex(&path, depth + 1, min_bytes, regex);
+                        let mut subtree = read_files_regex(&path, depth + 1, min_bytes, regex, silent);
                         let dir_size = subtree.file_size;
                         if let Some(b) = min_bytes {
                             if dir_size >= FileSize::new(b) {
@@ -109,13 +109,13 @@ pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, r
                         total_size.add(dir_size);
                     }
                 }
-                else {
+                else if !silent {
                     println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display());
                 }
             }
         }
     }
-    else {
+    else if !silent {
         println!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
     }
     tree
