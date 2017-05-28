@@ -45,7 +45,7 @@ fn main() {
             };
 
         // decide whether to print ids
-        let mut v = read_files(init_dir.clone(), 0);
+        let mut v = read_files(&init_dir, 0);
         v.sort(Some(num_int), depth);
 
         v.display_tree(init_dir);
