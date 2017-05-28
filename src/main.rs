@@ -88,6 +88,76 @@ fn main() {
         v_filtered.display_tree(init_dir);
     }
 
+    else if let Some(command) = matches.subcommand_matches("artifacts") {
+
+        // set threshhold
+        let min_bytes = if let Some(t) = command.value_of("threshhold") {
+                match t {
+                    "M" => Some(1048576),
+                    "G" => Some(1073741824),
+                    _ => { println!("{}: invalid threshhold; defaulting to M", "Warning".yellow()) ; Some(1048576) }
+                }
+            }
+            else { None };
+
+        // set depth
+        let depth = 
+            if let Some(n) = command.value_of("depth") {
+                Some(n.parse::<u8>().expect("Please enter a positive whole number"))
+            }
+            else {
+                Some(2)
+            };
+
+        // don't print warnings
+        let silent = match matches.occurrences_of("v") {
+            0 => true,
+            _ => false,
+        };
+
+        // set regex for artifacts
+        let artifacts = 
+            if let Some(n) = command.value_of("regex") {
+                Some(n)
+            }
+            else {
+                None
+            };
+
+        // set path to dir
+        let path_read = command.value_of("dir");
+        let init_dir = 
+            if let Some(read) = path_read {
+                let mut path_in = PathBuf::new();
+                path_in.push(read);
+                path_in
+            }
+            else {
+                // default path is "./"
+                PathBuf::from("./")
+            };
+
+        // decide what to print
+        let v = if let Some(r) = artifacts {
+                let re = if let Ok(rr) = Regex::new(r) {
+                        rr
+                    }
+                    else if let Err(x) = Regex::new(r) {
+                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
+                        process::exit(0x0f01)
+                    }
+                    else {
+                        process::exit(0x0f01)
+                    };
+                read_artifacts(&init_dir, 0, min_bytes, Some(&re), silent)
+            }
+            else {
+                read_artifacts(&init_dir, 0, min_bytes, None, silent)
+            };
+        let mut v_filtered = v.filtered(depth);
+
+        v_filtered.display_tree(init_dir);
+    }
     else if let Some(command) = matches.subcommand_matches("sort") {
 
         // set threshhold

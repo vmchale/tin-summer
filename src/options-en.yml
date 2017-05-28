@@ -33,7 +33,7 @@ subcommands:
                 long: threshhold
                 takes_value: true
                 value_name: M|G
-                help: Specify a threshhold to search by, rather than sorting (default M)
+                help: Specify a threshhold for file size (default M)
     - fat:
         about: Show big files/directories
         args:
@@ -54,6 +54,37 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
+    - artifacts:
+        about: Show directories with build artifacts 
+        args:
+            - dir:
+                help: Directory to search
+            - threshhold:
+                short: t
+                long: threshhold
+                takes_value: true
+                value_name: M|G
+                help: Specify a threshhold for file size (default M)
+            - silent:
+                short: s
+                long: silent
+                help: Don't print warnings.
+              #- quick:
+              #    short: q
+              #    long: no-sort
+              #    help: Don't sort results.
+            - regex:
+                short: a
+                long: artifact
+                takes_value: true
+                value_name: REGEX
+                help: specify a custom regex for artifacts
             - depth: 
                 short: d
                 long: depth

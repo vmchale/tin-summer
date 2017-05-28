@@ -1,3 +1,4 @@
+#[macro_use] extern crate lazy_static;
 extern crate pad;
 extern crate regex;
 extern crate colored;
@@ -14,15 +15,40 @@ use colored::*;
 /// function to determine whether something is an artifact. 
 ///
 /// Rules:
-/// - if it's included in the .gitignore and has a '.a' or '.o' extension,
+/// - if it's included in the .gitignore and has a '.json' extension,
 /// it's probably an artifact
-/// - if it's a '.a' or '.o' it's probably an artifact
-/// - 
-fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
-    let regex = if let Some(r) = re { r }
-        else { Regex::new(r".*?\.(a|o").unwrap() }; // FIXME use lazy_static
+/// - if it's a '.a' or '.o' (or '.keter', '.ll', '.bc', '.dyn_o') it's probably an artifact
+/// - if it's a .sh file w/ interpreter it's probably *not* an artifact
+/// - elsewise, if it's an executable *not* on the path it's probaby an artifact (unix)
+/// - if it's .dll or .exe it's probably an artifact (windows)
+/// - if there's a Cargo.toml + target/ that's probably an artifact
+/// - .stack-work is probably an artifact
+#[cfg(not(os = "windows"))]
+fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
+    lazy_static! {
+        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate)").unwrap();
+    }
     let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
-    regex.is_match(path_str)
+    if let Some(r) = re {
+        r.is_match(path_str)
+    }
+    else {
+        REGEX.is_match(path_str)
+    }
+}
+
+#[cfg(os = "windows")]
+fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
+    lazy_static! {
+        static ref REGEX: Regex = Regex::new(r".*?\.(exe|dll|ll|keter|bc|rlib|crate)").unwrap();
+    }
+    let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
+    if let Some(r) = re {
+        r.is_match(path_str)
+    }
+    else {
+        REGEX.is_match(path_str)
+    }
 }
 
 pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, silent: bool) -> FileTree {
@@ -67,6 +93,54 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, silent:
             else if !silent {
                 println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display());
             }
+        }
+    }
+    else if !silent {
+        println!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+    }
+    tree
+}
+
+pub fn read_artifacts(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, artifact_regex: Option<&Regex>, silent: bool) -> FileTree {
+    let mut tree = FileTree::new();
+    let mut total_size = FileSize::new(0);
+
+    if let Ok(paths) = fs::read_dir(&in_paths) {
+        for p in paths {
+            let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
+
+            // if this fails, it's probably because `path` is a symlink, so we ignore it.
+            if let Ok(metadata) = fs::metadata(&path) {
+                // append file size/name for a file
+                if metadata.is_file() {
+                    if is_artifact(path.clone(), artifact_regex) {
+                        let file_size = FileSize::new(metadata.len());
+                        if let Some(b) = min_bytes {
+                            if file_size >= FileSize::new(b) {
+                                tree.push(path, file_size, None, depth + 1);
+                            }
+                        }
+                        else {
+                            tree.push(path, file_size, None, depth + 1);
+                        }
+                        total_size.add(file_size);
+                    }
+                }
+
+                // otherwise, go deeper
+                else if metadata.is_dir() {
+                    let mut subtree = read_artifacts(&path, depth + 1, min_bytes, artifact_regex, silent);
+                    let dir_size = subtree.file_size;
+                    if let Some(b) = min_bytes {
+                        if dir_size >= FileSize::new(b) {
+                            tree.push(path, dir_size, Some(&mut subtree), depth + 1);
+                        }
+                    }
+                    else { tree.push(path, dir_size, Some(&mut subtree), depth + 1); }
+                    total_size.add(dir_size);
+                    }
+            }
+            else if !silent { println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
         }
     }
     else if !silent {
