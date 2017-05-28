@@ -13,6 +13,7 @@ fn main() {
     let yaml = load_yaml!("options-en.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
+    // TODO parallel implementation
     if let Some(command) = matches.subcommand_matches("fat") {
 
         // set threshhold
@@ -57,7 +58,12 @@ fn main() {
             };
 
         // decide what to print
-        let v = read_files(&init_dir, 0, Some(min_bytes));
+        let v = if let Some(r) = regex {
+                read_files_regex(&init_dir, 0, Some(min_bytes), r)
+            }
+            else {
+                read_files(&init_dir, 0, Some(min_bytes))
+            };
         let mut v_filtered = v.filtered(depth);
 
         v_filtered.display_tree(init_dir);
