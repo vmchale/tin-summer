@@ -8,6 +8,7 @@ Features:
   - [x] colorized output
   - [ ] find "likely build artifact" directories
   - [ ] match speed of gnu utils
+    - [x] beat the crap out of the gnu utils when using regex excludes
 
 ## Installation
 
@@ -46,3 +47,8 @@ To turn off colorized output:
 ```bash
 export CLICOLOR=0
 ```
+
+### Benchmarks
+
+The benchmarks use an [ion](https://github.com/redox-os/ion) shell script and
+[bench](https://github.com/Gabriel439/bench) to perform the actual benchmarks. 

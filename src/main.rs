@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use clap::App;
 use colored::*;
 use regex::Regex;
+use std::process;
 
 fn main() {
     // command-line parser
@@ -67,7 +68,16 @@ fn main() {
 
         // decide what to print
         let v = if let Some(r) = regex {
-                let re = Regex::new(r).unwrap();
+                let re = if let Ok(rr) = Regex::new(r) {
+                        rr
+                    }
+                    else if let Err(x) = Regex::new(r) {
+                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
+                        process::exit(0x0f01)
+                    }
+                    else {
+                        process::exit(0x0f01)
+                    };
                 read_files_regex(&init_dir, 0, Some(min_bytes), &re, silent)
             }
             else {
@@ -137,7 +147,16 @@ fn main() {
             };
 
         let v = if let Some(r) = regex {
-                let re = Regex::new(r).unwrap();
+                let re = if let Ok(rr) = Regex::new(r) {
+                        rr
+                    }
+                    else if let Err(x) = Regex::new(r) {
+                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
+                        process::exit(0x0f01)
+                    }
+                    else {
+                        process::exit(0x0f01)
+                    };
                 read_files_regex(&init_dir, 0, min_bytes, &re, silent)
             }
             else {
