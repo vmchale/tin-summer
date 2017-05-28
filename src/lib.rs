@@ -20,7 +20,7 @@ use colored::*;
 /// - 
 fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
     let regex = if let Some(r) = re { r }
-        else { Regex::new(r".?\.(a|o").unwrap() }; // FIXME use lazy_static
+        else { Regex::new(r".*?\.(a|o").unwrap() }; // FIXME use lazy_static
     let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
     regex.is_match(path_str)
 }

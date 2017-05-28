@@ -1,5 +1,6 @@
 - [x] colorized output
-- [ ] globs
+- [x] excludes w/ regex
+  - [ ] included paths w/ regex
 - [x] option to print out top *n* values
 - [ ] option to recognize what "artifacts" are most likely to look like, e.g. `.a` or
   `.o` files and executable permissions.
@@ -21,9 +22,10 @@
 - [x] benchmark on e.g. cabal source code + build and compare to du + rg and/or
   du + grep (+ sort)
 - [x] "fat" files, but also efficient (lazy) sorting algorithm w/ min & max.
-- [ ] multiple threads for building up the vector?? idk
+- [ ] multiple threads for building up the vector?? idk but feasible w/ 'fat'
 - [ ] when sorting, consider also dynamically picking which ones to include;
   don't rely on user to pass `-n` option by default.
   - [x] set threshholds even with `-n` flag
 - [x] currently panics on symlinks, which is bad
 - [ ] de/fr/bo translations would be nice
+- [ ] see how speed is affected with strings instead of PathBufs.
