@@ -17,6 +17,7 @@
   manual.
 - [ ] consider a `use_big_int` build flag for things besides desktop (up to 1YB
   is fine for most end users).
+- [ ] test w/ non-ascii characters
 - [ ] benchmark on e.g. cabal source code + build and compare to du + rg and/or
   du + grep (+ sort)
 - [ ] "fat" files, but also efficient (lazy) sorting algorithm w/ min & max.

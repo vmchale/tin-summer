@@ -43,8 +43,9 @@ impl FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
-            self.files.iter().filter(|a| { a.depth <= maybe_depth.unwrap() }).collect::<Vec<&NamePair>>(); // FIXME
-            self.files = self.files.clone().into_iter().take(n).collect();
+            self.files = self.files.clone().into_iter() // TODO intelligent sorting w/ filters based on 
+                .filter(|a| a.depth <= maybe_depth.unwrap() ) // FIXME no unwrap here
+                .take(n).collect();
         }
         else {
             self.files.sort();
