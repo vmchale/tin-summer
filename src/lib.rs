@@ -22,7 +22,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
 
-    if let Some(paths) = fs::read_dir(&in_paths) {
+    if let Ok(paths) = fs::read_dir(&in_paths) {
         for p in paths {
             let path = p.unwrap().path(); // TODO no unwraps b/c broken symlinks
 
@@ -63,7 +63,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
         }
     }
     else {
-        println!("{}: permission denied for directory", "Warning".yellow());
+        println!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
     }
     tree
 }
