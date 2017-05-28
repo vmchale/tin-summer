@@ -4,7 +4,7 @@ If you do a significant amount of programming, you'll probably end up with
 several of gigabytes of artifacts scattered about. `sniff` is a tool to help you find those artifacts.
 
 `sniff` can be used to find "fat" directories, but it's also smart. It will look
-for directories with lots of `.a` files and `.o` files, look *in* directories
+for directories with `.a` files and `.o` files, look *in* directories
   specified by a `.gitignore`, and check permissions/PATHs.
 
 ## Installation

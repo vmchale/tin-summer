@@ -5,8 +5,12 @@ authors = ["Vanessa McHale <vamchale@gmail.com>"]
 
 [dependencies]
 colored = "1.5"
-clap = "2.24"
+clap = {version = "2.24", features = ["yaml"]}
 pad = "0.1"
+
+[lib]
+path = "src/lib.rs"
+name = "libsniff"
 
 [[bin]]
 path = "src/main.rs"
