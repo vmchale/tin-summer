@@ -34,6 +34,15 @@ fn main() {
                 Some(2)
             };
 
+        // set regex for exclusions
+        let regex = 
+            if let Some(n) = command.value_of("excludes") {
+                Some(n)
+            }
+            else {
+                None
+            };
+
         // set path to dir
         let path_read = command.value_of("dir");
         let init_dir = 

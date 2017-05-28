@@ -19,6 +19,11 @@ subcommands:
                 long: depth
                 takes_value: true
                 value_name: NUMBER
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
             - threshhold:
                 short: t
                 long: threshhold
@@ -36,6 +41,11 @@ subcommands:
                 takes_value: true
                 value_name: M|G
                 help: Specify a threshhold to search by, rather than sorting (default M)
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
             - depth: 
                 short: d
                 long: depth
