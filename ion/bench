@@ -19,8 +19,8 @@ end
 #do the actual benchmarks
 
 echo 'gnu coreutils vs. sniff: show all files over 1M...'
-bench "(du -hc -d2 $path | rg M)"
-bench "(du -hc -d2 $path | grep M)"
+bench 'du -hc -d2 $path | rg \[M,G]'
+bench 'du -hc -d2 $path | grep \[M,G]'
 bench "sniff fat $path"
 
 echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'

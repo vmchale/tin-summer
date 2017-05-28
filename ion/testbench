@@ -1,4 +1,6 @@
 #!/usr/bin/env ion
+cargo run -- sort -tM
+cargo run -- fat
 cargo build --release
 
 let binpath = target/release/sniff

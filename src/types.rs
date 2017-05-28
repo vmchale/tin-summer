@@ -43,26 +43,30 @@ impl Default for FileTree {
 }
 
 impl FileTree {
-    pub fn sort(&mut self, maybe_num: Option<usize>, maybe_depth: Option<u8>) -> () {
+    pub fn sort(mut self, maybe_num: Option<usize>, maybe_depth: Option<u8>) -> FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
-            self.files = self.files.clone().into_iter()
+            let new = self.files.into_iter()
                 .filter(|a| a.depth <= maybe_depth.unwrap() ) // FIXME no unwrap here
-                .take(n).collect();
+                .take(n).collect::<Vec<NamePair>>();
+            FileTree { file_size: self.file_size, files: new }
         }
         else {
             self.files.sort();
             self.files.reverse();
+            FileTree { file_size: self.file_size, files: self.files }
         }
     }
-    pub fn filtered(&mut self, maybe_depth: Option<u8>) -> () {
+    pub fn filtered(mut self, maybe_depth: Option<u8>) -> FileTree {
         if let Some(d) = maybe_depth {
-                self.files = self.files.clone().into_iter() // TODO intelligent sorting w/ filters based on 
+                self.files = self.files.into_iter() // TODO intelligent sorting w/ filters based on 
                     .filter(|a| a.depth <= d)
-                    .collect();
+                    .collect::<Vec<NamePair>>();
+                FileTree { file_size: self.file_size, files: self.files }
         }
-        else { () }
+        else { FileTree { file_size: self.file_size, files: self.files } }
+
     }
     pub fn new() -> FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }

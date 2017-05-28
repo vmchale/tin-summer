@@ -17,13 +17,13 @@ fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
 }
 
 pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> FileTree {
-    let paths = fs::read_dir(in_paths.clone()).unwrap();
+    let paths = fs::read_dir(&in_paths).unwrap();
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
 
     for p in paths {
         let path = p.unwrap().path(); // TODO no unwraps
-        let metadata = fs::metadata(path.clone()).unwrap();
+        let metadata = fs::metadata(&path).unwrap();
 
         // append file size/name for a file
         if metadata.is_file() {
@@ -34,7 +34,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
                 }
             }
             else {
-                tree.push(path.clone(), file_size, None, depth + 1);
+                tree.push(path, file_size, None, depth + 1);
             }
             total_size.add(file_size);
         }

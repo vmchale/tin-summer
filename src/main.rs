@@ -48,10 +48,10 @@ fn main() {
             };
 
         // decide what to print
-        let mut v = read_files(&init_dir, 0, Some(min_bytes));
-        v.filtered(depth);
+        let v = read_files(&init_dir, 0, Some(min_bytes));
+        let mut v_filtered = v.filtered(depth);
 
-        v.display_tree(init_dir);
+        v_filtered.display_tree(init_dir);
     }
 
     else if let Some(command) = matches.subcommand_matches("sort") {
@@ -97,10 +97,10 @@ fn main() {
                 PathBuf::from("./")
             };
 
-        let mut v = read_files(&init_dir, 0, min_bytes);
-        v.sort(Some(num_int), depth);
+        let v = read_files(&init_dir, 0, min_bytes);
+        let mut v_sorted = v.sort(Some(num_int), depth);
 
-        v.display_tree(init_dir);
+        v_sorted.display_tree(init_dir);
     }
     else {
         println!("{}: Command not recognized. Try 'sniff --help' if you're stuck.", "Error".red());
