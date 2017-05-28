@@ -15,7 +15,7 @@ use colored::*;
 /// function to determine whether something is an artifact. 
 ///
 /// Rules:
-/// - if it's included in the .gitignore and has a '.json' extension,
+/// - if it's included in the .gitignore and has a '.json' '.log' extension or something of the like,
 /// it's probably an artifact
 /// - if it's a '.a' or '.o' (or '.keter', '.ll', '.bc', '.dyn_o') it's probably an artifact
 /// - if it's a .sh file w/ interpreter it's probably *not* an artifact
@@ -26,7 +26,7 @@ use colored::*;
 #[cfg(not(os = "windows"))]
 fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
     lazy_static! {
-        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate)").unwrap();
+        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi)$").unwrap(); // FIXME .*?\.a works on '.aes'!!
     }
     let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
     if let Some(r) = re {

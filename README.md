@@ -1,12 +1,18 @@
 # file-sniffer
 
 If you do a significant amount of programming, you'll probably end up with
-several of gigabytes of artifacts scattered about. `sniff` is a tool to help you find those artifacts.
+build artifacts scattered about. `sniff` is a tool to help you find those
+artifacts. It's also a useful aid when you're writing build systems.
+
+`sniff` can be used to find "fat" directories, but it's also smart. It can look
+for directories with `.a` files and `.o` files, look *in* directories
+  specified by a `.gitignore`, and check permissions/PATHs.
 
 Features:
   - [x] find "fat" files and directories
   - [x] colorized output
-  - [ ] find "likely build artifact" directories
+  - [x] find "likely build artifact" directories
+    - [ ] use .gitignore to make decision
   - [ ] match speed of gnu utils
     - [x] beat the crap out of the gnu utils when using regex excludes
 
@@ -26,6 +32,12 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
 ```
 
 ## Use
+
+Search current directory for directories with build artifacts:
+
+```bash
+ $ sniff artifacts
+```
 
 Look for subdirectories/files that consume the most disk space:
 
@@ -49,13 +61,6 @@ export CLICOLOR=0
 ```
 
 ### Benchmarks
-
-#### Results
-
-| Tool used | Task | Time |
-| --------- | ---- | ---- |
-| sniff     | find files over 1MB | 17.65 ms |
-| du piped into grep | find files over 1MB | 13.87 ms | 
 
 #### Replicating the benchmarks
 

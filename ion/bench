@@ -31,3 +31,8 @@ bench "sniff fat $path --exclude target/debug"
 echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'
 bench "du -c -d2 $path | sort -nr | head -n20"
 bench "sniff sort $path"
+
+echo 'gnu coreutils vs. sniff: sort files & exclude w/ simple regex...'
+bench "du -hc -d2 $path --exclude target/debug | rg \[M,G\] "
+bench "du -hc -d2 $path --exclude target/debug | grep \[M,G\] "
+bench "sniff fat $path --exclude target/debug"

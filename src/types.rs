@@ -88,8 +88,10 @@ impl FileTree {
         // subdirs &c.
         let vec = &self.files;
         for name_pair in vec {
-            let to_formatted = format!("{}", name_pair.bytes);
-            println!("{} {}", &to_formatted.pad_to_width(8), name_pair.name.display());
+            if name_pair.bytes != FileSize::new(0) {
+                let to_formatted = format!("{}", name_pair.bytes);
+                println!("{} {}", &to_formatted.pad_to_width(8), name_pair.name.display());
+            }
         }
 
         // total; don't display if it's zero because we used threshholds

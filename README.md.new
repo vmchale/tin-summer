@@ -24,11 +24,6 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
 
 ## Use
 
-Search current directory for directories with build artifacts.
-
-```bash
- $ sniff artifacts
-```
 
 Look for subdirectories/files that consume the most disk space.
 
