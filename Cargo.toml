@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["Vanessa McHale <vamchale@gmail.com>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer."
+readme = "README.md"
+repository = "https://github.com/vmchale/file-sniffer"
+documentation = "https://github.com/vmchale/file-sniffer#README"
+homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
+test = false
 
 [dependencies]
 colored = "1.5"
