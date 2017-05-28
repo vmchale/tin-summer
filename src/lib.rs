@@ -24,11 +24,12 @@ impl FileSize {
 pub struct NamePair {
     bytes: FileSize,
     name: PathBuf,
+    pub depth: u8,
 }
 
 impl NamePair {
-    pub fn new(path: PathBuf, bytes_in: FileSize) -> NamePair {
-        NamePair { name: path, bytes: bytes_in }
+    pub fn new(path: PathBuf, bytes_in: FileSize, d: u8) -> NamePair {
+        NamePair { name: path, bytes: bytes_in, depth: d }
     }
     //fn cmp(&self, other: &NamePair) -> Ordering {
     //    self.bytes.cmp(&other.bytes)
@@ -42,10 +43,11 @@ pub struct FileTree {
 }
 
 impl FileTree {
-    pub fn sort(&mut self, maybe_num: Option<usize>) -> () {
+    pub fn sort(&mut self, maybe_num: Option<usize>, maybe_depth: Option<u8>) -> () {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
+            self.files.filter(|a| { a <= maybe_depth.unwrap() });
             self.files = self.files.clone().into_iter().take(n).collect();
         }
         else {
@@ -57,12 +59,12 @@ impl FileTree {
     pub fn new() -> FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
-    pub fn push(&mut self, path: PathBuf, size: FileSize, subtree: Option<&mut FileTree>) -> () {
+    pub fn push(&mut self, path: PathBuf, size: FileSize, subtree: Option<&mut FileTree>, depth: u8) -> () {
         self.file_size.add(size); // add subdirectory or file size to total
         if let Some(s) = subtree {
             self.files.append(&mut s.files); // add subtree if desired
         }
-        self.files.push(NamePair::new(path, size)); // tag file or subdirectory with its size
+        self.files.push(NamePair::new(path, size, depth)); // tag file or subdirectory with its size
         // by tracking total size nicely, we avoid the need to traverse the vector to sum it.
     }
     pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
@@ -102,11 +104,10 @@ impl fmt::Display for FileSize {
             let pre_size = format!("{}", self.size/1099511627776);
             write!(f, "{} TB", &pre_size.pad_to_width(4))
         }
-
     }
 }
 
-pub fn read_files(in_paths: PathBuf) -> FileTree {
+pub fn read_files(in_paths: PathBuf, depth: u8) -> FileTree {
     let paths = fs::read_dir(in_paths.clone()).unwrap();
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
@@ -118,14 +119,14 @@ pub fn read_files(in_paths: PathBuf) -> FileTree {
         // append file size/name for a file
         if metadata.is_file() {
             let file_size = FileSize::new(metadata.len());
-            tree.push(path.clone(), file_size, None);
+            tree.push(path.clone(), file_size, None, depth + 1);
             total_size.add(file_size);
         }
         // otherwise, go deeper
         else if metadata.is_dir() {
-            let mut subtree = read_files(path.clone());
+            let mut subtree = read_files(path.clone(), depth + 1);
             let dir_size = subtree.file_size;
-            tree.push(path, dir_size, Some(&mut subtree));
+            tree.push(path, dir_size, Some(&mut subtree), depth + 1);
             total_size.add(dir_size);
         }
     }

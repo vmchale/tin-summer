@@ -22,6 +22,15 @@ fn main() {
                 20
             };
 
+        // set depth
+        let depth = 
+            if let Some(n) = command.value_of("depth") {
+                Some(n.parse::<u8>().expect("Please enter a positive whole number"))
+            }
+            else {
+                Some(2)
+            };
+
         // set path to dir
         let path_read = command.value_of("dir");
         let init_dir = 
@@ -36,8 +45,8 @@ fn main() {
             };
 
         // decide whether to print ids
-        let mut v = read_files(init_dir.clone());
-        v.sort(Some(num_int));
+        let mut v = read_files(init_dir.clone(), 0);
+        v.sort(Some(num_int), depth);
 
         v.display_tree(init_dir);
     }
