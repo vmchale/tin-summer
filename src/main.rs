@@ -2,11 +2,13 @@
 
 extern crate libsniff;
 extern crate colored;
+extern crate regex;
 
 use libsniff::*;
 use std::path::PathBuf;
 use clap::App;
 use colored::*;
+use regex::Regex;
 
 fn main() {
     // command-line parser
@@ -59,7 +61,8 @@ fn main() {
 
         // decide what to print
         let v = if let Some(r) = regex {
-                read_files_regex(&init_dir, 0, Some(min_bytes), r)
+                let re = Regex::new(r).unwrap();
+                read_files_regex(&init_dir, 0, Some(min_bytes), re)
             }
             else {
                 read_files(&init_dir, 0, Some(min_bytes))
@@ -112,7 +115,22 @@ fn main() {
                 PathBuf::from("./")
             };
 
-        let v = read_files(&init_dir, 0, min_bytes);
+        // set regex for exclusions
+        let regex = 
+            if let Some(n) = command.value_of("excludes") {
+                Some(n)
+            }
+            else {
+                None
+            };
+
+        let v = if let Some(r) = regex {
+                let re = Regex::new(r).unwrap();
+                read_files_regex(&init_dir, 0, min_bytes, re)
+            }
+            else {
+                read_files(&init_dir, 0, min_bytes)
+            };
         let mut v_sorted = v.sort(Some(num_int), depth);
 
         v_sorted.display_tree(init_dir);

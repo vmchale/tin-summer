@@ -68,17 +68,16 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
     tree
 }
 
-pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: &str) -> FileTree {
+pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: Regex) -> FileTree {
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
-    let re = Regex::new(regex).unwrap();
 
     if let Ok(paths) = fs::read_dir(&in_paths) {
         for p in paths {
             let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
             let path_string = &path.clone().into_os_string().into_string().expect("OS String invalid.");
 
-            if !re.is_match(path_string) {
+            if !regex.is_match(path_string) {
                 // if this fails, it's probably because `path` is a symlink, so we ignore it.
                 if let Ok(metadata) = fs::metadata(&path) {
                     // append file size/name for a file
