@@ -31,10 +31,6 @@ impl NamePair {
     pub fn new(path: PathBuf, bytes_in: FileSize, d: u8) -> NamePair {
         NamePair { name: path, bytes: bytes_in, depth: d }
     }
-    //fn cmp(&self, other: &NamePair) -> Ordering {
-    //    self.bytes.cmp(&other.bytes)
-    //}
-
 }
 
 pub struct FileTree {
@@ -47,7 +43,7 @@ impl FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
-            self.files.filter(|a| { a <= maybe_depth.unwrap() });
+            self.files.iter().filter(|a| { a.depth <= maybe_depth.unwrap() }).collect::<Vec<&NamePair>>(); // FIXME
             self.files = self.files.clone().into_iter().take(n).collect();
         }
         else {
