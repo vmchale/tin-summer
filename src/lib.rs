@@ -2,6 +2,7 @@ extern crate pad;
 extern crate regex;
 
 pub mod types;
+pub mod parser;
 
 use std::fs;
 use std::path::PathBuf;

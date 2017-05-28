@@ -1,20 +1,28 @@
 #!/usr/bin/env ion
 
-let HOME = /home/vanessa/
-export PATH=$HOME/.cargo/bin:$PATH
+# set path to include sniff
+let PATH=$HOME/.cargo/bin:$PATH
 
 # set to a suitable path
-let path = /home/vanessa/programming/haskell/forks/cabal
+let path_arg = "false"
+for x in @args
+    if test $x = "--path"
+        let path_arg = "true"
+    end
+end
+if test $path_arg = "true"
+    let path = @args[2]
+else
+    let path = /home/vanessa/programming/haskell/forks/cabal
+end
 
-# set path to 'sniff' executable
-#let sniff = /home/vanessa/.cargo/bin/sniff
+#do the actual benchmarks
 
-#do the actual benchmarsk
-echo 'benchmarking du/ripgrep'
-#bench "(du -hc -d2 $path | rg M)"
-echo 'benchmarking du/sort'
-#bench "du -c -d2 $path | sort -n"
-echo 'benchmarking sniff sort'
-bench "sniff sort $path"
-echo 'benchmarking sniff fat'
+echo 'gnu coreutils vs. sniff: show all files over 1M...'
+bench "(du -hc -d2 $path | rg M)"
+bench "(du -hc -d2 $path | grep M)"
 bench "sniff fat $path"
+
+echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'
+bench "du -c -d2 $path | sort -nr | head -n20"
+bench "sniff sort $path"
