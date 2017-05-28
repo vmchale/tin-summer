@@ -24,7 +24,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
 
     if let Ok(paths) = fs::read_dir(&in_paths) {
         for p in paths {
-            let path = p.unwrap().path(); // TODO no unwraps b/c broken symlinks
+            let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
 
             // if this fails, it's probably because `path` is a symlink, so we ignore it.
             if let Ok(metadata) = fs::metadata(&path) {
