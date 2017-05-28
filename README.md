@@ -6,6 +6,7 @@ several of gigabytes of artifacts scattered about. `sniff` is a tool to help you
 Features:
   - [x] find "fat" files and directories
   - [ ] find "likely build artifact" directories
+  - [ ] match speed of gnu utils
 
 ## Installation
 
@@ -34,9 +35,8 @@ Look for in the current directory for directories/files that occupy more than 1G
 
 
 ```bash
- $ sniff fat
+ $ sniff fat --threshhold G
 ```
-
 
 ### Accessibility
 

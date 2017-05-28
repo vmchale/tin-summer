@@ -22,7 +22,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
     let mut total_size = FileSize::new(0);
 
     for p in paths {
-        let path = p.unwrap().path(); // TODO no unwraps
+        let path = p.unwrap().path(); // TODO no unwraps b/c broken symlinks
         let metadata = fs::metadata(&path).unwrap();
 
         // append file size/name for a file
@@ -38,6 +38,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
             }
             total_size.add(file_size);
         }
+
         // otherwise, go deeper
         else if metadata.is_dir() {
             let mut subtree = read_files(&path, depth + 1, min_bytes);

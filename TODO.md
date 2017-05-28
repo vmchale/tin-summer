@@ -24,3 +24,4 @@
 - [ ] multiple threads for building up the vector?? idk
 - [ ] when sorting, consider also dynamically picking which ones to include;
   don't rely on user to pass `-n` option by default.
+- [ ] currently panics on symlinks, which is bad

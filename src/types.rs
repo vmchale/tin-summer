@@ -43,6 +43,7 @@ impl Default for FileTree {
 }
 
 impl FileTree {
+
     pub fn sort(mut self, maybe_num: Option<usize>, maybe_depth: Option<u8>) -> FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
@@ -58,6 +59,7 @@ impl FileTree {
             FileTree { file_size: self.file_size, files: self.files }
         }
     }
+
     pub fn filtered(mut self, maybe_depth: Option<u8>) -> FileTree {
         if let Some(d) = maybe_depth {
                 self.files = self.files.into_iter() // TODO intelligent sorting w/ filters based on 
@@ -68,9 +70,11 @@ impl FileTree {
         else { FileTree { file_size: self.file_size, files: self.files } }
 
     }
+
     pub fn new() -> FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
+    
     pub fn push(&mut self, path: PathBuf, size: FileSize, subtree: Option<&mut FileTree>, depth: u8) -> () {
         self.file_size.add(size); // add subdirectory or file size to total
         if let Some(s) = subtree {
@@ -79,6 +83,7 @@ impl FileTree {
         self.files.push(NamePair::new(path, size, depth)); // tag file or subdirectory with its size
         // by tracking total size nicely, we avoid the need to traverse the vector to sum it.
     }
+
     pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
         // subdirs &c.
         let vec = &self.files;
@@ -87,10 +92,12 @@ impl FileTree {
             println!("{} {}", &to_formatted.pad_to_width(8), name_pair.name.display());
         }
 
-        // total
-        let to_formatted = format!("{}", self.file_size);
-        let path = init_dir.display(); // fix this!! better data structure
-        println!("{} {}", &to_formatted.pad_to_width(8), path);
+        // total; don't display if it's zero because we used threshholds
+        if self.file_size != FileSize::new(0) {
+            let to_formatted = format!("{}", self.file_size);
+            let path = init_dir.display(); // fix this!! better data structure
+            println!("{} {}", &to_formatted.pad_to_width(8), path);
+        }
     }
 }
 
