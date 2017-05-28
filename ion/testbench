@@ -1,0 +1,25 @@
+#!/usr/bin/env ion
+cargo build --release
+
+let binpath = target/release/sniff
+
+# set to a suitable path
+let path_arg = "false"
+for x in @args
+    if test $x = "--path"
+        let path_arg = "true"
+    end
+end
+if test $path_arg = "true"
+    let path = @args[2]
+else
+    let path = /home/vanessa/programming/haskell/forks/cabal
+end
+
+#do the actual benchmarks
+
+echo 'gnu coreutils vs. sniff: show all files over 1M...'
+bench "$binpath fat $path"
+
+echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'
+bench "$binpath sort $path"
