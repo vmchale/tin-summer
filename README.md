@@ -50,5 +50,21 @@ export CLICOLOR=0
 
 ### Benchmarks
 
+#### Results
+
+| Tool used | Task | Time |
+| --------- | ---- | ---- |
+| sniff     | find files over 1MB | 17.65 ms |
+| du piped into grep | find files over 1MB | 13.87 ms | 
+
+#### Replicating the benchmarks
+
 The benchmarks use an [ion](https://github.com/redox-os/ion) shell script and
-[bench](https://github.com/Gabriel439/bench) to perform the actual benchmarks. 
+[bench](https://github.com/Gabriel439/bench) to perform the actual benchmarks.
+
+I ran them on the built source of cabal, but you can use any directory to
+benchmark them with:
+
+```bash
+./ion/bench --path $PATH_TO_DIR
+```

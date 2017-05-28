@@ -11,9 +11,16 @@ use regex::Regex;
 use types::*;
 use colored::*;
 
+/// function to determine whether something is an artifact. 
+///
+/// Rules:
+/// - if it's included in the .gitignore and has a '.a' or '.o' extension,
+/// it's probably an artifact
+/// - if it's a '.a' or '.o' it's probably an artifact
+/// - 
 fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
-    let regex = if let Some(r) = re { r } 
-        else { Regex::new(r"^\S+.a").unwrap() };
+    let regex = if let Some(r) = re { r }
+        else { Regex::new(r".?\.(a|o").unwrap() }; // FIXME use lazy_static
     let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
     regex.is_match(path_str)
 }
