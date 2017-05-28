@@ -1,0 +1,9 @@
+#!/usr/bin/env ion
+echo 'benchmarking du/ripgrep'
+bench "(du -hc -d2 | rg M)"
+echo 'benchmarking du/sort'
+bench "du -c -d2 | sort -n"
+echo 'benchmarking sniff sort'
+bench "sniff sort"
+echo 'benchmarking sniff fat'
+bench "sniff fat"'

@@ -47,7 +47,7 @@ impl FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
-            self.files = self.files.clone().into_iter() // TODO intelligent sorting w/ filters based on 
+            self.files = self.files.clone().into_iter()
                 .filter(|a| a.depth <= maybe_depth.unwrap() ) // FIXME no unwrap here
                 .take(n).collect();
         }
@@ -55,7 +55,14 @@ impl FileTree {
             self.files.sort();
             self.files.reverse();
         }
-
+    }
+    pub fn filtered(&mut self, maybe_depth: Option<u8>) -> () {
+        if let Some(d) = maybe_depth {
+                self.files = self.files.clone().into_iter() // TODO intelligent sorting w/ filters based on 
+                    .filter(|a| a.depth <= d)
+                    .collect();
+        }
+        else { () }
     }
     pub fn new() -> FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }

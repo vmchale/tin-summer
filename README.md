@@ -24,8 +24,24 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
 
 ## Use
 
-Look for subdirectories/files that consume the most disk space.
+Look for subdirectories/files that consume the most disk space:
 
 ```bash
- $ sniff fat dir
+ $ sniff sort dir
+```
+
+Look for in the current directory for directories/files that occupy more than 1GB of disk space:
+
+
+```bash
+ $ sniff fat
+```
+
+
+### Accessibility
+
+To turn off colorized output:
+
+```bash
+export CLICOLOR=0
 ```

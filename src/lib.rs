@@ -15,7 +15,7 @@ fn is_artifact(p: PathBuf, re: Option<Regex>) -> bool {
     regex.is_match(path_str)
 }
 
-pub fn read_files(in_paths: &PathBuf, depth: u8) -> FileTree {
+pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> FileTree {
     let paths = fs::read_dir(in_paths.clone()).unwrap();
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
@@ -27,14 +27,28 @@ pub fn read_files(in_paths: &PathBuf, depth: u8) -> FileTree {
         // append file size/name for a file
         if metadata.is_file() {
             let file_size = FileSize::new(metadata.len());
-            tree.push(path.clone(), file_size, None, depth + 1);
+            if let Some(b) = min_bytes {
+                if file_size >= FileSize::new(b) {
+                    tree.push(path.clone(), file_size, None, depth + 1);
+                }
+            }
+            else {
+                tree.push(path.clone(), file_size, None, depth + 1);
+            }
             total_size.add(file_size);
         }
         // otherwise, go deeper
         else if metadata.is_dir() {
-            let mut subtree = read_files(&path, depth + 1);
+            let mut subtree = read_files(&path, depth + 1, min_bytes);
             let dir_size = subtree.file_size;
-            tree.push(path, dir_size, Some(&mut subtree), depth + 1);
+            if let Some(b) = min_bytes {
+                if dir_size >= FileSize::new(b) {
+                    tree.push(path, dir_size, Some(&mut subtree), depth + 1);
+                }
+            }
+            else {
+                tree.push(path, dir_size, Some(&mut subtree), depth + 1);
+            }
             total_size.add(dir_size);
         }
     }
