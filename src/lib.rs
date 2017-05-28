@@ -68,7 +68,7 @@ pub fn read_files(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>) -> File
     tree
 }
 
-pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: Regex) -> FileTree {
+pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, regex: &Regex) -> FileTree {
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
 
@@ -96,7 +96,7 @@ pub fn read_files_regex(in_paths: &PathBuf, depth: u8, min_bytes: Option<u64>, r
 
                     // otherwise, go deeper
                     else if metadata.is_dir() {
-                        let mut subtree = read_files(&path, depth + 1, min_bytes);
+                        let mut subtree = read_files_regex(&path, depth + 1, min_bytes, regex);
                         let dir_size = subtree.file_size;
                         if let Some(b) = min_bytes {
                             if dir_size >= FileSize::new(b) {

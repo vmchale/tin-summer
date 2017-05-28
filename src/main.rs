@@ -62,7 +62,7 @@ fn main() {
         // decide what to print
         let v = if let Some(r) = regex {
                 let re = Regex::new(r).unwrap();
-                read_files_regex(&init_dir, 0, Some(min_bytes), re)
+                read_files_regex(&init_dir, 0, Some(min_bytes), &re)
             }
             else {
                 read_files(&init_dir, 0, Some(min_bytes))
@@ -126,7 +126,7 @@ fn main() {
 
         let v = if let Some(r) = regex {
                 let re = Regex::new(r).unwrap();
-                read_files_regex(&init_dir, 0, min_bytes, re)
+                read_files_regex(&init_dir, 0, min_bytes, &re)
             }
             else {
                 read_files(&init_dir, 0, min_bytes)
