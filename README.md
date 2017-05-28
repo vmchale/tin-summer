@@ -5,6 +5,7 @@ several of gigabytes of artifacts scattered about. `sniff` is a tool to help you
 
 Features:
   - [x] find "fat" files and directories
+  - [x] colorized output
   - [ ] find "likely build artifact" directories
   - [ ] match speed of gnu utils
 
