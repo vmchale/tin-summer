@@ -28,6 +28,8 @@ subcommands:
     - fat:
         about: Show big files/directories
         args:
+            - dir:
+                help: Directory to search
             - threshhold:
                 short: t
                 long: threshhold

@@ -1,9 +1,20 @@
 #!/usr/bin/env ion
+
+let HOME = /home/vanessa/
+export PATH=$HOME/.cargo/bin:$PATH
+
+# set to a suitable path
+let path = /home/vanessa/programming/haskell/forks/cabal
+
+# set path to 'sniff' executable
+#let sniff = /home/vanessa/.cargo/bin/sniff
+
+#do the actual benchmarsk
 echo 'benchmarking du/ripgrep'
-bench "(du -hc -d2 | rg M)"
+#bench "(du -hc -d2 $path | rg M)"
 echo 'benchmarking du/sort'
-bench "du -c -d2 | sort -n"
+#bench "du -c -d2 $path | sort -n"
 echo 'benchmarking sniff sort'
-bench "sniff sort"
+bench "sniff sort $path"
 echo 'benchmarking sniff fat'
-bench "sniff fat"'
+bench "sniff fat $path"
