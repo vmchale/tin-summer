@@ -5,6 +5,7 @@ extern crate colored;
 extern crate regex;
 
 use libsniff::*;
+use libsniff::cli_helpers::*;
 use libsniff::error::check_regex;
 use std::path::PathBuf;
 use clap::App;
@@ -60,22 +61,12 @@ fn main() {
             };
 
         // set path to dir
-        let path_read = command.value_of("dir");
-        let init_dir = 
-            if let Some(read) = path_read {
-                let mut path_in = PathBuf::new();
-                path_in.push(read);
-                path_in
-            }
-            else {
-                // default path is "./"
-                PathBuf::from("./")
-            };
+        let init_dir = get_dir(command.value_of("dir"));
 
         // decide what to print
         let v = match regex {
-            Some(r) => read_all(&init_dir, 0, Some(min_bytes), None, Some(&check_regex(r)), silent, false),
-            _ => read_all(&init_dir, 0, Some(min_bytes), None, None, silent, false),
+                Some(r) => read_all(&init_dir, 0, Some(min_bytes), None, Some(&check_regex(r)), silent, false),
+                _ => read_all(&init_dir, 0, Some(min_bytes), None, None, silent, false),
         };
         let mut v_filtered = v.filtered(depth);
 

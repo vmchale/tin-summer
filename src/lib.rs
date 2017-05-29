@@ -4,6 +4,7 @@ extern crate colored;
 
 pub mod types;
 pub mod error;
+pub mod cli_helpers;
 
 use std::fs;
 use std::path::PathBuf;
