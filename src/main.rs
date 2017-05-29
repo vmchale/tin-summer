@@ -112,10 +112,6 @@ fn main() {
         // set regex for artifacts
         let artifacts = 
             if let Some(n) = command.value_of("regex") {
-                //let set = RegexSet::new(&[
-                //    r"[a-z]+@[a-z]+\.(com|org|net)",
-                //    r"[a-z]+\.(com|org|net)",
-                //]).unwrap();
                 Some(n)
             }
             else {
@@ -138,10 +134,14 @@ fn main() {
         // decide what to print
         let v = if let Some(r) = artifacts {
                 let re = error::check_regex(r);
-                read_artifacts(&init_dir, 0, min_bytes, Some(&re), silent)
+                match command.value_of("excludes") {
+                    Some(ex) => { let excludes = error::check_regex(ex);
+                        read_artifacts_excludes(&init_dir, 0, min_bytes, Some(&re), &excludes, silent) },
+                    _ => read_artifacts(&init_dir, 0, min_bytes, Some(&re), silent),
+                }
             }
             else {
-                match command.value_of("exclude") {
+                match command.value_of("excludes") {
                     Some(ex) => { let re = error::check_regex(ex);
                         read_artifacts_excludes(&init_dir, 0, min_bytes, None, &re, silent) },
                     _ => read_artifacts(&init_dir, 0, min_bytes, None, silent),
