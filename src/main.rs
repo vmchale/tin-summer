@@ -136,15 +136,15 @@ fn main() {
                 let re = error::check_regex(r);
                 match command.value_of("excludes") {
                     Some(ex) => { let excludes = error::check_regex(ex);
-                        read_artifacts_excludes(&init_dir, 0, min_bytes, Some(&re), &excludes, silent) },
-                    _ => read_artifacts(&init_dir, 0, min_bytes, Some(&re), silent),
+                        read_artifacts(&init_dir, 0, min_bytes, Some(&re), Some(&excludes), silent) },
+                    _ => read_artifacts(&init_dir, 0, min_bytes, Some(&re), None, silent),
                 }
             }
             else {
                 match command.value_of("excludes") {
-                    Some(ex) => { let re = error::check_regex(ex);
-                        read_artifacts_excludes(&init_dir, 0, min_bytes, None, &re, silent) },
-                    _ => read_artifacts(&init_dir, 0, min_bytes, None, silent),
+                    Some(ex) => { let excludes = error::check_regex(ex);
+                        read_artifacts(&init_dir, 0, min_bytes, None, Some(&excludes), silent) },
+                    _ => read_artifacts(&init_dir, 0, min_bytes, None, None, silent),
                 }
             };
         let mut v_filtered = v.filtered(depth);
