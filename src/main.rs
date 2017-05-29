@@ -36,19 +36,10 @@ fn main() {
             else { 1048576 };
 
         // set depth
-        let depth = 
-            if let Some(n) = command.value_of("depth") {
-                n.parse::<u8>().expect("Please enter a positive whole number")
-            }
-            else {
-                2
-            };
+        let depth = get_depth(command.value_of("depth"));
 
         // don't print warnings
-        let silent = match matches.occurrences_of("silent") {
-            0 => true,
-            _ => false,
-        };
+        let silent = command.is_present("silent");
 
         // set regex for exclusions
         let regex = 
@@ -85,34 +76,16 @@ fn main() {
             else { None };
 
         // set depth
-        let depth = 
-            if let Some(n) = command.value_of("depth") {
-                n.parse::<u8>().expect("Please enter a positive whole number")
-            }
-            else {
-                2
-            };
+        let depth = get_depth(command.value_of("depth"));
 
         // set number of things to fetch for sort
-        let num_int = 
-            if let Some(num) = command.value_of("count") {
-                num.parse::<usize>().expect("Please enter a positive whole number")
-            }
-            else {
-                20
-            };
+        let num_int = get_num(command.value_of("count")); 
 
         // decide whether to sort
-        let should_sort = match matches.occurrences_of("sort") {
-            0 => false,
-            _ => true,
-        };
+        let should_sort = command.is_present("sort");
 
         // don't print warnings
-        let silent = match matches.occurrences_of("silent") {
-            0 => true,
-            _ => false,
-        };
+        let silent = command.is_present("silent");
 
         // set regex for artifacts
         let artifacts = 
@@ -162,29 +135,14 @@ fn main() {
             }
             else { None };
 
-        // set number of things to fetch
-        let num_int = 
-            if let Some(num) = command.value_of("count") {
-                num.parse::<usize>().expect("Please enter a positive whole number")
-            }
-            else {
-                20
-            };
+        // set number of things to fetch for sort
+        let num_int = get_num(command.value_of("count")); 
 
         // set depth
-        let depth = 
-            if let Some(n) = command.value_of("depth") {
-                n.parse::<u8>().expect("Please enter a positive whole number")
-            }
-            else {
-                2
-            };
+        let depth = get_depth(command.value_of("depth"));
 
         // don't print warnings
-        let silent = match matches.occurrences_of("silent") {
-            0 => true,
-            _ => false,
-        };
+        let silent = command.is_present("silent");
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));

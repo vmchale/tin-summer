@@ -82,6 +82,7 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+                help: Regex for paths to exclude
             - sort:
                 short: o
                 long: sort
@@ -91,7 +92,7 @@ subcommands:
                 long: artifact
                 takes_value: true
                 value_name: REGEX
-                help: specify a custom regex for artifacts
+                help: Specify a custom regex for picking out artifacts
             - depth: 
                 short: d
                 long: depth
