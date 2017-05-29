@@ -18,26 +18,25 @@ end
 
 #do the actual benchmarks
 
-echo 'gnu coreutils vs. sniff: find artifacts greater than 1M'
-bench "du -hac -t1M $path | rg '.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$|total'"
-bench "du -hac -t1M $path | grep -P \".*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$"
-bench "sniff artifacts -tM $path"
+#echo 'gnu coreutils vs. sniff: find artifacts greater than 1M'
+#bench "du -hac -t1M $path | rg '.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$|total'"
+#bench "du -hac -t1M $path | grep -P \".*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$"
+#bench "sniff artifacts -tM $path"
 
-#echo 'gnu coreutils vs. sniff: show all files over 1M'
-#bench "du -ha -d2 $path | rg \[M,G\] "
-#bench "du -ha -d2 $path | grep \[M,G\] "
-#bench "sniff fat $path"
+echo 'gnu coreutils vs. sniff: show all files over 1M'
+bench "du -ha -d2 -t1M $path"
+bench "du -ha -d2 -t1M $path"
+bench "sniff fat $path"
 
-#echo 'gnu coreutils vs. sniff: show all files over 1M w/ simple regex'
-#bench "du -ha -d2 $path --exclude target/debug | rg \[M,G\] "
-#bench "du -ha -d2 $path --exclude target/debug | grep \[M,G\] "
-#bench "sniff fat $path --exclude target/debug"
+echo 'gnu coreutils vs. sniff: show all files over 1M w/ simple regex'
+bench "du -ha -d2 -t1M $path --exclude target/debug"
+bench "du -ha -d2 -t1M $path --exclude target/debug"
+bench "sniff fat $path --exclude target/debug"
 
 echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories'
 bench "du -a -d2 $path | sort -nr | head -n20"
 bench "sniff sort $path"
 
 echo 'gnu coreutils vs. sniff: sort files & exclude w/ simple regex'
-bench "du -ha -d2 $path --exclude target/debug -t1M" # | rg \[M,G\] "
-bench "du -ha -d2 $path --exclude target/debug | grep \[M,G\] "
-bench "sniff fat $path --exclude target/debug"
+bench "du -ha -d2 $path --exclude target/debug | sort -nr | head -n20"
+bench "sniff sort $path --exclude target/debug"
