@@ -74,8 +74,8 @@ fn main() {
 
         // decide what to print
         let v = match regex {
-            Some(r) => read_files(&init_dir, 0, Some(min_bytes), Some(&check_regex(r)), silent),
-            _ => read_files(&init_dir, 0, Some(min_bytes), None, silent),
+            Some(r) => read_all(&init_dir, 0, Some(min_bytes), None, Some(&check_regex(r)), silent, false),
+            _ => read_all(&init_dir, 0, Some(min_bytes), None, None, silent, false),
         };
         let mut v_filtered = v.filtered(depth);
 
@@ -135,14 +135,14 @@ fn main() {
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
                 match command.value_of("excludes") {
-                    Some(ex) => read_artifacts(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent),
-                    _ => read_artifacts(&init_dir, 0, min_bytes, Some(&re), None, silent),
+                    Some(ex) => read_all(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent, true),
+                    _ => read_all(&init_dir, 0, min_bytes, Some(&re), None, silent, true),
                 }
             }
             else {
                 match command.value_of("excludes") {
-                    Some(ex) => read_artifacts(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent),
-                    _ => read_artifacts(&init_dir, 0, min_bytes, None, None, silent),
+                    Some(ex) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent, true),
+                    _ => read_all(&init_dir, 0, min_bytes, None, None, silent, true),
                 }
             };
         let mut v_filtered = v.filtered(depth);
@@ -186,7 +186,7 @@ fn main() {
         };
 
         // set path to dir
-        let path_read = command.value_of("dir");
+        let path_read: Option<&str> = command.value_of("dir");
         let init_dir = 
             if let Some(read) = path_read {
                 let mut path_in = PathBuf::new();
@@ -208,8 +208,8 @@ fn main() {
             };
 
         let v = match regex {
-            Some(r) => read_files(&init_dir, 0, min_bytes, Some(&check_regex(r)), silent),
-            _ => read_files(&init_dir, 0, min_bytes, None, silent),
+            Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, false),
+            _ => read_all(&init_dir, 0, min_bytes, None, None, silent, false),
         };
         let mut v_sorted = v.sort(Some(num_int), depth);
 
