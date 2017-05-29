@@ -8,8 +8,6 @@ use libsniff::*;
 use std::path::PathBuf;
 use clap::App;
 use colored::*;
-use regex::Regex;
-use std::process;
 
 #[allow(unknown_lints)] 
 #[allow(cyclomatic_complexity)]
@@ -74,22 +72,11 @@ fn main() {
             };
 
         // decide what to print
-        let v = if let Some(r) = regex {
-                let re = if let Ok(rr) = Regex::new(r) {
-                        rr
-                    }
-                    else if let Err(x) = Regex::new(r) {
-                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
-                        process::exit(0x0f01)
-                    }
-                    else {
-                        process::exit(0x0f01)
-                    };
-                read_files_regex(&init_dir, 0, Some(min_bytes), &re, silent)
-            }
-            else {
-                read_files(&init_dir, 0, Some(min_bytes), silent)
-            };
+        let v = match regex {
+            Some(r) => { let re = error::check_regex(r);
+                read_files_regex(&init_dir, 0, Some(min_bytes), &re, silent) }
+            _ => read_files(&init_dir, 0, Some(min_bytes), silent)
+        };
         let mut v_filtered = v.filtered(depth);
 
         v_filtered.display_tree(init_dir);
@@ -150,20 +137,15 @@ fn main() {
 
         // decide what to print
         let v = if let Some(r) = artifacts {
-                let re = if let Ok(rr) = Regex::new(r) {
-                        rr
-                    }
-                    else if let Err(x) = Regex::new(r) {
-                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
-                        process::exit(0x0f01)
-                    }
-                    else {
-                        process::exit(0x0f01)
-                    };
+                let re = error::check_regex(r);
                 read_artifacts(&init_dir, 0, min_bytes, Some(&re), silent)
             }
             else {
-                read_artifacts(&init_dir, 0, min_bytes, None, silent)
+                match command.value_of("exclude") {
+                    Some(ex) => { let re = error::check_regex(ex);
+                        read_artifacts_excludes(&init_dir, 0, min_bytes, None, &re, silent) },
+                    _ => read_artifacts(&init_dir, 0, min_bytes, None, silent),
+                }
             };
         let mut v_filtered = v.filtered(depth);
 
@@ -227,22 +209,11 @@ fn main() {
                 None
             };
 
-        let v = if let Some(r) = regex {
-                let re = if let Ok(rr) = Regex::new(r) {
-                        rr
-                    }
-                    else if let Err(x) = Regex::new(r) {
-                        println!("{}: Invalid regex:\n    {}", "Error".red(), x);
-                        process::exit(0x0f01)
-                    }
-                    else {
-                        process::exit(0x0f01)
-                    };
-                read_files_regex(&init_dir, 0, min_bytes, &re, silent)
-            }
-            else {
-                read_files(&init_dir, 0, min_bytes, silent)
-            };
+        let v = match regex {
+            Some(r) => { let re = error::check_regex(r);
+                read_files_regex(&init_dir, 0, min_bytes, &re, silent) },
+            _ => read_files(&init_dir, 0, min_bytes, silent),
+        };
         let mut v_sorted = v.sort(Some(num_int), depth);
 
         v_sorted.display_tree(init_dir);
