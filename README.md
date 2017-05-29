@@ -14,7 +14,7 @@ Features:
   - [x] find "fat" files and directories
   - [x] colorized output
   - [x] find "likely build artifact" directories
-    - [ ] use .gitignore/path to make decision
+    - [x] use .gitignore/path to make decision
   - [ ] match speed of gnu utils
     - [x] beat the crap out of the gnu utils when using regex excludes
 
@@ -68,6 +68,8 @@ export CLICOLOR=0
 
 The benchmarks use an [ion](https://github.com/redox-os/ion) shell script and
 [bench](https://github.com/Gabriel439/bench) to perform the actual benchmarks.
+Unfortunately, I'm not sure how meaningful they are, because as far as I know,
+there aren't any comparable tools.
 
 I ran them on the built source of cabal, but you can use any directory to
 benchmark them with:
