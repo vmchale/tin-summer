@@ -2,6 +2,7 @@
 
 # set path to include sniff
 let PATH=$HOME/.cargo/bin:$PATH
+let CLICOLOR=0
 
 # set to a suitable path
 let path_arg = "false"

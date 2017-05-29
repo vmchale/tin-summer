@@ -19,8 +19,10 @@ else
     let path = /home/vanessa/programming/haskell/forks/cabal
 end
 
-#do the actual benchmarks
+# turn off color
+export CLICOLOR=0
 
+#do the actual benchmarks
 echo 'gnu coreutils vs. sniff: show all files over 1M...'
 bench "$binpath fat $path"
 

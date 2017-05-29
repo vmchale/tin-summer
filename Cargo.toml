@@ -18,8 +18,8 @@ english = []
 [dependencies]
 colored = "1.5"
 clap = {version = "2.24", features = ["yaml"]}
-pad = "0.1"
 regex = "0.2"
+pad = "0.1"
 lazy_static = "0.2"
 
 [lib]

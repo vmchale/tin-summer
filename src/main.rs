@@ -11,6 +11,8 @@ use colored::*;
 use regex::Regex;
 use std::process;
 
+#[allow(unknown_lints)] 
+#[allow(cyclomatic_complexity)]
 fn main() {
     // command-line parser
     #[cfg(feature = "english")]
@@ -37,10 +39,10 @@ fn main() {
         // set depth
         let depth = 
             if let Some(n) = command.value_of("depth") {
-                Some(n.parse::<u8>().expect("Please enter a positive whole number"))
+                n.parse::<u8>().expect("Please enter a positive whole number")
             }
             else {
-                Some(2)
+                2
             };
 
         // don't print warnings
@@ -108,10 +110,10 @@ fn main() {
         // set depth
         let depth = 
             if let Some(n) = command.value_of("depth") {
-                Some(n.parse::<u8>().expect("Please enter a positive whole number"))
+                n.parse::<u8>().expect("Please enter a positive whole number")
             }
             else {
-                Some(2)
+                2
             };
 
         // don't print warnings
@@ -191,10 +193,10 @@ fn main() {
         // set depth
         let depth = 
             if let Some(n) = command.value_of("depth") {
-                Some(n.parse::<u8>().expect("Please enter a positive whole number"))
+                n.parse::<u8>().expect("Please enter a positive whole number")
             }
             else {
-                Some(2)
+                2
             };
 
         // don't print warnings

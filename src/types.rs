@@ -1,7 +1,5 @@
-extern crate pad;
 extern crate regex;
 
-use pad::PadStr;
 use std::fmt;
 use std::path::PathBuf;
 use colored::*;
@@ -45,12 +43,12 @@ impl Default for FileTree {
 
 impl FileTree {
 
-    pub fn sort(mut self, maybe_num: Option<usize>, maybe_depth: Option<u8>) -> FileTree {
+    pub fn sort(mut self, maybe_num: Option<usize>, d: u8) -> FileTree {
         if let Some(n) = maybe_num {
             self.files.sort();
             self.files.reverse();
             let new = self.files.into_iter()
-                .filter(|a| a.depth <= maybe_depth.unwrap() ) // FIXME no unwrap here
+                .filter(|a| a.depth <= d )
                 .take(n).collect::<Vec<NamePair>>();
             FileTree { file_size: self.file_size, files: new }
         }
@@ -61,15 +59,11 @@ impl FileTree {
         }
     }
 
-    pub fn filtered(mut self, maybe_depth: Option<u8>) -> FileTree {
-        if let Some(d) = maybe_depth {
-                self.files = self.files.into_iter() // TODO intelligent sorting w/ filters based on 
-                    .filter(|a| a.depth <= d)
-                    .collect::<Vec<NamePair>>();
-                FileTree { file_size: self.file_size, files: self.files }
-        }
-        else { FileTree { file_size: self.file_size, files: self.files } }
-
+    pub fn filtered(mut self, d: u8) -> FileTree {
+        self.files = self.files.into_iter() // TODO intelligent sorting w/ filters based on 
+            .filter(|a| a.depth <= d)
+            .collect::<Vec<NamePair>>();
+        FileTree { file_size: self.file_size, files: self.files }
     }
 
     pub fn new() -> FileTree {
@@ -81,8 +75,7 @@ impl FileTree {
         if let Some(s) = subtree {
             self.files.append(&mut s.files); // add subtree if desired
         }
-        self.files.push(NamePair::new(path, size, depth)); // tag file or subdirectory with its size
-        // by tracking total size nicely, we avoid the need to traverse the vector to sum it.
+        self.files.push(NamePair::new(path, size, depth));
     }
 
     pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
