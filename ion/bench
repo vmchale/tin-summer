@@ -18,10 +18,10 @@ end
 
 #do the actual benchmarks
 
-echo 'gnu coreutils vs. sniff: find artifacts'
-bench "du -a . | rg '\\d{4}\\t.*?\\.*(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$'"
-bench "du -a . | grep -P \"[0-9]{4}\\t.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$"
-bench "sniff artifacts -tM"
+echo 'gnu coreutils vs. sniff: find artifacts greater than 1M'
+bench "du -hac -t1M $path | rg '.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$|total'"
+bench "du -hac -t1M $path | grep -P \".*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$"
+bench "sniff artifacts -tM $path"
 
 #echo 'gnu coreutils vs. sniff: show all files over 1M'
 #bench "du -ha -d2 $path | rg \[M,G\] "
@@ -38,6 +38,6 @@ bench "du -a -d2 $path | sort -nr | head -n20"
 bench "sniff sort $path"
 
 echo 'gnu coreutils vs. sniff: sort files & exclude w/ simple regex'
-bench "du -ha -d2 $path --exclude target/debug | rg \[M,G\] "
+bench "du -ha -d2 $path --exclude target/debug -t1M" # | rg \[M,G\] "
 bench "du -ha -d2 $path --exclude target/debug | grep \[M,G\] "
 bench "sniff fat $path --exclude target/debug"
