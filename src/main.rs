@@ -133,17 +133,15 @@ fn main() {
 
         // decide what to print
         let v = if let Some(r) = artifacts {
-                let re = error::check_regex(r);
+                let re = check_regex(r);
                 match command.value_of("excludes") {
-                    Some(ex) => { let excludes = error::check_regex(ex);
-                        read_artifacts(&init_dir, 0, min_bytes, Some(&re), Some(&excludes), silent) },
+                    Some(ex) => read_artifacts(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent),
                     _ => read_artifacts(&init_dir, 0, min_bytes, Some(&re), None, silent),
                 }
             }
             else {
                 match command.value_of("excludes") {
-                    Some(ex) => { let excludes = error::check_regex(ex);
-                        read_artifacts(&init_dir, 0, min_bytes, None, Some(&excludes), silent) },
+                    Some(ex) => read_artifacts(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent),
                     _ => read_artifacts(&init_dir, 0, min_bytes, None, None, silent),
                 }
             };
