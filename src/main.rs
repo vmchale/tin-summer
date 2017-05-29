@@ -7,7 +7,6 @@ extern crate regex;
 use libsniff::*;
 use libsniff::cli_helpers::*;
 use libsniff::error::check_regex;
-use std::path::PathBuf;
 use clap::App;
 use colored::*;
 
@@ -110,17 +109,7 @@ fn main() {
             };
 
         // set path to dir
-        let path_read = command.value_of("dir");
-        let init_dir = 
-            if let Some(read) = path_read {
-                let mut path_in = PathBuf::new();
-                path_in.push(read);
-                path_in
-            }
-            else {
-                // default path is "./"
-                PathBuf::from("./")
-            };
+        let init_dir = get_dir(command.value_of("dir"));
 
         // decide what to print
         let v = if let Some(r) = artifacts {
@@ -177,17 +166,7 @@ fn main() {
         };
 
         // set path to dir
-        let path_read: Option<&str> = command.value_of("dir");
-        let init_dir = 
-            if let Some(read) = path_read {
-                let mut path_in = PathBuf::new();
-                path_in.push(read);
-                path_in
-            }
-            else {
-                // default path is "./"
-                PathBuf::from("./")
-            };
+        let init_dir = get_dir(command.value_of("dir"));
 
         // set regex for exclusions
         let regex = 

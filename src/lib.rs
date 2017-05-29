@@ -34,7 +34,7 @@ fn is_artifact(p: &PathBuf, re: Option<&Regex>) -> bool {
     else {
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)$")
+                Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*)$")
                 .unwrap();
         }
         REGEX.is_match(&path_str)
@@ -56,10 +56,11 @@ fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
 }
 
 pub fn read_all(in_paths: &PathBuf, 
-                      depth: u8, min_bytes: Option<u64>, 
-                      artifact_regex: Option<&Regex>, 
-                      excludes: Option<&Regex>, 
-                      silent: bool, 
+                      depth: u8,
+                      min_bytes: Option<u64>,
+                      artifact_regex: Option<&Regex>,
+                      excludes: Option<&Regex>,
+                      silent: bool,
                       artifacts_only: bool) -> FileTree {
     let mut tree = FileTree::new();
     let mut total_size = FileSize::new(0);
