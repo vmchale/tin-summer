@@ -13,7 +13,7 @@ test = false
 [features]
 default = ["english"]
 english = []
-"français" = []
+#"français" = []
 
 [dependencies]
 colored = "1.5"
