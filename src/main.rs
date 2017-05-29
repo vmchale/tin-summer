@@ -13,6 +13,7 @@ use colored::*;
 #[allow(unknown_lints)] 
 #[allow(cyclomatic_complexity)]
 fn main() {
+    
     // command-line parser
     #[cfg(feature = "english")]
     let yaml = load_yaml!("options-en.yml");
@@ -123,6 +124,7 @@ fn main() {
 
         v_processed.display_tree(init_dir);
     }
+
     else if let Some(command) = matches.subcommand_matches("sort") {
 
         // set threshhold
@@ -164,6 +166,7 @@ fn main() {
 
         v_sorted.display_tree(init_dir);
     }
+
     else {
         println!("{}: Command not recognized. Try 'sniff --help' if you're stuck.", "Error".red());
     }

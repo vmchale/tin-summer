@@ -17,6 +17,7 @@ Features:
   - [x] colorized output
   - [x] find "likely build artifact" directories
     - [x] use .gitignore/path to make decision
+  - [ ] multilingual command options
   - [ ] match speed of gnu utils
     - [x] beat the crap out of the gnu utils when using regex excludes
 
