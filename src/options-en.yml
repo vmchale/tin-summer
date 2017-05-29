@@ -82,10 +82,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
-              #- quick:
-              #    short: q
-              #    long: no-sort
-              #    help: Don't sort results.
+            - sort:
+                short: o
+                long: sort
+                help: Sort results by size
             - regex:
                 short: a
                 long: artifact

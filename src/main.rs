@@ -22,7 +22,7 @@ fn main() {
     let yaml = load_yaml!("options-de.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
-    // TODO parallel implementation for 'fat' and 'artifacts'
+    // TODO parallel implementation for 'fat' and 'artifacts'?
     if let Some(command) = matches.subcommand_matches("fat") {
 
         // set threshhold
@@ -45,7 +45,7 @@ fn main() {
             };
 
         // don't print warnings
-        let silent = match matches.occurrences_of("v") {
+        let silent = match matches.occurrences_of("silent") {
             0 => true,
             _ => false,
         };
@@ -93,8 +93,23 @@ fn main() {
                 2
             };
 
+        // set number of things to fetch for sort
+        let num_int = 
+            if let Some(num) = command.value_of("count") {
+                num.parse::<usize>().expect("Please enter a positive whole number")
+            }
+            else {
+                20
+            };
+
+        // decide whether to sort
+        let should_sort = match matches.occurrences_of("sort") {
+            0 => false,
+            _ => true,
+        };
+
         // don't print warnings
-        let silent = match matches.occurrences_of("v") {
+        let silent = match matches.occurrences_of("silent") {
             0 => true,
             _ => false,
         };
@@ -125,9 +140,15 @@ fn main() {
                     _ => read_all(&init_dir, 0, min_bytes, None, None, silent, true),
                 }
             };
-        let mut v_filtered = v.filtered(depth);
 
-        v_filtered.display_tree(init_dir);
+        let mut v_processed = if should_sort {
+                v.sort(Some(num_int), depth)
+            }
+            else {
+                v.filtered(depth)
+            };
+
+        v_processed.display_tree(init_dir);
     }
     else if let Some(command) = matches.subcommand_matches("sort") {
 
@@ -160,7 +181,7 @@ fn main() {
             };
 
         // don't print warnings
-        let silent = match matches.occurrences_of("v") {
+        let silent = match matches.occurrences_of("silent") {
             0 => true,
             _ => false,
         };

@@ -64,9 +64,9 @@ To turn off colorized output:
 export CLICOLOR=0
 ```
 
-### Benchmarks
+## Benchmarks
 
-#### Replicating the benchmarks
+### Replicating the benchmarks
 
 The benchmarks use an [ion](https://github.com/redox-os/ion) shell script and
 [bench](https://github.com/Gabriel439/bench) to perform the actual benchmarks.
