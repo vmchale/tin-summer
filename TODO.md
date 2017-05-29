@@ -9,6 +9,7 @@
 - [x] currently panics on symlinks, which is bad
 - [x] test w/ non-ascii characters in filenames
   - [x] non-ascii regex
+- [x] travis ci
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob
 - [ ] when sorting, consider also dynamically picking which ones to include if
@@ -16,18 +17,16 @@
   - [x] set threshholds even with `-n` flag
 - [x] option to recognize what "artifacts" are most likely to look like, e.g. `.a` or
   `.o` files and executable permissions.
-  - [ ] allow `additional artifacts regex` flag
+  - [x] allow `additional artifacts regex` flag
   - [ ] look in .gitignore
     - [ ] check executable permissions/binary file-ness when not on path but NOT for `.sh` or if it starts like a script (e.g. header for interpreter)
-  - [ ] option to show probable artifacts by number, not file size
   - [x] regex
 - [ ] consider a `use_big_int` build flag for things besides desktop (up to 1YB
   is fine for most end users).
-- [ ] option to avoid hidden files
 - [ ] multiple threads?? feasible w/ 'fat' and 'artifacts'
 - [ ] de/fr/bo translations would be nice
-  - [ ] stabilize interface w/ at least --exclude for artifact
+  - [x] stabilize interface w/ at least --exclude for artifact
 - [ ] see how speed is affected with strings instead of PathBufs?
 - [ ] make threshhold accept number w/ M/G tag (nom).
-- [ ] use .gitignore to set recursion depth
-- [ ] consider using blocks like du?
+- [ ] use .gitignore to set recursion depth/set it intelligently
+- [ ] consider using blocks like du? get du-like speeds.

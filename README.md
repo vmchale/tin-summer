@@ -1,5 +1,7 @@
 # file-sniffer
 
+[![Build Status](https://travis-ci.org/vmchale/file-sniffer.svg?branch=master)](https://travis-ci.org/vmchale/file-sniffer)
+
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sniff` is a tool to help you find those
 artifacts. It's also a useful aid when you're writing build systems 
@@ -22,7 +24,7 @@ Features:
 
 ### Binary install
 
-The easiest way to install for linux and ARM is to download a binary from the [releases
+The easiest way to install for Linux or Windows is to download a binary from the [releases
 page](https://github.com/vmchale/file-sniffer/releases).
 
 ### Cargo

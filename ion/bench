@@ -25,11 +25,11 @@ bench "du -hac -t1M $path | grep -P \".*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crat
 bench "sniff artifacts -tM $path"
 
 echo 'show all files over 1M'
-bench "du --bytes -ad2 -t1M $path"
+bench "du -had2 -t1M $path"
 bench "sniff fat $path"
 
 echo 'show all files over 1M & exclude w/ simple regex'
-bench "du --bytes -ad2 -t1M $path --exclude target/debug"
+bench "du -had2 -t1M $path --exclude target/debug"
 bench "sniff fat $path --exclude target/debug"
 
 echo 'show the 20 biggest files/directories'
