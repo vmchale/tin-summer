@@ -11,10 +11,13 @@
   - [x] non-ascii regex
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob
+- [ ] when sorting, consider also dynamically picking which ones to include if
+  the user wants it.
+  - [x] set threshholds even with `-n` flag
 - [x] option to recognize what "artifacts" are most likely to look like, e.g. `.a` or
   `.o` files and executable permissions.
-  - [ ] flag for extra extensions of artifacts
-  - [ ] look *in* .gitignore
+  - [ ] allow `additional artifacts regex` flag
+  - [ ] look in .gitignore
     - [ ] check executable permissions/binary file-ness when not on path but NOT for `.sh` or if it starts like a script (e.g. header for interpreter)
   - [ ] option to show probable artifacts by number, not file size
   - [x] regex
@@ -22,10 +25,7 @@
   is fine for most end users).
 - [ ] option to avoid hidden files
 - [ ] multiple threads?? feasible w/ 'fat' and 'artifacts'
-- [ ] when sorting, consider also dynamically picking which ones to include if
-  the user wants it.
-  - [x] set threshholds even with `-n` flag
 - [ ] de/fr/bo translations would be nice
-- [ ] see how speed is affected with strings instead of PathBufs.
+- [ ] see how speed is affected with strings instead of PathBufs?
 - [ ] make threshhold accept number w/ M/G tag (nom).
 - [ ] use .gitignore to set recursion depth

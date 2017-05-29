@@ -21,7 +21,7 @@ fn main() {
     let yaml = load_yaml!("options-de.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
-    // TODO parallel implementation
+    // TODO parallel implementation for 'fat' and 'artifacts'
     if let Some(command) = matches.subcommand_matches("fat") {
 
         // set threshhold
@@ -123,6 +123,10 @@ fn main() {
         // set regex for artifacts
         let artifacts = 
             if let Some(n) = command.value_of("regex") {
+                //let set = RegexSet::new(&[
+                //    r"[a-z]+@[a-z]+\.(com|org|net)",
+                //    r"[a-z]+\.(com|org|net)",
+                //]).unwrap();
                 Some(n)
             }
             else {

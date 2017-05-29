@@ -27,15 +27,16 @@ use colored::*;
 /// - also, don't forget .gitignore_global
 #[cfg(not(os = "windows"))]
 fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
-    lazy_static! {
-        // this could probably be faster w/ a file extension method!
-        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|.fdb_latexmk|fls|egg)$").unwrap(); // FIXME .*?\.a works on '.aes'!!
-    }
-    let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
+    let path_str = &p.clone().into_os_string().into_string().expect("OS String invalid.");
     if let Some(r) = re {
         r.is_match(path_str)
     }
     else {
+        lazy_static! {
+            static ref REGEX: Regex = 
+                Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)$")
+                .unwrap();
+        }
         REGEX.is_match(path_str)
     }
 }
