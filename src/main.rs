@@ -5,6 +5,7 @@ extern crate colored;
 extern crate regex;
 
 use libsniff::*;
+use libsniff::error::check_regex;
 use std::path::PathBuf;
 use clap::App;
 use colored::*;
@@ -73,9 +74,8 @@ fn main() {
 
         // decide what to print
         let v = match regex {
-            Some(r) => { let re = error::check_regex(r);
-                read_files_regex(&init_dir, 0, Some(min_bytes), &re, silent) }
-            _ => read_files(&init_dir, 0, Some(min_bytes), silent)
+            Some(r) => read_files(&init_dir, 0, Some(min_bytes), Some(&check_regex(r)), silent),
+            _ => read_files(&init_dir, 0, Some(min_bytes), None, silent),
         };
         let mut v_filtered = v.filtered(depth);
 
@@ -210,9 +210,8 @@ fn main() {
             };
 
         let v = match regex {
-            Some(r) => { let re = error::check_regex(r);
-                read_files_regex(&init_dir, 0, min_bytes, &re, silent) },
-            _ => read_files(&init_dir, 0, min_bytes, silent),
+            Some(r) => read_files(&init_dir, 0, min_bytes, Some(&check_regex(r)), silent),
+            _ => read_files(&init_dir, 0, min_bytes, None, silent),
         };
         let mut v_sorted = v.sort(Some(num_int), depth);
 
