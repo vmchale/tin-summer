@@ -24,19 +24,17 @@ end
 #bench "sniff artifacts -tM $path"
 
 echo 'show all files over 1M'
-bench "du -ha -d2 -t1M $path"
-bench "du -ha -d2 -t1M $path"
+bench "du --bytes -ad2 -t1M $path"
 bench "sniff fat $path"
 
 echo 'show all files over 1M & exclude w/ simple regex'
-bench "du -ha -d2 -t1M $path --exclude target/debug"
-bench "du -ha -d2 -t1M $path --exclude target/debug"
+bench "du --bytes -ad2 -t1M $path --exclude target/debug"
 bench "sniff fat $path --exclude target/debug"
 
 echo 'show the 20 biggest files/directories'
-bench "du -a -d2 $path | sort -nr | head -n20"
+bench "du --bytes -a -d2 $path | sort -nr | head -n20"
 bench "sniff sort $path"
 
 echo 'sort files & exclude w/ simple regex'
-bench "du -ha -d2 $path --exclude target/debug | sort -nr | head -n20"
+bench "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
 bench "sniff sort $path --exclude target/debug"

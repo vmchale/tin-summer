@@ -27,8 +27,7 @@
 - [ ] multiple threads?? feasible w/ 'fat' and 'artifacts'
 - [ ] de/fr/bo translations would be nice
   - [ ] stabilize interface w/ at least --exclude for artifact
-  - [ ] and ideally multiple directories can be specified at once
-  - [ ] and flag to override built-in regex
 - [ ] see how speed is affected with strings instead of PathBufs?
 - [ ] make threshhold accept number w/ M/G tag (nom).
 - [ ] use .gitignore to set recursion depth
+- [ ] consider using blocks like du?

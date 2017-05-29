@@ -4,6 +4,7 @@ extern crate regex;
 use pad::PadStr;
 use std::fmt;
 use std::path::PathBuf;
+use colored::*;
 
 #[derive(Ord, Eq, PartialOrd, PartialEq, Debug, Copy, Clone)]
 pub struct FileSize {
@@ -90,15 +91,15 @@ impl FileTree {
         for name_pair in vec {
             if name_pair.bytes != FileSize::new(0) {
                 let to_formatted = format!("{}", name_pair.bytes);
-                println!("{} {}", &to_formatted.pad_to_width(8), name_pair.name.display());
+                println!("{}\t {}", &to_formatted.green(), name_pair.name.display());
             }
         }
 
         // total; don't display if it's zero because we used threshholds
         if self.file_size != FileSize::new(0) {
             let to_formatted = format!("{}", self.file_size);
-            let path = init_dir.display(); // fix this!! better data structure
-            println!("{} {}", &to_formatted.pad_to_width(8), path);
+            let path = init_dir.display();
+            println!("{}\t {}", &to_formatted.green(), path);
         }
     }
 }
