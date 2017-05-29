@@ -28,3 +28,4 @@
 - [ ] de/fr/bo translations would be nice
 - [ ] see how speed is affected with strings instead of PathBufs.
 - [ ] make threshhold accept number w/ M/G tag (nom).
+- [ ] use .gitignore to set recursion depth

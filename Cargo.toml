@@ -10,6 +10,11 @@ documentation = "https://github.com/vmchale/file-sniffer#README"
 homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
 test = false
 
+[features]
+default = ["english"]
+english = []
+"français" = []
+
 [dependencies]
 colored = "1.5"
 clap = {version = "2.24", features = ["yaml"]}

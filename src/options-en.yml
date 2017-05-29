@@ -6,8 +6,8 @@ subcommands:
         about: Find the biggest files/directories
         args:
             - dir:
+                value_name: DIRECTORY
                 help: Directory to search
-                index: 1
             - count: 
                 short: n
                 long: count
@@ -38,6 +38,7 @@ subcommands:
         about: Show big files/directories
         args:
             - dir:
+                value_name: DIRECTORY
                 help: Directory to search
             - threshhold:
                 short: t
@@ -64,6 +65,7 @@ subcommands:
         about: Show directories with build artifacts 
         args:
             - dir:
+                value_name: DIRECTORY
                 help: Directory to search
             - threshhold:
                 short: t
@@ -75,6 +77,11 @@ subcommands:
                 short: s
                 long: silent
                 help: Don't print warnings.
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
               #- quick:
               #    short: q
               #    long: no-sort

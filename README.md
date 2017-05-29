@@ -2,17 +2,19 @@
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sniff` is a tool to help you find those
-artifacts. It's also a useful aid when you're writing build systems.
+artifacts. It's also a useful aid when you're writing build systems 
+(because you can make sure your `clean` command actually cleans everything).
 
-`sniff` can be used to find "fat" directories, but it's also smart. It can look
-for directories with `.a` files and `.o` files, look *in* directories
-  specified by a `.gitignore`, and check permissions/PATHs.
+`sniff` can be used to find big files/directories, but so can nimble use of the
+gnu coreutils. 
+What makes `sniff` special is that it can look *only* at files that are likely
+build artifacts e.g. files with `.a` or `.o` extensions.
 
 Features:
   - [x] find "fat" files and directories
   - [x] colorized output
   - [x] find "likely build artifact" directories
-    - [ ] use .gitignore to make decision
+    - [ ] use .gitignore/path to make decision
   - [ ] match speed of gnu utils
     - [x] beat the crap out of the gnu utils when using regex excludes
 
@@ -20,7 +22,7 @@ Features:
 
 ### Binary install
 
-The easiest way to install is probably to download a binary from the [releases
+The easiest way to install for linux and ARM is to download a binary from the [releases
 page](https://github.com/vmchale/file-sniffer/releases).
 
 ### Cargo

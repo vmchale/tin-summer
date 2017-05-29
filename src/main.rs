@@ -13,7 +13,12 @@ use std::process;
 
 fn main() {
     // command-line parser
+    #[cfg(feature = "english")]
     let yaml = load_yaml!("options-en.yml");
+    #[cfg(feature = "français")]
+    let yaml = load_yaml!("options-fr.yml");
+    #[cfg(feature = "deutsch")]
+    let yaml = load_yaml!("options-de.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
     // TODO parallel implementation

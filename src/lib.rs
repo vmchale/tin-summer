@@ -23,10 +23,13 @@ use colored::*;
 /// - if it's .dll or .exe it's probably an artifact (windows)
 /// - if there's a Cargo.toml + target/ that's probably an artifact
 /// - .stack-work is probably an artifact
+/// - .log or .dvi in a folder w/ a .tex is probably 
+/// - also, don't forget .gitignore_global
 #[cfg(not(os = "windows"))]
 fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
     lazy_static! {
-        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi)$").unwrap(); // FIXME .*?\.a works on '.aes'!!
+        // this could probably be faster w/ a file extension method!
+        static ref REGEX: Regex = Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|.fdb_latexmk|fls|egg)$").unwrap(); // FIXME .*?\.a works on '.aes'!!
     }
     let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
     if let Some(r) = re {
