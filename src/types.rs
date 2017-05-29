@@ -1,5 +1,7 @@
+extern crate pad;
 extern crate regex;
 
+use self::pad::PadStr;
 use std::fmt;
 use std::path::PathBuf;
 use colored::*;

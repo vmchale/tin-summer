@@ -15,7 +15,7 @@ use colored::*;
 /// Rules:
 /// - if it`s included in the .gitignore and has a `.json` `.log` extension or something of the like,
 /// it`s probably an artifact
-/// - if it`s a `.a` or `.o` (or `.keter`, `.ll`, `.bc`, `.dyn_o`) it`s probably an artifact
+/// - if it`s a `.a` or `.o` (or `.keter`, `.ll`, `.bc`, `.dyn\_o`) it`s probably an artifact
 /// - if it`s a .sh file w/ interpreter it`s probably *not* an artifact
 /// - elsewise, if it`s an executable *not* on the path it`s probaby an artifact (unix)
 /// - if it`s .dll or .exe it`s probably an artifact (windows)
