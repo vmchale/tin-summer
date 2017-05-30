@@ -10,7 +10,7 @@ os:
 
 rust:
   - nightly
-  - stable
+    #- stable
 
 script:
   - cargo build
