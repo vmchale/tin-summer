@@ -93,6 +93,7 @@ pub mod prelude {
                           artifacts_only: bool) -> FileTree {
 
         let mut tree = FileTree::new();
+        let min_size = min_bytes.map(|a| FileSize::new(a));
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -119,11 +120,11 @@ pub mod prelude {
                                 let file_size = FileSize::new(metadata.len());
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                        tree.push(path_string, file_size, None, depth + 1);
+                                        tree.push(path_string, file_size, None, depth + 1, min_size);
                                     }
                                 }
                                 else {
-                                    tree.push(path_string, file_size, None, depth + 1);
+                                    tree.push(path_string, file_size, None, depth + 1, min_size);
                                 }
                             }
                         }
@@ -131,14 +132,14 @@ pub mod prelude {
                         // otherwise, go deeper
                         
                         else if metadata.is_dir() {
-                            let mut subtree = read_all(&path, depth + 1, None, artifact_regex, excludes, silent, artifacts_only);
+                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {
-                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1);
+                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, min_size);
                                 }
                             }
-                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1); }
+                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, min_size); }
                         }
                     }
                     else if !silent { println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }

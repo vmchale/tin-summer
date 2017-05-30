@@ -86,14 +86,23 @@ impl FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
     
-    pub fn push(&mut self, path: String, size: FileSize, subtree: Option<&mut FileTree>, depth: u8) -> () {
+    pub fn push(&mut self, path: String, size: FileSize, subtree: Option<&mut FileTree>, depth: u8, min_size: Option<FileSize>) -> () {
 
         // add to total
         self.file_size.add(size);
 
-        // append subtree
-        if let Some(s) = subtree {
-            self.files.append(&mut s.files); // add subtree if desired
+        // append subtree if appropriate
+        if let Some(min) = min_size {
+            if let Some(s) = subtree {
+                if size > min {
+                    self.files.append(&mut s.files);
+                }
+            }
+        }
+        else {
+            if let Some(s) = subtree {
+                self.files.append(&mut s.files);
+            }
         }
 
         // return new file tree
