@@ -4,9 +4,7 @@ extern crate libsniff;
 extern crate colored;
 extern crate regex;
 
-use libsniff::*;
-use libsniff::cli_helpers::*;
-use libsniff::error::check_regex;
+use libsniff::prelude::*;
 use clap::App;
 use colored::*;
 
@@ -120,14 +118,7 @@ fn main() {
     else if let Some(command) = matches.subcommand_matches("sort") {
 
         // set threshhold
-        let min_bytes = if let Some(t) = command.value_of("threshhold") {
-                match t {
-                    "M" => Some(1048576),
-                    "G" => Some(1073741824),
-                    _ => { println!("{}: invalid threshhold; defaulting to M", "Warning".yellow()) ; Some(1048576) }
-                }
-            }
-            else { None };
+        let min_bytes = threshhold(command.value_of("threshhold"));
 
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count")); 

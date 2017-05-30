@@ -16,6 +16,7 @@ english = []
 #"français" = []
 
 [dependencies]
+nom = "3.0"
 colored = "1.5"
 clap = {version = "2.24", features = ["yaml"]}
 regex = "0.2"

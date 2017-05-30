@@ -13,12 +13,15 @@ pub struct FileSize {
 }
 
 impl FileSize {
+
     pub fn new(i: u64) -> FileSize {
         FileSize { size: i }
     }
+
     pub fn add(&mut self, other: FileSize) -> () {
         self.size += other.size;
     }
+
 }
 
 pub struct NamePair {
@@ -55,7 +58,7 @@ impl FileTree {
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
-            self.files.sort_by(|a, b| sort_by_size(a, b));
+            self.files.sort_by(|a, b| sort_by_size(b, a));
             let new = self.files.into_iter()
                 .filter(|a| a.depth <= d )
                 .take(n).collect::<Vec<NamePair>>();

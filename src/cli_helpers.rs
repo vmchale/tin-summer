@@ -1,5 +1,8 @@
 extern crate regex;
 
+use colored::*;
+use nom::IResult;
+use std::process::exit;
 use std::path::PathBuf;
 
 pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
@@ -28,3 +31,50 @@ pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
         PathBuf::from(".")
     }
 }
+
+pub fn threshhold(s: Option<&str>) -> Option<u64> {
+    s.map(pre_threshhold)
+}
+
+fn pre_threshhold(t_from_cli: &str) -> u64 {
+    match get_threshhold(t_from_cli.as_bytes()) {
+            IResult::Done(_,n) => n,
+            _ => { println!("{}: failed to parse threshhold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
+            }
+}
+
+fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
+    let pre: String = nums.into_iter().collect();
+    let n = pre.parse::<u64>()
+        .expect("Please enter a positive whole number.");
+    //let n = u64::from_str_radix(num_slice, 10)
+    match size_tag {
+        b"G" => n * 1073741824,
+        b"M" => n * 1048576,
+        b"k" => n * 1024,
+        _ => exit(0x0f01),
+    }
+}
+
+named!(digit_char<&[u8], char>,
+    alt!(
+        char!('1') |
+        char!('2') |
+        char!('3') |
+        char!('4') |
+        char!('5') |
+        char!('6') |
+        char!('7') |
+        char!('8') |
+        char!('9') |
+        char!('0')
+    )
+);
+
+named!(get_threshhold<&[u8],u64>,
+    do_parse!(
+        nums:     many1!(digit_char) >>
+        size_tag: alt!(tag!("M") | tag!("G") | tag!("k")) >>
+        (to_u64(nums, size_tag))
+    )
+);
