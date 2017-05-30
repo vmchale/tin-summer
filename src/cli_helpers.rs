@@ -46,12 +46,13 @@ fn pre_threshhold(t_from_cli: &str) -> u64 {
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
     let pre: String = nums.into_iter().collect();
     let n = pre.parse::<u64>()
-        .expect("Please enter a positive whole number.");
+        .expect("Error parsing integer at cli_helpers.rs:48");
     //let n = u64::from_str_radix(num_slice, 10)
     match size_tag {
         b"G" => n * 1073741824,
         b"M" => n * 1048576,
         b"k" => n * 1024,
+        b"b" => n,
         _ => exit(0x0f01),
     }
 }
@@ -74,7 +75,7 @@ named!(digit_char<&[u8], char>,
 named!(get_threshhold<&[u8],u64>,
     do_parse!(
         nums:     many1!(digit_char) >>
-        size_tag: alt!(tag!("M") | tag!("G") | tag!("k")) >>
+        size_tag: alt!(tag!("M") | tag!("G") | tag!("k") | tag!("b")) >>
         (to_u64(nums, size_tag))
     )
 );

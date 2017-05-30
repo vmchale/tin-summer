@@ -24,9 +24,11 @@ export CLICOLOR=0
 
 #do the actual benchmarks
 echo 'gnu coreutils vs. sniff: show all files over 1M...'
+bench "sniff fat $path"
 bench "$binpath fat $path"
 
 echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'
+bench "sniff sort $path"
 bench "$binpath sort $path"
 
 echo 'sniff for build artifacts & compare to self'
