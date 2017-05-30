@@ -55,6 +55,37 @@ fn main() {
         v_filtered.display_tree(init_dir);
     }
 
+    // find large files
+    if let Some(command) = matches.subcommand_matches("all") {
+
+        // set threshhold
+        let min_bytes = threshhold(command.value_of("threshhold"));
+
+        // set depth
+        let depth = get_depth(command.value_of("depth"));
+
+        // don't print warnings
+        let silent = command.is_present("silent");
+
+        // set regex for exclusions
+        let regex = command.value_of("excludes"); 
+
+        // set path to dir
+        let init_dir = get_dir(command.value_of("dir"));
+
+        // get relevant filenames &c.
+        let v = match regex {
+                Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, false),
+                _ => read_all(&init_dir, 0, min_bytes, None, None, silent, false),
+        };
+
+        // filter by depth
+        let mut v_filtered = v.filtered(depth);
+
+        // display results
+        v_filtered.display_tree(init_dir);
+    }
+
     else if let Some(command) = matches.subcommand_matches("artifacts") {
 
         // set threshhold
