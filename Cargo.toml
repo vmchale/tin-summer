@@ -10,6 +10,9 @@ documentation = "https://github.com/vmchale/file-sniffer#README"
 homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
 test = false
 
+[profile.release]
+lto = true
+
 [features]
 default = ["english"]
 english = []

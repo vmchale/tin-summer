@@ -27,7 +27,7 @@ impl FileSize {
 pub struct NamePair {
     bytes: FileSize,
     depth: u8,
-    name: PathBuf,
+    name: String,
 }
 
 fn sort_by_size(fst: &NamePair, snd: &NamePair) -> Ordering {
@@ -35,7 +35,7 @@ fn sort_by_size(fst: &NamePair, snd: &NamePair) -> Ordering {
 }
 
 impl NamePair {
-    pub fn new(path: PathBuf, bytes_in: FileSize, d: u8) -> NamePair {
+    pub fn new(path: String, bytes_in: FileSize, d: u8) -> NamePair {
         NamePair { name: path, bytes: bytes_in, depth: d }
     }
 }
@@ -86,7 +86,7 @@ impl FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
     
-    pub fn push(&mut self, path: PathBuf, size: FileSize, subtree: Option<&mut FileTree>, depth: u8) -> () {
+    pub fn push(&mut self, path: String, size: FileSize, subtree: Option<&mut FileTree>, depth: u8) -> () {
 
         // add to total
         self.file_size.add(size);
@@ -108,7 +108,7 @@ impl FileTree {
         for name_pair in vec {
             if name_pair.bytes != FileSize::new(0) {
                 let to_formatted = format!("{}", name_pair.bytes);
-                println!("{}\t {}", &to_formatted.green(), name_pair.name.display());
+                println!("{}\t {}", &to_formatted.green(), name_pair.name);
             }
         }
 

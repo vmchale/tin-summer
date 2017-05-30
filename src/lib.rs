@@ -69,6 +69,10 @@ pub mod prelude {
         }
     }
 
+
+    // how depth/recursion SHOULD work for artifacts: if e.g. .stack-work/ has *multiple* subdirs
+    // with artifacts, then list it in place of all of them. Basically find "root nodes" of these
+    // places - hard but potentially very nice? look in .gitignore?
     /// Function to process directory contents and return a `FileTree` struct.
     ///
     /// # Examples
@@ -80,7 +84,7 @@ pub mod prelude {
     /// let path = PathBuf::from("src");
     /// let file_tree = read_all(&path, 2, None, None, None, false, true);
     /// ```
-    pub fn read_all(in_paths: &PathBuf, 
+    pub fn read_all(in_paths: &PathBuf,
                           depth: u8,
                           min_bytes: Option<u64>,
                           artifact_regex: Option<&Regex>,
@@ -96,13 +100,13 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let path_string = &path.clone().into_os_string().into_string().expect("OS String invalid."); // TODO nicer error message, mention windows/utf-8?
+                let path_string = path.clone().into_os_string().into_string().expect("OS String invalid."); // TODO nicer error message, mention windows/utf-8?
                 let bool_loop = match excludes {
-                    Some(ex) => !ex.is_match(path_string),
+                    Some(ex) => !ex.is_match(&path_string),
                     _ => true,
                 };
 
-                // only enter directory if we're not using regex excludes or if they don't match the
+                // only consider path if we're not using regex excludes or if they don't match the
                 // exclusion regex
                 if bool_loop {
 
@@ -115,26 +119,27 @@ pub mod prelude {
                                 let file_size = FileSize::new(metadata.len());
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                        tree.push(path, file_size, None, depth + 1);
+                                        tree.push(path_string, file_size, None, depth + 1);
                                     }
                                 }
                                 else {
-                                    tree.push(path, file_size, None, depth + 1);
+                                    tree.push(path_string, file_size, None, depth + 1);
                                 }
                             }
                         }
 
                         // otherwise, go deeper
+                        
                         else if metadata.is_dir() {
                             let mut subtree = read_all(&path, depth + 1, None, artifact_regex, excludes, silent, artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {
-                                    tree.push(path, dir_size, Some(&mut subtree), depth + 1);
+                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1);
                                 }
                             }
-                            else { tree.push(path, dir_size, Some(&mut subtree), depth + 1); }
-                            }
+                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1); }
+                        }
                     }
                     else if !silent { println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }

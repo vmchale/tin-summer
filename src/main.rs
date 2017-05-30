@@ -56,7 +56,7 @@ fn main() {
     }
 
     // find large files
-    if let Some(command) = matches.subcommand_matches("all") {
+    else if let Some(command) = matches.subcommand_matches("all") {
 
         // set threshhold
         let min_bytes = threshhold(command.value_of("threshhold"));
