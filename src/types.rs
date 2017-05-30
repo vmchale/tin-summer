@@ -65,10 +65,13 @@ impl FileTree {
             FileTree { file_size: self.file_size, files: new }
         }
 
-        // sort by size
+        // sort by size and filter by depth
         else {
             self.files.sort_by(|a, b| sort_by_size(a, b));
-            FileTree { file_size: self.file_size, files: self.files }
+            let new = self.files.into_iter()
+                .filter(|a| a.depth <= d )
+                .collect::<Vec<NamePair>>();
+            FileTree { file_size: self.file_size, files: new }
         }
     }
 

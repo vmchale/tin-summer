@@ -25,12 +25,8 @@ fn main() {
     if let Some(command) = matches.subcommand_matches("fat") {
 
         // set threshhold
-        let min_bytes = match command.value_of("threshhold") {
-            Some(t) => match t {
-                        "M" => 1048576,
-                        "G" => 1073741824,
-                        _ => { println!("{}: invalid threshhold; defaulting to M", "Warning".yellow()) ; 1048576 }
-                        },
+        let min_bytes = match threshhold(command.value_of("threshhold")) {
+            Some(t) => t, 
             _ => 1048576,
         };
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env ion
-cargo run -- sort -tM
+cargo run -- sort -t1M
 cargo run -- fat
 cargo run -- sort src/ # to make sure non-ascii displays correctly
 cargo build --release
