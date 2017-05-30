@@ -20,9 +20,9 @@ end
 #do the actual benchmarks
 
 echo 'find artifacts greater than 1M'
-bench "du -hac -t1M $path | rg '.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$|total'"
-bench "du -hac -t1M $path | grep -P \".*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$"
-bench "sniff artifacts -tM $path"
+bench "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+bench "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+bench "sniff artifacts -t1M $path"
 
 echo 'show all files over 1M'
 bench "du -had2 -t1M $path"
