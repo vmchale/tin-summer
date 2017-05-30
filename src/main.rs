@@ -58,14 +58,7 @@ fn main() {
     else if let Some(command) = matches.subcommand_matches("artifacts") {
 
         // set threshhold
-        let min_bytes = match command.value_of("threshhold") {
-            Some(t) => match t {
-                        "M" => Some(1048576),
-                        "G" => Some(1073741824),
-                        _ => { println!("{}: invalid threshhold; defaulting to M", "Warning".yellow()) ; Some(1048576) }
-                        },
-            _ => None,
-        };
+        let min_bytes = threshhold(command.value_of("threshhold"));
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
