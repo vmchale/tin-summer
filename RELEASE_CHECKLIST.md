@@ -6,3 +6,4 @@
 - [ ] likewise for `cargo bench`
 - [ ] run `cargo clippy`
 - [ ] upload binaries for major releases
+- [ ] sleep > release
