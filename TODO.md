@@ -7,14 +7,13 @@
   du + grep (+ sort)
 - [x] "fat" files, but also efficient (lazy) sorting algorithm w/ min & max.
 - [x] currently panics on symlinks, which is bad
+- [x] add tests
 - [x] test w/ non-ascii characters in filenames
   - [x] non-ascii regex
 - [x] travis ci
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob
-- [ ] when sorting, consider also dynamically picking which ones to include if
-  the user wants it.
-  - [x] set threshholds even with `-n` flag
+- [x] set threshholds even with `-n` flag
 - [x] option to recognize what "artifacts" are most likely to look like, e.g. `.a` or
   `.o` files and executable permissions.
   - [x] allow `additional artifacts regex` flag
@@ -32,3 +31,5 @@
 - [ ] consider using blocks like du? get du-like speeds.
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] warning if user inputs flags that make no sense
+- [ ] flag to follow symlinks
+- [ ] output error message to stderr

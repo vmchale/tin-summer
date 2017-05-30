@@ -30,5 +30,5 @@ echo 'gnu coreutils vs. sniff: show the 20 biggest files/directories...'
 bench "$binpath sort $path"
 
 echo 'sniff for build artifacts & compare to self'
-bench "$HOME/.cargo/bin/sniff artifacts /home/vanessa/programming/haskell/forks/cabal"
-bench "$binpath artifacts $path"
+bench "$HOME/.cargo/bin/sniff artifacts --sort /home/vanessa/programming/haskell/forks/cabal"
+bench "$binpath artifacts --sort $path"
