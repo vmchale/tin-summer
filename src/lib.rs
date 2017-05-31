@@ -23,7 +23,8 @@ pub mod prelude {
     use std::io::prelude::*;
     use std::process::exit;
     use std::fs::{Metadata, File};
-    #[cfg(not(os = "windows"))]
+
+    #[cfg(not(target_os = "windows"))]
     use std::os::unix::fs::PermissionsExt;
 
     pub use cli_helpers::*;
@@ -47,11 +48,45 @@ pub mod prelude {
     /// let path_buf: PathBuf = PathBuf::from("lib.so");
     /// assert_eq!(is_artifact(&path_buf, None), true);
     /// ```
-    #[cfg(not(os = "windows"))]
+    #[cfg(not(target_os = "windows"))]
     pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, metadata: Metadata, gitignore: &Option<RegexSet>) -> bool {
+
+        // get path as a string so we can match against it
         let path_str = p.clone().into_os_string().into_string().expect("OS string invalid.");
+
+        // match on the user's expression if it exists
         if let Some(r) = re {
             r.is_match(&path_str)
+        }
+
+        // otherwise, use builtin expressions
+        else {
+            lazy_static! {
+                static ref REGEX: Regex = 
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx)$")
+                    .unwrap();
+            }
+            lazy_static! {
+                static ref REGEX_GITIGNORE: Regex = 
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
+                    .unwrap();
+            }
+            if REGEX.is_match(&path_str) { true }
+            
+            else if let &Some(ref x) = gitignore {
+                if x.is_match(&path_str) {
+                    metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str)
+                } else { false }
+            }
+            else { false }
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, _: Metadata, gitignore:&Option<RegexSet>) -> bool {
+        let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
+        if let Some(r) = re {
+            r.is_match(path_str)
         }
         else {
             lazy_static! {
@@ -64,30 +99,14 @@ pub mod prelude {
                     Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
                     .unwrap();
             }
-            // TODO consider copying some of the ripgrep code to figure out gitignores?
-            // easy intermediary: parse gitignore into a regex?
             if REGEX.is_match(&path_str) { true }
             
             else if let &Some(ref x) = gitignore {
-                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str) {
+                if REGEX_GITIGNORE.is_match(&path_str) {
                     if x.is_match(&path_str) { true } else { false }
                 } else { false }
             }
             else { false }
-        }
-    }
-
-    #[cfg(os = "windows")]
-    pub fn is_artifact(p: PathBuf, re: Option<&Regex>, ) -> bool {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new(r".*?\.(exe|dll|ll|keter|bc|rlib|crate|min\.js|toc|aux|whl|vba|crx|out)$").unwrap();
-        }
-        let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
-        if let Some(r) = re {
-            r.is_match(path_str)
-        }
-        else {
-            REGEX.is_match(path_str)
         }
     }
 
@@ -114,22 +133,20 @@ pub mod prelude {
                           maybe_gitignore: &Option<RegexSet>,
                           artifacts_only: bool) -> FileTree {
 
+        // attempt to read the .gitignore
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
         let gitignore = if let &Some(ref gitignore) = maybe_gitignore { Some(gitignore.to_owned()) }
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
-                //println!("{:?}", gitignore_path);
                 if let Ok(mut file) = File::open(gitignore_path) {
-                    println!("here");
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
-                        .expect("File read failed");
+                        .expect("File read failed. Is your system configured to use unix?");
                     Some(file_contents_to_regex(&contents))
                 } else { None }
             };
-
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {

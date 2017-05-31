@@ -10,7 +10,7 @@ artifacts. It's also a useful aid when you're writing build systems
 ## Features
 
   - [x] find "likely build artifact" directories
-    - [ ] use .gitignore/path to make decision
+    - [x] use .gitignore/path to make decision
   - [ ] match speed of gnu utils
     - [x] faster when finding artifacts
     - [x] faster with excludes
