@@ -15,6 +15,12 @@ fn bench_traversal(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_traversal_sort (b: &mut Bencher) {
+    let p = PathBuf::from("src/testdata");
+    b.iter(|| { let v = read_all(&p, 4, None, None, None, true, true); v.sort(None, 2) })
+}
+
+#[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| read_all(&p, 4, None, None, None, true, true))

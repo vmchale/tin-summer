@@ -4,13 +4,17 @@
 let PATH=$HOME/.cargo/bin:$PATH
 let CLICOLOR=0
 
-# set to a suitable path
+# set to a suitable path & decide whether to produce reports
 let path_arg = "false"
+let reports = "false"
 for x in @args
-    if test $x = "--path"
+    if test $x = "+path"
         let path_arg = "true"
+    else if test $x = "+reports"
+        let reports = "true"
     end
 end
+
 if test $path_arg = "true"
     let path = @args[2]
 else
@@ -19,27 +23,61 @@ end
 
 #do the actual benchmarks
 
-echo 'find everything'
-bench "du -ha"
-bench "sniff all"
+if test $reports = "true"
 
-echo 'find artifacts greater than 1M'
-bench "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-bench "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-bench "sniff artifacts -t1M $path"
+    echo 'generating reports with benchmarks...'
+    mkdir -p reports/
 
-echo 'show all files over 1M'
-bench "du -had2 -t1M $path"
-bench "sniff fat $path"
+    echo 'find everything'
+    bench --output reports/du-all.html "du -ha $path"
+    bench --output reports/sniff-all.html "sniff all $path"
 
-echo 'show all files over 1M & exclude w/ simple regex'
-bench "du -had2 -t1M $path --exclude target/debug"
-bench "sniff fat $path --exclude target/debug"
+    echo 'find artifacts greater than 1M'
+    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+    bench --output reports/du-grep.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
 
-echo 'show the 20 biggest files/directories'
-bench "du --bytes -a -d2 $path | sort -nr | head -n20"
-bench "sniff sort $path"
+    echo 'show all files over 1M'
+    bench --output reports/du-thresh.html "du -had2 -t1M $path"
+    bench --output reports/sniff-fat.html "sniff fat $path"
 
-echo 'sort files & exclude w/ simple regex'
-bench "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
-bench "sniff sort $path --exclude target/debug"
+    echo 'show all files over 1M & exclude w/ simple regex'
+    bench --output reports/du-thresh-exclude.html "du -had2 -t1M $path --exclude target/debug"
+    bench --output reports/sniff-fat-exclude.html "sniff fat $path --exclude target/debug"
+
+    echo 'show the 20 biggest files/directories'
+    bench --output reports/du-sort.html "du --bytes -a -d2 $path | sort -nr | head -n20"
+    bench --output reports/sort.html "sniff sort $path"
+
+    echo 'sort files & exclude w/ simple regex'
+    bench --output reports/du-sort-exclude.html "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
+    bench --output reports/sniff-sort-exclude.html "sniff sort $path --exclude target/debug"
+
+else
+
+    echo 'find everything'
+    bench "du -ha $path"
+    bench "sniff all $path"
+
+    echo 'find artifacts greater than 1M'
+    bench "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+    bench "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
+    bench "sniff artifacts -t1M $path"
+
+    echo 'show all files over 1M'
+    bench "du -had2 -t1M $path"
+    bench "sniff fat $path"
+
+    echo 'show all files over 1M & exclude w/ simple regex'
+    bench "du -had2 -t1M $path --exclude target/debug"
+    bench "sniff fat $path --exclude target/debug"
+
+    echo 'show the 20 biggest files/directories'
+    bench "du --bytes -a -d2 $path | sort -nr | head -n20"
+    bench "sniff sort $path"
+
+    echo 'sort files & exclude w/ simple regex'
+    bench "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
+    bench "sniff sort $path --exclude target/debug"
+
+end

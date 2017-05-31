@@ -32,8 +32,8 @@ subcommands:
                 short: t
                 long: threshhold
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
+                value_name: SIZE
+                help: Specify a threshhold for file size (default 1M)
     - fat:
         about: Show big files/directories
         args:
@@ -44,8 +44,8 @@ subcommands:
                 short: t
                 long: threshhold
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold to search by, rather than sorting (default M)
+                value_name: SIZE
+                help: Specify a threshhold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -71,8 +71,8 @@ subcommands:
                 short: t
                 long: threshhold
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold to search by, rather than sorting (default M)
+                value_name: SIZE
+                help: Specify a threshhold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -98,8 +98,8 @@ subcommands:
                 short: t
                 long: threshhold
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
+                value_name: SIZE
+                help: Specify a threshhold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -115,11 +115,11 @@ subcommands:
                 long: sort
                 help: Sort results by size
             - regex:
-                short: a
-                long: artifact
+                short: r
+                long: regex
                 takes_value: true
                 value_name: REGEX
-                help: Specify a custom regex for picking out artifacts
+                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files, you could do 'sniff artifacts .*?rlib$'
             - depth: 
                 short: d
                 long: depth

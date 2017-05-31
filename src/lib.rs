@@ -28,6 +28,8 @@ pub mod prelude {
     /// Rules:
     /// - if the file extension of that is that of an artifact, return true
     /// - if the file is executable and included in the .gitignore, return true
+    /// - if the file looks like a configuration file and is in the .gitignore, return true
+    /// (\.cache.*, \.conf
     /// - return false otherwise
     ///
     /// # Examples
@@ -48,7 +50,7 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|vba|crx)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache)$")
                     .unwrap();
             }
             REGEX.is_match(&path_str)
@@ -68,7 +70,6 @@ pub mod prelude {
             REGEX.is_match(path_str)
         }
     }
-
 
     // how depth/recursion SHOULD work for artifacts: if e.g. .stack-work/ has *multiple* subdirs
     // with artifacts, then list it in place of all of them. Basically find "root nodes" of these
@@ -93,7 +94,7 @@ pub mod prelude {
                           artifacts_only: bool) -> FileTree {
 
         let mut tree = FileTree::new();
-        let min_size = min_bytes.map(|a| FileSize::new(a));
+        let min_size = min_bytes.map(FileSize::new);
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -120,9 +121,9 @@ pub mod prelude {
                                 let file_size = FileSize::new(metadata.len());
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                        tree.push(path_string, file_size, None, depth + 1, min_size);
+                                            tree.push(path_string, file_size, None, depth + 1, min_size);
+                                        }
                                     }
-                                }
                                 else {
                                     tree.push(path_string, file_size, None, depth + 1, min_size);
                                 }
@@ -150,17 +151,17 @@ pub mod prelude {
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
         else if !in_paths.exists() {
-            println!("{}: path '{}' does not exist.", "Error".red(), &in_paths.display()); // FIXME check it is a directory too
+            eprintln!("{}: path '{}' does not exist.", "Error".red(), &in_paths.display()); // FIXME check it is a directory too
             exit(0x0001);
         }
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
-            println!("{}: {} is not a directory.", "Error".red(), &in_paths.display());
+            eprintln!("{}: {} is not a directory.", "Error".red(), &in_paths.display());
             exit(0x0001);
         }
         // 3: otherwise, give a warning about permissions
         else if !silent {
-            println!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+            eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
         }
 
         tree

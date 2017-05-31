@@ -99,10 +99,8 @@ impl FileTree {
                 }
             }
         }
-        else {
-            if let Some(s) = subtree {
-                self.files.append(&mut s.files);
-            }
+        else if let Some(s) = subtree {
+            self.files.append(&mut s.files);
         }
 
         // return new file tree
