@@ -1,4 +1,4 @@
-#![feature(test)]
+ #![feature(test)] 
 
 #[macro_use] extern crate nom;
 #[macro_use] extern crate lazy_static;
@@ -10,6 +10,7 @@ pub mod test;
 pub mod types;
 pub mod error;
 pub mod cli_helpers;
+pub mod gitignore;
 
 pub mod prelude {
 
@@ -18,7 +19,11 @@ pub mod prelude {
     use regex::Regex;
     use types::*;
     use colored::*;
+    use gitignore::*;
     use std::process::exit;
+    use std::fs::Metadata;
+    #[cfg(not(os = "windows"))]
+    use std::os::unix::fs::PermissionsExt;
 
     pub use cli_helpers::*;
     pub use error::*;
@@ -42,7 +47,7 @@ pub mod prelude {
     /// assert_eq!(is_artifact(&path_buf, None), true);
     /// ```
     #[cfg(not(os = "windows"))]
-    pub fn is_artifact(p: &PathBuf, re: Option<&Regex>) -> bool {
+    pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, metadata: Metadata, gitignore: &Option<File>) -> bool {
         let path_str = p.clone().into_os_string().into_string().expect("OS string invalid.");
         if let Some(r) = re {
             r.is_match(&path_str)
@@ -50,15 +55,42 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx)$")
                     .unwrap();
             }
-            REGEX.is_match(&path_str)
+            lazy_static! {
+                static ref REGEX_GITIGNORE: Regex = 
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
+                    .unwrap();
+            }
+            // TODO consider copying some of the ripgrep code to figure out gitignores?
+            // easy intermediary: parse gitignore into a regex?
+            if REGEX.is_match(&path_str) { true }
+            else if let &Some(ref x) = gitignore {
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str) {
+                    //if let Ok(true) = x.is_excluded(p) { true }
+                    //else { false }
+                    false
+                } else { false }
+            }
+            else { false }
+            /*
+            else if let &Some(ref x) = gitignore {
+                // currently this takes too long & needs to be replaced with something better.
+                //if let Ok(true) = x.is_excluded(p) {
+                //    REGEX_GITIGNORE.is_match(&path_str)
+                //}
+                if metadata.permissions().mode() == 0o755 {
+                    if let Ok(true) = x.is_excluded(p) { true } else { false }
+                }
+                else { REGEX_GITIGNORE.is_match(&path_str) }
+            }
+            else { false }*/
         }
     }
 
     #[cfg(os = "windows")]
-    pub fn is_artifact(p: PathBuf, re: Option<&Regex>) -> bool {
+    pub fn is_artifact(p: PathBuf, re: Option<&Regex>, ) -> bool {
         lazy_static! {
             static ref REGEX: Regex = Regex::new(r".*?\.(exe|dll|ll|keter|bc|rlib|crate|min\.js|toc|aux|whl|vba|crx|out)$").unwrap();
         }
@@ -91,7 +123,12 @@ pub mod prelude {
                           artifact_regex: Option<&Regex>,
                           excludes: Option<&Regex>,
                           silent: bool,
+                          //gitignore: &Option<File>,
                           artifacts_only: bool) -> FileTree {
+
+        let gitignore_path = { let mut p = in_paths.clone() ; p.push(".gitignore") ; fs::canonicalize(&p) };
+        let gitignore_path_result = if let Ok(x) = gitignore_path { x } else { PathBuf::from(".gitignore") };
+        let gitignore = &File::new(&gitignore_path_result).ok();
 
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
@@ -117,7 +154,7 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            if !artifacts_only || is_artifact(&path, artifact_regex) {
+                            if !artifacts_only || is_artifact(&path, artifact_regex, metadata.clone(), gitignore) {
                                 let file_size = FileSize::new(metadata.len());
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
@@ -133,7 +170,7 @@ pub mod prelude {
                         // otherwise, go deeper
                         
                         else if metadata.is_dir() {
-                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, artifacts_only);
+                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, /*gitignore, */artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {

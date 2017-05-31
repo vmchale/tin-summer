@@ -7,13 +7,15 @@ build artifacts scattered about. `sniff` is a tool to help you find those
 artifacts. It's also a useful aid when you're writing build systems 
 (because you can make sure your `clean` command actually cleans everything).
 
-Features:
-  - [x] find "fat" files and directories
-  - [x] colorized output
+## Features
+
   - [x] find "likely build artifact" directories
     - [ ] use .gitignore/path to make decision
   - [ ] match speed of gnu utils
     - [x] faster when finding artifacts
+    - [x] faster with excludes
+  - [x] colorized output
+  - [x] sort results by size 
 
 ## Installation
 

@@ -8,7 +8,6 @@ readme = "README.md"
 repository = "https://github.com/vmchale/file-sniffer"
 documentation = "https://github.com/vmchale/file-sniffer#README"
 homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
-test = false
 
 [profile.release]
 lto = true
@@ -19,6 +18,7 @@ english = []
 #"français" = []
 
 [dependencies]
+gitignore = "1.0"
 nom = "3.0"
 colored = "1.5"
 clap = {version = "2.24", features = ["yaml"]}
