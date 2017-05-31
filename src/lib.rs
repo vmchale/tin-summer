@@ -143,7 +143,7 @@ pub mod prelude {
                             else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, min_size); }
                         }
                     }
-                    else if !silent { println!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
+                    else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }
             }
         }

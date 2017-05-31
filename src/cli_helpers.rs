@@ -39,7 +39,7 @@ pub fn threshhold(s: Option<&str>) -> Option<u64> {
 fn pre_threshhold(t_from_cli: &str) -> u64 {
     match get_threshhold(t_from_cli.as_bytes()) {
             IResult::Done(_,n) => n,
-            _ => { println!("{}: failed to parse threshhold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
+            _ => { eprintln!("{}: failed to parse threshhold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
             }
 }
 

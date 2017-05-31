@@ -175,6 +175,6 @@ fn main() {
     }
 
     else {
-        println!("{}: Command not recognized. Try 'sniff --help' if you're stuck.", "Error".red());
+        eprintln!("{}: Command not recognized. Try 'sniff --help' if you're stuck.", "Error".red());
     }
 }
