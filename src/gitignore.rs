@@ -24,9 +24,17 @@ named!(process<&str, Vec<&str>>, many0!(get_glob_as_regex));
 
 named!(get_glob_as_regex<&str, &str>,
     alt!(
-        is_not!("*?") |
+        is_not!("*?.") |
+        parse_period |
         parse_asterix |
         parse_questionmark
+    )
+);
+
+named!(parse_period<&str, &str>,
+    do_parse!(
+        tag!(".") >>
+        ("\\.")
     )
 );
 
