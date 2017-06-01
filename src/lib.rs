@@ -68,7 +68,7 @@ pub mod prelude {
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*|lock)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
@@ -91,12 +91,12 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx)$")
+                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx)$")
                     .unwrap();
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*|lock)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
