@@ -95,7 +95,7 @@ pub mod prelude {
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(stats|conf|h|cache.*)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }

@@ -28,3 +28,4 @@
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] warning if user inputs flags that make no sense
 - [ ] flag to follow symlinks
+- [ ] figure out file size disparity

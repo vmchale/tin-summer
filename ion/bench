@@ -32,11 +32,6 @@ if test $reports = "true"
     bench --output reports/du-all.html "du -ha $path"
     bench --output reports/sniff-all.html "sniff all $path"
 
-    echo 'find artifacts greater than 1M'
-    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-    bench --output reports/du-grep.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
-
     echo 'show all files over 1M'
     bench --output reports/du-thresh.html "du -had2 -t1M $path"
     bench --output reports/sniff-fat.html "sniff fat $path"
@@ -53,16 +48,16 @@ if test $reports = "true"
     bench --output reports/du-sort-exclude.html "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
     bench --output reports/sniff-sort-exclude.html "sniff sort $path --exclude target/debug"
 
+    echo 'find artifacts greater than 1M'
+    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
+    bench --output reports/du-rg.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
+    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
+
 else
 
     echo 'find everything'
     bench "du -ha $path"
     bench "sniff all $path"
-
-    echo 'find artifacts greater than 1M'
-    bench "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-    bench "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o)\$)|total'"
-    bench "sniff artifacts -t1M $path"
 
     echo 'show all files over 1M'
     bench "du -had2 -t1M $path"
@@ -79,5 +74,10 @@ else
     echo 'sort files & exclude w/ simple regex'
     bench "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
     bench "sniff sort $path --exclude target/debug"
+
+    echo 'find artifacts greater than 1M'
+    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
+    bench --output reports/du-rg.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
+    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
 
 end
