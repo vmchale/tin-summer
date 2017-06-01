@@ -103,6 +103,9 @@ fn main() {
         // don't print warnings
         let silent = command.is_present("silent");
 
+        // don't print warnings
+        //let no_gitignore = command.is_present("gitignore");
+
         // set regex for artifacts
         let artifacts = command.value_of("regex"); 
 

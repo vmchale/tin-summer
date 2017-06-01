@@ -116,8 +116,8 @@ subcommands:
                 help: Sort results by size
             - gitignore:
                 short: g
-                long: no-ignore
-                help: Don't bother using .gitignore information
+                long: no-gitignore
+                help: Don't bother using .gitignore information for faster traversal
             - regex:
                 short: r
                 long: regex

@@ -9,9 +9,8 @@ pub fn file_contents_to_regex(file: &str) -> RegexSet {
     let processed_vec: Vec<&str> = process_to_vector(file);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
-    let regex = RegexSet::new(lines)
-        .expect("Error parsing .gitignore");
-    regex
+    RegexSet::new(lines)
+        .expect("Error parsing .gitignore")
 }
 
 pub fn process_to_vector(input: &str) -> Vec<&str> {

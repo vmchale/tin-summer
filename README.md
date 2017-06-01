@@ -11,7 +11,7 @@ artifacts. It's also a useful aid when you're writing build systems
 
   - [x] find "likely build artifact" directories
     - [x] use .gitignore/path to make decision
-  - [ ] match speed of gnu utils
+  - [ ] match speed of gnu utils on traversals
     - [x] faster when finding artifacts
     - [x] faster with excludes
   - [x] colorized output
