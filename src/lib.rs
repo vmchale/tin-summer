@@ -84,9 +84,9 @@ pub mod prelude {
 
     #[cfg(target_os = "windows")]
     pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, _: Metadata, gitignore:&Option<RegexSet>) -> bool {
-        let path_str = &p.into_os_string().into_string().expect("OS String invalid.");
+        let path_str = p.clone().into_os_string().into_string().expect("OS String invalid.");
         if let Some(r) = re {
-            r.is_match(path_str)
+            r.is_match(&path_str)
         }
         else {
             lazy_static! {
@@ -96,7 +96,7 @@ pub mod prelude {
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|conf|h|cache.*)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
