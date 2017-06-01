@@ -66,7 +66,7 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vmb|crx|orig)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vmb|crx|orig)$")
                     .unwrap();
             }
             lazy_static! {
