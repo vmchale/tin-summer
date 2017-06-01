@@ -68,15 +68,15 @@ pub mod prelude {
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*|lock)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
             
             else if let &Some(ref x) = gitignore {
-                if x.is_match(&path_str) {
-                    metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str)
-                } else { false }
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str)
+                    { x.is_match(&path_str) }
+                else { false }
             }
             else { false }
         }
@@ -96,7 +96,7 @@ pub mod prelude {
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*|lock)$")
+                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|cache|conf|h|cache.*)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
