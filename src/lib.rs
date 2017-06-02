@@ -52,10 +52,7 @@ pub mod prelude {
     /// assert_eq!(is_artifact(&path_buf, None), true);
     /// ```
     #[cfg(not(target_os = "windows"))]
-    pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
-
-        // get path as a string so we can match against it
-        let path_str = p.clone().into_os_string().into_string().expect("OS string invalid.");
+    pub fn is_artifact(path_str: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
 
         // match on the user's expression if it exists
         if let Some(r) = re {
@@ -85,8 +82,7 @@ pub mod prelude {
     }
 
     #[cfg(target_os = "windows")]
-    pub fn is_artifact(p: &PathBuf, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
-        let path_str = p.clone().into_os_string().into_string().expect("OS String invalid.");
+    pub fn is_artifact(path_str: &str, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
         if let Some(r) = re {
             r.is_match(&path_str)
         }
@@ -156,7 +152,8 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let path_string = path.clone().into_os_string().into_string().expect("OS String invalid."); // TODO nicer error message, mention windows/utf-8?
+                let path_string = path.clone().into_os_string().into_string() // why does it do a clone here??
+                    .expect("OS String invalid."); // TODO nicer error message, mention windows/utf-8?
                 let bool_loop = match excludes {
                     Some(ex) => !ex.is_match(&path_string),
                     _ => true,
@@ -171,7 +168,7 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            if !artifacts_only || is_artifact(&path, artifact_regex, &metadata, &gitignore) {
+                            if !artifacts_only || is_artifact(&path_string, artifact_regex, &metadata, &gitignore) {
                                 let file_size = FileSize::new(metadata.len());
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
