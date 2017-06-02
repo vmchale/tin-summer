@@ -29,3 +29,4 @@
 - [ ] warning if user inputs flags that make no sense
 - [ ] flag to follow symlinks
 - [ ] figure out file size disparity
+- [ ] output config files as well? in e.g. yellow
