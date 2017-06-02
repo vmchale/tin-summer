@@ -4,7 +4,7 @@
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sniff` is a tool to help you find those
-artifacts. It's especially useful when you're writing build systems 
+artifacts. It's especially useful when you're writing build systems
 (because you can make sure your `clean` command actually cleans everything).
 
 ## Features
@@ -17,7 +17,7 @@ artifacts. It's especially useful when you're writing build systems
   - [x] colorized output
   - [x] sort results by size
 
-### Languages Tested With
+### Languages Supported
 
   - [x] Haskell (incl. GHCJS)
   - [x] Rust
