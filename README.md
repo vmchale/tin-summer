@@ -19,6 +19,8 @@ artifacts. It's especially useful when you're writing build systems
 
 ### Languages Supported
 
+The *intent* is to support basically anything
+
   - [x] Haskell (incl. GHCJS)
   - [x] Rust
   - [x] Julia

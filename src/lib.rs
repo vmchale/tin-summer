@@ -56,7 +56,7 @@ pub mod prelude {
 
         // match on the user's expression if it exists
         if let Some(r) = re {
-            r.is_match(&path_str)
+            r.is_match(path_str)
         }
 
         // otherwise, use builtin expressions
@@ -71,10 +71,10 @@ pub mod prelude {
                     Regex::new(r".*?\.(stats|conf|h|cache.*|dat|pc|info)$")
                     .unwrap();
             }
-            if REGEX.is_match(&path_str) { true }
+            if REGEX.is_match(path_str) { true }
             else if let &Some(ref x) = gitignore {
-                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(&path_str)
-                    { x.is_match(&path_str) }
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str)
+                    { x.is_match(path_str) }
                 else { false }
             }
             else { false }
@@ -84,12 +84,12 @@ pub mod prelude {
     #[cfg(target_os = "windows")]
     pub fn is_artifact(path_str: &str, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
         if let Some(r) = re {
-            r.is_match(&path_str)
+            r.is_match(path_str)
         }
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(exe|a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vmb|crx)$")
+                    Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc)$")
                     .unwrap();
             }
             lazy_static! {
@@ -100,8 +100,8 @@ pub mod prelude {
             if REGEX.is_match(&path_str) { true }
             
             else if let &Some(ref x) = gitignore {
-                if REGEX_GITIGNORE.is_match(&path_str) {
-                    if x.is_match(&path_str) { true } else { false }
+                if REGEX_GITIGNORE.is_match(path_str) {
+                    if x.is_match(path_str) { true } else { false }
                 } else { false }
             }
             else { false }
@@ -129,12 +129,14 @@ pub mod prelude {
                           excludes: Option<&Regex>,
                           silent: bool,
                           maybe_gitignore: &Option<RegexSet>,
+                          with_gitignore: bool,
                           artifacts_only: bool) -> FileTree {
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
-        let gitignore = if let &Some(ref gitignore) = maybe_gitignore { Some(gitignore.to_owned()) }
+        let gitignore = if with_gitignore {
+            if let &Some(ref gitignore) = maybe_gitignore { Some(gitignore.to_owned()) }
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
@@ -144,7 +146,8 @@ pub mod prelude {
                         .expect("File read failed. Is your system configured to use unix?");
                     Some(file_contents_to_regex(&contents))
                 } else { None }
-            };
+            }
+        } else { None };
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -184,7 +187,7 @@ pub mod prelude {
                         // otherwise, go deeper
                         
                         else if metadata.is_dir() {
-                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, &gitignore, artifacts_only);
+                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {

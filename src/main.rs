@@ -44,8 +44,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, 0, Some(min_bytes), None, Some(&check_regex(r)), silent, &None, false),
-                _ => read_all(&init_dir, 0, Some(min_bytes), None, None, silent, &None, false),
+                Some(r) => read_all(&init_dir, 0, Some(min_bytes), None, Some(&check_regex(r)), silent, &None, false, false),
+                _ => read_all(&init_dir, 0, Some(min_bytes), None, None, silent, &None, false, false),
         };
 
         // filter by depth
@@ -75,8 +75,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, &None, false),
-                _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, false),
+                Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, &None, false, false),
+                _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, false, false),
         };
 
         // filter by depth
@@ -103,11 +103,11 @@ fn main() {
         // don't print warnings
         let silent = command.is_present("silent");
 
-        // don't print warnings
-        //let no_gitignore = command.is_present("gitignore");
-
         // set regex for artifacts
         let artifacts = command.value_of("regex"); 
+
+        // decide whether to warnings
+        let no_gitignore = command.is_present("gitignore");
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
@@ -116,14 +116,14 @@ fn main() {
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
                 match command.value_of("excludes") {
-                    Some(ex) => read_all(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent, &None, true),
-                    _ => read_all(&init_dir, 0, min_bytes, Some(&re), None, silent, &None, true),
+                    Some(ex) => read_all(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent, &None, !no_gitignore, true),
+                    _ => read_all(&init_dir, 0, min_bytes, Some(&re), None, silent, &None, !no_gitignore, true),
                 }
             }
             else {
                 match command.value_of("excludes") {
-                    Some(ex) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent, &None, true),
-                    _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, true),
+                    Some(ex) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent, &None, !no_gitignore, true),
+                    _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, !no_gitignore, true),
                 }
             };
 
@@ -166,8 +166,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-            Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, &None, false),
-            _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, false),
+            Some(r) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(r)), silent, &None, false, false),
+            _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, false, false),
         };
 
         // sort them
