@@ -66,12 +66,12 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vmb|crx|orig)$")
+                    Regex::new(r".*?\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi)$")
                     .unwrap();
             }
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(stats|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(stats|conf|h|cache.*|dat)$")
                     .unwrap();
             }
             if REGEX.is_match(&path_str) { true }
