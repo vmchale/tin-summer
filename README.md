@@ -26,6 +26,7 @@ artifacts. It's especially useful when you're writing build systems
   - [x] Elm
   - [x] Nim
   - [x] Vimscript
+  - [x] Idris
 
 ## Installation
 
