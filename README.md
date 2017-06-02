@@ -15,7 +15,17 @@ artifacts. It's especially useful when you're writing build systems
     - [x] faster when finding artifacts
     - [x] faster with excludes
   - [x] colorized output
-  - [x] sort results by size 
+  - [x] sort results by size
+
+### Languages Tested With
+
+  - [x] Haskell (incl. GHCJS)
+  - [x] Rust
+  - [x] Julia
+  - [x] Python
+  - [x] Elm
+  - [x] Nim
+  - [x] Vimscript
 
 ## Installation
 
