@@ -37,7 +37,7 @@ fn main() {
         let silent = command.is_present("silent");
 
         // set regex for exclusions
-        let regex = Some(get_excludes(command.value_of("excludes")));
+        let regex = command.value_of("excludes");
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
@@ -106,7 +106,7 @@ fn main() {
         // set regex for artifacts
         let artifacts = command.value_of("regex"); 
 
-        // decide whether to warnings
+        // decide whether to use gitignore information
         let no_gitignore = command.is_present("gitignore");
 
         // set path to dir
@@ -115,16 +115,12 @@ fn main() {
         // get relevant filenames &c.
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
-                match command.value_of("excludes") {
-                    Some(ex) => read_all(&init_dir, 0, min_bytes, Some(&re), Some(&check_regex(ex)), silent, &None, !no_gitignore, true),
-                    _ => read_all(&init_dir, 0, min_bytes, Some(&re), None, silent, &None, !no_gitignore, true),
-                }
+                let excludes = get_excludes(command.value_of("excludes"));
+                read_all(&init_dir, 0, min_bytes, Some(&re), Some(&excludes), silent, &None, !no_gitignore, true)
             }
             else {
-                match command.value_of("excludes") {
-                    Some(ex) => read_all(&init_dir, 0, min_bytes, None, Some(&check_regex(ex)), silent, &None, !no_gitignore, true),
-                    _ => read_all(&init_dir, 0, min_bytes, None, None, silent, &None, !no_gitignore, true),
-                }
+                let excludes = get_excludes(command.value_of("excludes"));
+                read_all(&init_dir, 0, min_bytes, None, Some(&excludes), silent, &None, !no_gitignore, true)
             };
 
         let mut v_processed = if should_sort {

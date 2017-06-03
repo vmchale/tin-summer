@@ -4,11 +4,19 @@ use colored::*;
 use nom::IResult;
 use std::process::exit;
 use std::path::PathBuf;
+use regex::Regex;
+use error::check_regex;
 
-pub fn get_excludes(cli_excludes: Option<&str>) -> &str {
+pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
+    //lazy_static! { // TODO fix this with an enum?
+    let regex_git: Regex = 
+        Regex::new(r".*?\.(stats|conf|h|cache.*|dat|pc|info)$")
+        .unwrap();
+    //}
     match cli_excludes {
-        Some(x) => { x.to_owned().push_str(r"|\.git"); x }
-        _ => r"\.git",
+        Some(x) => { x.to_owned().push_str(r"|\.git"); check_regex(x) }
+        _ => regex_git,
+
     }
 }
 
