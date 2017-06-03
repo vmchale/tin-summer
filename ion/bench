@@ -21,6 +21,9 @@ else
     let path = /home/vanessa/programming/haskell/forks/cabal
 end
 
+# set regex to compare to
+let regex = '\'(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)\' '
+
 #do the actual benchmarks
 
 if test $reports = "true"
@@ -49,9 +52,14 @@ if test $reports = "true"
     bench --output reports/sniff-sort-exclude.html "sniff sort $path --exclude target/debug"
 
     echo 'find artifacts greater than 1M'
-    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
-    bench --output reports/du-rg.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
-    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
+    bench --output reports/du-rg-thresh.html "du -hac -t1M $path | rg $regex"
+    bench --output reports/du-rg-thresh.html "du -hac -t1M $path | grep -P $regex"
+    bench --output reports/sniff-artifacts-thresh.html "sniff artifacts -g -t1M $path"
+
+    echo 'find artifacts'
+    bench --output reports/du-rg.html "du -hac $path | rg $regex"
+    bench --output reports/du-rg.html "du -hac $path | grep -P $regex"
+    bench --output reports/sniff-artifacts.html "sniff artifacts -g $path"
 
 else
 
@@ -76,8 +84,13 @@ else
     bench "sniff sort $path --exclude target/debug"
 
     echo 'find artifacts greater than 1M'
-    bench --output reports/du-rg.html "du -hac -t1M $path | rg '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
-    bench --output reports/du-rg.html "du -hac -t1M $path | grep -P '(.*?\\.(a|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig)\$|total)'"
-    bench --output reports/sniff-artifacts.html "sniff artifacts -t1M $path"
+    bench "du -hac -t1M $path | rg $regex"
+    bench "du -hac -t1M $path | grep -P $regex"
+    bench "sniff artifacts -g -t1M $path"
+
+    echo 'find artifacts'
+    bench reports/du-rg.html "du -hac $path | rg $regex"
+    bench reports/du-rg.html "du -hac $path | grep -P $regex"
+    bench reports/sniff-artifacts.html "sniff artifacts -g $path"
 
 end
