@@ -26,7 +26,5 @@
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [ ] use .gitignore to set recursion depth/set it intelligently
 - [ ] flag to print all (e.g. no max depth/etc.)
-- [ ] warning if user inputs flags that make no sense
 - [ ] flag to follow symlinks
-- [ ] figure out file size disparity
-- [ ] output config files as well? in e.g. yellow
+- [ ] output machine-generated config files as well? in e.g. yellow

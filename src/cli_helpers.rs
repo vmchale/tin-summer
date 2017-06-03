@@ -5,6 +5,13 @@ use nom::IResult;
 use std::process::exit;
 use std::path::PathBuf;
 
+pub fn get_excludes(cli_excludes: Option<&str>) -> &str {
+    match cli_excludes {
+        Some(x) => x,
+        _ => r"\.git",
+    }
+}
+
 pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
     if let Some(n) = depth_from_cli {
         n.parse::<u8>().expect("Please enter a positive whole number")

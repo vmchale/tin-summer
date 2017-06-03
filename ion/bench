@@ -89,8 +89,9 @@ else
     bench "sniff artifacts -g -t1M $path"
 
     echo 'find artifacts'
-    bench reports/du-rg.html "du -hac $path | rg $regex"
-    bench reports/du-rg.html "du -hac $path | grep -P $regex"
-    bench reports/sniff-artifacts.html "sniff artifacts -g $path"
+    bench "du -hac $path | rg $regex"
+    bench "du -hac $path | grep -P $regex"
+    bench "sniff artifacts -g $path"
+    bench "sniff artifacts $path"
 
 end

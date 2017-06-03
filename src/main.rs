@@ -37,7 +37,7 @@ fn main() {
         let silent = command.is_present("silent");
 
         // set regex for exclusions
-        let regex = command.value_of("excludes"); 
+        let regex = Some(get_excludes(command.value_of("excludes")));
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
