@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 pub fn get_excludes(cli_excludes: Option<&str>) -> &str {
     match cli_excludes {
-        Some(x) => x,
+        Some(x) => { x.to_owned().push_str(r"|\.git"); x }
         _ => r"\.git",
     }
 }
