@@ -2,6 +2,7 @@
 extern crate test;
 extern crate regex;
 
+use std::fs;
 use regex::Regex;
 use std::path::PathBuf;
 use std::mem::replace;
@@ -24,33 +25,39 @@ fn bench_gitignore(b: &mut Bencher) {
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false))
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
 }
 
 #[bench]
+fn bench_traversal_gitignore(b: &mut Bencher) {
+    let p = PathBuf::from("src/testdata");
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, true, true))
+}
+#[bench]
 fn bench_traversal_sort (b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, 4, None, None, None, true, &None, true); v.sort(None, 2) })
+    b.iter(|| { let v = read_all(&p, 4, None, None, None, true, &None, false, true); v.sort(None, 2) })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, true))
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, true))
 }
 
 
-/*#[bench]
+#[bench]
 fn bench_extension_regex(b: &mut Bencher) {
-    let p = PathBuf::from("target/release/libdoggo.rlib");
-    b.iter(|| is_artifact(&p, None) )
+    let metadata = fs::metadata("src/main.rs").unwrap();
+    b.iter(|| is_artifact("target/release/libdoggo.rlib", None, &metadata, &None) )
 }
 
 #[bench]
 fn bench_extension_regex_long(b: &mut Bencher) {
-    let p = PathBuf::from("./target/release/.fingerprint/kernel32-sys-5ee1259db1228dbc/build-script-build_script_build-5ee1259db1228dbc.json");
-    b.iter(|| is_artifact(&p, None) )
-}*/
+    let metadata = fs::metadata("src/main.rs").unwrap();
+    b.iter(|| is_artifact("./target/release/.fingerprint/kernel32-sys-5ee1259db1228dbc/build-script-build_script_build-5ee1259db1228dbc.json", 
+                          None, &metadata, &None) )
+}
 
 #[bench]
 fn bench_parser(b:&mut Bencher) {

@@ -39,7 +39,7 @@ pub mod prelude {
     /// - if the file extension of that is that of an artifact, return true
     /// - if the file is executable and included in the .gitignore, return true
     /// - if the file looks like a configuration file and is in the .gitignore, return true
-    /// (\.cache.*, \.conf
+    /// (\.cache.*, \.conf, \.in)
     /// - return false otherwise
     ///
     /// # Examples
