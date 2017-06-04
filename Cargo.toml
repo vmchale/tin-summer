@@ -21,10 +21,15 @@ francais = []
 [dependencies]
 nom = "3.0"
 colored = "1.5"
-clap = {version = "2.24", features = ["yaml"]}
+#clap = {version = "2.24", features = ["yaml"]}
 regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"
+
+[dependencies.clap]
+git = "https://github.com/vmchale/clap-rs.git"
+rev = "b733f701bd9bf7e777281c596845da9d673a6d98"
+features = ["yaml"]
 
 [lib]
 path = "src/lib.rs"
