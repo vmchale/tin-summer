@@ -54,12 +54,12 @@ if test $reports = "true"
     echo 'find artifacts greater than 1M'
     bench --output reports/du-rg-thresh.html "du -hac -t1M $path | rg $regex"
     bench --output reports/du-rg-thresh.html "du -hac -t1M $path | grep -P $regex"
-    bench --output reports/sniff-artifacts-thresh.html "sniff artifacts -g -t1M $path"
+    bench --output reports/sniff-artifacts-thresh.html "sniff ar -g -t1M $path"
 
     echo 'find artifacts'
     bench --output reports/du-rg.html "du -hac $path | rg $regex"
     bench --output reports/du-rg.html "du -hac $path | grep -P $regex"
-    bench --output reports/sniff-artifacts.html "sniff artifacts -g $path"
+    bench --output reports/sniff-artifacts.html "sniff ar -g $path"
 
 else
 
@@ -86,12 +86,12 @@ else
     echo 'find artifacts greater than 1M'
     bench "du -hac -t1M $path | rg $regex"
     bench "du -hac -t1M $path | grep -P $regex"
-    bench "sniff artifacts -g -t1M $path"
+    bench "sniff ar -g -t1M $path"
 
     echo 'find artifacts'
     bench "du -hac $path | rg $regex"
     bench "du -hac $path | grep -P $regex"
-    bench "sniff artifacts -g $path"
-    bench "sniff artifacts $path"
+    bench "sniff ar -g $path"
+    bench "sniff ar $path"
 
 end
