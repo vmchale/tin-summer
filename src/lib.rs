@@ -40,6 +40,24 @@ pub mod prelude {
     /// - if the file is executable and included in the .gitignore, return true
     /// - return false otherwise
     ///
+    /// Explanation of extensions:
+    /// - .a, .la, .o, .lo, .so.*:
+    /// - .ll, .bc: llvm
+    /// - .keter: keter
+    /// - .d: make
+    /// - .rlib, .crate: rust
+    /// - .hi, .dyn_hi, .dyn_o, .p_hi, .p_o, .prof, .dump-.*, .tix: GHC
+    /// - .webapp: Web app manifest
+    /// - .js.externs, .jsexe, .min.js:
+    /// - .ibc: Idris
+    /// - .toc, .aux, .fdb_latexmk, .fls: TeX
+    /// - .egg-info, .whl, .pyc: python
+    /// - .js_a, .js_hi, .js_o: GHCJS
+    /// - .vmb: Vim
+    /// - .crx: chrome
+    /// - .elmo, .elmi: Elm
+    /// - .mod: FORTRAN
+    /// - .ji, .jld: julia
     #[cfg(not(target_os = "windows"))]
     pub fn is_artifact(path_str: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
 
@@ -78,7 +96,7 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc)$")
+                    Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
                     .unwrap();
             }
             lazy_static! {
