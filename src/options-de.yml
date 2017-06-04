@@ -121,7 +121,7 @@ subcommands:
             - gitignore:
                 short: g
                 long: keine-gitignore
-                help: Nicht Angaben aus .gitignore benutzen 
+                help: Nicht Angaben aus '.gitignore' benutzen 
             - regex:
                 short: r
                 long: regex

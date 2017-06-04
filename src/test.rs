@@ -62,5 +62,5 @@ fn bench_extension_regex_long(b: &mut Bencher) {
 #[bench]
 fn bench_parser(b:&mut Bencher) {
     let cli_input = "1M";
-    b.iter(|| threshhold(Some(cli_input)))
+    b.iter(|| threshold(Some(cli_input)))
 }
