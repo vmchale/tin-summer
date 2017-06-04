@@ -7,31 +7,6 @@ build artifacts scattered about. `sniff` is a tool to help you find those
 artifacts. It's especially useful when you're writing build systems, 
 because you can make sure your `clean` command atually cleans everything.
 
-## Features
-
-  - [x] find "likely build artifact" directories
-    - [x] use .gitignore/path to make decision
-  - [ ] match speed of gnu utils on traversals
-    - [x] faster when finding artifacts
-    - [x] faster with excludes
-  - [x] colorized output
-  - [x] sort results by size
-
-### Languages Supported
-
-The *intent* is to support basically anything, so if your DOC is not on the
-list, feel free to open a PR or start an issue.
-
-  - [x] Haskell (incl. GHCJS)
-  - [x] rust
-  - [x] julia
-  - [x] python
-  - [x] Elm
-  - [x] nim
-  - [x] Vimscript
-  - [x] Idris
-  - [ ] FORTRAN
-
 ## Installation
 
 ### Binary install
@@ -75,3 +50,28 @@ To turn off colorized output:
 ```bash
 export CLICOLOR=0
 ```
+
+## Features
+
+  - [x] find "likely build artifact" directories
+    - [x] use .gitignore/path to make decision
+  - [ ] match speed of gnu utils on traversals
+    - [x] faster when finding artifacts
+    - [x] faster with excludes
+  - [x] colorized output
+  - [x] sort results by size
+
+### Languages Supported
+
+The *intent* is to support basically anything, so if your DOC is not on the
+list, feel free to open a PR or start an issue.
+
+  - [x] Haskell (incl. GHCJS)
+  - [x] rust
+  - [x] julia
+  - [x] python
+  - [x] Elm
+  - [x] nim
+  - [x] Vimscript
+  - [x] Idris
+  - [ ] FORTRAN
