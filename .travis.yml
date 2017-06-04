@@ -15,3 +15,5 @@ rust:
 script:
   - cargo build
   - cargo doc
+  - cargo test
+  - cargo bench
