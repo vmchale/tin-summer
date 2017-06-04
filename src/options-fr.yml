@@ -40,7 +40,7 @@ subcommands:
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Directory to search
+                help: Répertoire à rechercher. 
             - threshold:
                 short: s
                 long: seuil
@@ -68,7 +68,7 @@ subcommands:
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Directory to search
+                help: Répertoire à rechercher. 
             - threshold:
                 short: s
                 long: seuil
@@ -96,7 +96,7 @@ subcommands:
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Directory to search
+                help: Répertoire à rechercher. 
             - threshold:
                 short: s
                 long: seuil
