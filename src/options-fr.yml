@@ -106,7 +106,7 @@ subcommands:
             - silent:
                 short: x
                 long: silencieux
-                help: N'imprimer pas les avertissements.
+                help: N'imprime pas les avertissements.
             - excludes:
                 short: e
                 long: exclure
@@ -114,12 +114,12 @@ subcommands:
                 value_name: CHEMIN
                 help: Expression régulière imposant chemins à exclure
             - sort:
-                short: o
-                long: sort
+                short: t
+                long: trier
                 help: Trier les résultats par taille. 
             - gitignore:
                 short: g
-                long: no-gitignore
+                long: sans-gitignore
                 help: Ne pas utiliser les .gitignore pour exécution plus vite.
             - regex:
                 short: r

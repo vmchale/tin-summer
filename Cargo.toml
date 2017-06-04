@@ -16,7 +16,7 @@ lto = true
 default = ["english"]
 english = []
 deutsch = []
-#"français" = []
+francais = []
 
 [dependencies]
 nom = "3.0"
