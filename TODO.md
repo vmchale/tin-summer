@@ -19,7 +19,7 @@
   - [x] look in .gitignore
     - [x] check executable permissions/binary file-ness
   - [x] regex
-- [ ] de/fr/bo translations would be nice
+- [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob

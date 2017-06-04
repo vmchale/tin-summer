@@ -28,24 +28,24 @@ subcommands:
                 short: s
                 long: silent
                 help: Don't print warnings.
-            - threshhold:
+            - threshold:
                 short: t
-                long: threshhold
+                long: threshold
                 takes_value: true
                 value_name: SIZE
-                help: Specify a threshhold for file size (default 1M)
+                help: Specify a threshold for file size (default 1M)
     - fat:
         about: Show big files/directories
         args:
             - dir:
                 value_name: DIRECTORY
                 help: Directory to search
-            - threshhold:
+            - threshold:
                 short: t
-                long: threshhold
+                long: threshold
                 takes_value: true
                 value_name: SIZE
-                help: Specify a threshhold for file size (default 1M)
+                help: Specify a threshold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -67,12 +67,12 @@ subcommands:
             - dir:
                 value_name: DIRECTORY
                 help: Directory to search
-            - threshhold:
+            - threshold:
                 short: t
-                long: threshhold
+                long: threshold
                 takes_value: true
                 value_name: SIZE
-                help: Specify a threshhold for file size (default 1M)
+                help: Specify a threshold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -88,18 +88,18 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
-    - artifacts:
-        about: Show directories with build artifacts 
+    - ar:
+        about: Show directories with build artifacts
         args:
             - dir:
                 value_name: DIRECTORY
                 help: Directory to search
-            - threshhold:
+            - threshold:
                 short: t
-                long: threshhold
+                long: threshold
                 takes_value: true
                 value_name: SIZE
-                help: Specify a threshhold for file size (default 1M)
+                help: Specify a threshold for file size (default 1M)
             - silent:
                 short: s
                 long: silent
@@ -123,7 +123,7 @@ subcommands:
                 long: regex
                 takes_value: true
                 value_name: REGEX
-                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files, you could do 'sniff artifacts .*?rlib$'
+                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files, you could do 'sniff ar -r .*?rlib$'
             - depth: 
                 short: d
                 long: depth

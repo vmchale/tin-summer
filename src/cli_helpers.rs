@@ -10,7 +10,7 @@ use error::check_regex;
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
     //lazy_static! { // TODO fix this with an enum?
     let regex_git: Regex = 
-        Regex::new(r"\.git")
+        Regex::new(r"\.git/")
         .unwrap();
     //}
     match cli_excludes {
@@ -47,14 +47,14 @@ pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
     }
 }
 
-pub fn threshhold(s: Option<&str>) -> Option<u64> {
-    s.map(pre_threshhold)
+pub fn threshold(s: Option<&str>) -> Option<u64> {
+    s.map(pre_threshold)
 }
 
-fn pre_threshhold(t_from_cli: &str) -> u64 {
-    match get_threshhold(t_from_cli.as_bytes()) {
+fn pre_threshold(t_from_cli: &str) -> u64 {
+    match get_threshold(t_from_cli.as_bytes()) {
             IResult::Done(_,n) => n,
-            _ => { eprintln!("{}: failed to parse threshhold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
+            _ => { eprintln!("{}: failed to parse threshold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
             }
 }
 
@@ -87,7 +87,7 @@ named!(digit_char<&[u8], char>,
     )
 );
 
-named!(get_threshhold<&[u8],u64>,
+named!(get_threshold<&[u8],u64>,
     do_parse!(
         nums:     many1!(digit_char) >>
         size_tag: alt!(tag!("M") | tag!("G") | tag!("k") | tag!("b")) >>

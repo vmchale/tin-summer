@@ -1,100 +1,136 @@
 name: sniff
 author: Vanessa McHale <tmchale@wisc.edu>
-about: Tool to find large files and project build artifacts. 
+about: Werkzeug zu große Datein und Erstellungsartefakte finden.
 subcommands:
     - sort:
-        about: Find the biggest files/directories
+        about: Die größte Datein/Verzeichnis finden
         args:
             - dir:
-                value_name: DIRECTORY
-                help: Directory to search
+                value_name: VERZEICHNIS
+                help: Verzeichnis zu suchen in
             - count: 
                 short: n
-                long: count
+                long: zahl
                 takes_value: true
-                value_name: NUMBER
-                help: Number of files to find (default 20)
-            - depth: 
-                short: d
-                long: depth
-                takes_value: true
-                value_name: NUMBER
-            - excludes:
-                short: e
-                long: exclude
-                takes_value: true
-                value_name: PATH
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
-            - threshhold:
+                value_name: NUMMER
+                help: Nummer des Datein zu finden (Vorgabewert 20)
+            - tiefe: 
                 short: t
-                long: threshhold
+                long: tiefe
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
-    - fat:
-        about: Show big files/directories
-        args:
-            - dir:
-                value_name: DIRECTORY
-                help: Directory to search
-            - threshhold:
-                short: t
-                long: threshhold
-                takes_value: true
-                value_name: M|G
-                help: Specify a threshhold to search by, rather than sorting (default M)
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
+                value_name: NUMMER
+                help: Wie tief zu durchqueren
             - excludes:
-                short: e
-                long: exclude
-                takes_value: true
-                value_name: PATH
-            - depth: 
-                short: d
-                long: depth
-                takes_value: true
-                value_name: NUMBER
-                help: How far to recurse (default 2)
-    - artifacts:
-        about: Show directories with build artifacts 
-        args:
-            - dir:
-                value_name: DIRECTORY
-                help: Directory to search
-            - threshhold:
-                short: t
-                long: threshhold
-                takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
-            - excludes:
-                short: e
-                long: exclude
-                takes_value: true
-                value_name: PATH
-              #- quick:
-              #    short: q
-              #    long: no-sort
-              #    help: Don't sort results.
-            - regex:
                 short: a
-                long: artifact
+                long: ausklammern
+                takes_value: true
+                value_name: PFADNAME
+                help: Pfade zu ausklammern
+            - silent:
+                short: x
+                long: schwiegend
+                help: Drucken keine Warnungen.
+            - threshold:
+                short: s
+                long: schwelle
+                takes_value: true
+                value_name: DATEIGRÖßE
+                help: Ein Schwelle für Dateigröße angeben.
+    - fat:
+        about: Größe Datein/Verzeichnis anzeigen
+        args:
+            - dir:
+                value_name: VERZEICHNIS
+                help: Verzeichnis zu suchen in
+            - threshold:
+                short: s
+                long: schwelle
+                takes_value: true
+                value_name: DATEIGRÖßE
+                help: Ein Schwelle für Dateigröße angeben.
+            - silent:
+                short: x
+                long: schwiegend
+                help: Drucken keine Warnungen.
+            - excludes:
+                short: a
+                long: ausklammern
+                takes_value: true
+                value_name: PFADNAME
+                help: Pfade zu ausklammern
+            - tiefe: 
+                short: d
+                long: tiefe
+                takes_value: true
+                value_name: NUMMER
+                help: Wie tief zu durchqueren
+    - all:
+        about: Alle Datein/Verzeichnis anzeigen
+        args:
+            - dir:
+                value_name: VERZEICHNIS
+                help: Verzeichnis zu suchen in
+            - threshold:
+                short: s
+                long: schwelle
+                takes_value: true
+                value_name: DATEIGRÖßE
+                help: Ein Schwelle für Dateigröße angeben.
+            - silent:
+                short: x
+                long: schwiegend
+                help: Drucken keine Warnungen.
+            - excludes:
+                short: a
+                long: ausklammern
+                takes_value: true
+                value_name: PFADNAME
+                help: Pfade zu ausklammern
+            - tiefe: 
+                short: t
+                long: tiefe
+                takes_value: true
+                value_name: NUMMER
+                help: Wie tief zu durchqueren
+    - ar:
+        about: Verzeichnis mit Artefakte anzeigen
+        args:
+            - dir:
+                value_name: VERZEICHNIS
+                help: Verzeichnis zu suchen in
+            - threshold:
+                short: s
+                long: schwelle
+                takes_value: true
+                value_name: DATEIGRÖßE
+                help: Ein Schwelle für Dateigröße angeben.
+            - silent:
+                short: x
+                long: schwiegend
+                help: Drucken keine Warnungen.
+            - excludes:
+                short: a
+                long: ausklammern
+                takes_value: true
+                value_name: PFADNAME
+                help: Pfade zu ausklammern
+            - sort:
+                short: o
+                long: sort
+                help: Sortieren Ergebnisse nach Größe
+            - gitignore:
+                short: g
+                long: keine-gitignore
+                help: Nicht Angaben aus .gitignore benutzen 
+            - regex:
+                short: r
+                long: regex
                 takes_value: true
                 value_name: REGEX
-                help: specify a custom regex for artifacts
-            - depth: 
-                short: d
-                long: depth
+                help: Regulärer Ausdruck 
+            - tiefe: 
+                short: t
+                long: tiefe
                 takes_value: true
-                value_name: NUMBER
-                help: How far to recurse (default 2)
+                value_name: NUMMER
+                help: Wie tief zu durchqueren

@@ -15,7 +15,7 @@ fn main() {
     // command-line parser
     #[cfg(feature = "english")]
     let yaml = load_yaml!("options-en.yml");
-    #[cfg(feature = "français")]
+    #[cfg(feature = "francais")]
     let yaml = load_yaml!("options-fr.yml");
     #[cfg(feature = "deutsch")]
     let yaml = load_yaml!("options-de.yml");
@@ -24,8 +24,8 @@ fn main() {
     // find large files
     if let Some(command) = matches.subcommand_matches("fat") {
 
-        // set threshhold
-        let min_bytes = match threshhold(command.value_of("threshhold")) {
+        // set threshold
+        let min_bytes = match threshold(command.value_of("threshold")) {
             Some(t) => t, 
             _ => 1048576,
         };
@@ -58,8 +58,8 @@ fn main() {
     // find large files
     else if let Some(command) = matches.subcommand_matches("all") {
 
-        // set threshhold
-        let min_bytes = threshhold(command.value_of("threshhold"));
+        // set threshold
+        let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
@@ -86,10 +86,10 @@ fn main() {
         v_filtered.display_tree(init_dir);
     }
 
-    else if let Some(command) = matches.subcommand_matches("artifacts") {
+    else if let Some(command) = matches.subcommand_matches("ar") {
 
-        // set threshhold
-        let min_bytes = threshhold(command.value_of("threshhold"));
+        // set threshold
+        let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
@@ -136,8 +136,8 @@ fn main() {
     // sort entities by size
     else if let Some(command) = matches.subcommand_matches("sort") {
 
-        // set threshhold
-        let min_bytes = threshhold(command.value_of("threshhold"));
+        // set threshold
+        let min_bytes = threshold(command.value_of("threshold"));
 
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count")); 

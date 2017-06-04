@@ -1,100 +1,135 @@
 name: sniff
 author: Vanessa McHale <tmchale@wisc.edu>
-about: Tool to find large files and project build artifacts. 
+about: Util pour trouver grands fichiers et artefacts de construction.
 subcommands:
     - sort:
-        about: Find the biggest files/directories
+        about: Trouve les fichiers/répertoires les plus grands
         args:
             - dir:
-                value_name: DIRECTORY
-                help: Directory to search
+                value_name: RÉPERTOIRE
+                help: Répertoire à rechercher. 
             - count: 
                 short: n
-                long: count
                 takes_value: true
-                value_name: NUMBER
-                help: Number of files to find (default 20)
+                value_name: NUMÉRO
+                help: Numéro de fichiers à trouver.
             - depth: 
-                short: d
-                long: depth
+                short: p
+                long: profondeur
                 takes_value: true
-                value_name: NUMBER
+                value_name: NUMÉRO
+                help: Profondeur à chercher (par défaut 2)
             - excludes:
                 short: e
-                long: exclude
+                long: exclure
                 takes_value: true
-                value_name: PATH
+                value_name: CHEMIN
+                help: Expression régulière imposant chemins à exclure
             - silent:
+                short: x
+                long: silencieux
+                help: N'imprimer pas les avertissements.
+            - threshold:
                 short: s
-                long: silent
-                help: Don't print warnings.
-            - threshhold:
-                short: t
-                long: threshhold
+                long: seuil
                 takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
+                value_name: TAILLE
+                help: Seuil de taille du fichier
     - fat:
-        about: Show big files/directories
+        about: Afficher grands fichiers/répertoires 
         args:
             - dir:
-                value_name: DIRECTORY
+                value_name: RÉPERTOIRE
                 help: Directory to search
-            - threshhold:
-                short: t
-                long: threshhold
-                takes_value: true
-                value_name: M|G
-                help: Specify a threshhold to search by, rather than sorting (default M)
-            - silent:
+            - threshold:
                 short: s
-                long: silent
-                help: Don't print warnings.
+                long: seuil
+                takes_value: true
+                value_name: TAILLE
+                help: Seuil de taille du fichier
+            - silent:
+                short: x
+                long: silencieux
+                help: N'imprimer pas les avertissements.
             - excludes:
                 short: e
-                long: exclude
+                long: exclure
                 takes_value: true
-                value_name: PATH
+                value_name: CHEMIN
+                help: Expression régulière imposant chemins à exclure
             - depth: 
-                short: d
-                long: depth
+                short: p
+                long: profondeur
                 takes_value: true
-                value_name: NUMBER
-                help: How far to recurse (default 2)
-    - artifacts:
-        about: Show directories with build artifacts 
+                value_name: NUMÉRO
+                help: Profondeur à chercher (par défaut 2)
+    - all:
+        about: Affiche tout 
         args:
             - dir:
-                value_name: DIRECTORY
+                value_name: RÉPERTOIRE
                 help: Directory to search
-            - threshhold:
-                short: t
-                long: threshhold
-                takes_value: true
-                value_name: M|G
-                help: Specify a threshhold for file size (default M)
-            - silent:
+            - threshold:
                 short: s
-                long: silent
-                help: Don't print warnings.
+                long: seuil
+                takes_value: true
+                value_name: TAILLE
+                help: Seuil de taille du fichier
+            - silent:
+                short: x
+                long: silencieux
+                help: N'imprimer pas les avertissements.
             - excludes:
                 short: e
-                long: exclude
+                long: exclure
                 takes_value: true
-                value_name: PATH
-              #- quick:
-              #    short: q
-              #    long: no-sort
-              #    help: Don't sort results.
+                value_name: CHEMIN
+                help: Expression régulière imposant chemins à exclure
+            - depth: 
+                short: p
+                long: profondeur
+                takes_value: true
+                value_name: NUMÉRO
+                help: Profondeur à chercher (par défaut 2)
+    - ar:
+        about: Affiche artefacts de construction
+        args:
+            - dir:
+                value_name: RÉPERTOIRE
+                help: Directory to search
+            - threshold:
+                short: s
+                long: seuil
+                takes_value: true
+                value_name: TAILLE
+                help: Seuil de taille du fichier
+            - silent:
+                short: x
+                long: silencieux
+                help: N'imprimer pas les avertissements.
+            - excludes:
+                short: e
+                long: exclure
+                takes_value: true
+                value_name: CHEMIN
+                help: Expression régulière imposant chemins à exclure
+            - sort:
+                short: o
+                long: sort
+                help: Trier les résultats par taille. 
+            - gitignore:
+                short: g
+                long: no-gitignore
+                help: Ne pas utiliser les .gitignore pour exécution plus vite.
             - regex:
-                short: a
-                long: artifact
+                short: r
+                long: regex
                 takes_value: true
                 value_name: REGEX
-                help: specify a custom regex for artifacts
+                help: Expréssion régulière pour décider si c'est un artefact. Comme exemple, pour trouver fichiers '.rlib', on pourra utiliser 'sniff ar -r .*?rlib$'.
             - depth: 
-                short: d
-                long: depth
+                short: p
+                long: profondeur
                 takes_value: true
-                value_name: NUMBER
-                help: How far to recurse (default 2)
+                value_name: NUMÉRO
+                help: Profondeur à chercher (par défaut 2)

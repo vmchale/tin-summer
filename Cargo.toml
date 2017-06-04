@@ -15,6 +15,7 @@ lto = true
 [features]
 default = ["english"]
 english = []
+deutsch = []
 #"français" = []
 
 [dependencies]
