@@ -23,13 +23,14 @@ The *intent* is to support basically anything, so if your DOC is not on the
 list, feel free to open a PR or start an issue.
 
   - [x] Haskell (incl. GHCJS)
-  - [x] Rust
-  - [x] Julia
-  - [x] Python
+  - [x] rust
+  - [x] julia
+  - [x] python
   - [x] Elm
-  - [x] Nim
+  - [x] nim
   - [x] Vimscript
   - [x] Idris
+  - [ ] FORTRAN
 
 ## Installation
 
@@ -51,20 +52,20 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
 Search current directory for directories with build artifacts:
 
 ```bash
- $ sniff artifacts
+ $ sniff ar
 ```
 
 Look in `$DIR` for build artifacts and sort by size:
 
 ```bash
- $ sniff artifacts $DIR --sort
+ $ sniff ar $DIR --sort
 ```
 
 Look for artifacts or directories containing artifacts that occupy more than 1GB of disk space:
 
 
 ```bash
- $ sniff artifacts -t1G
+ $ sniff ar -t1G
 ```
 
 ### Accessibility
