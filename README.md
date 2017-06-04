@@ -51,7 +51,7 @@ To turn off colorized output:
 export CLICOLOR=0
 ```
 
-## Features
+### Features
 
   - [x] find "likely build artifact" directories
     - [x] use .gitignore/path to make decision
@@ -61,7 +61,7 @@ export CLICOLOR=0
   - [x] colorized output
   - [x] sort results by size
 
-### Languages Supported
+#### Languages Supported
 
 The *intent* is to support basically anything, so if your DOC is not on the
 list, feel free to open a PR or start an issue.
