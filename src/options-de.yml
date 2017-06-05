@@ -1,136 +1,136 @@
 name: sniff
 author: Vanessa McHale <tmchale@wisc.edu>
-about: Werkzeug zu große Datein und Erstellungsartefakte finden.
+about: Werkzeug um große Datein und Entwickungsartefakte zu finden.
 subcommands:
     - sort:
-        about: Die größte Datein/Verzeichnis finden
+        about: Die größten Dateien/Verzeichnisse finden
         args:
             - dir:
                 value_name: VERZEICHNIS
-                help: Verzeichnis zu suchen in
+                help: Verzeichnis indem gesucht wird
             - count: 
                 short: n
-                long: zahl
+                long: count
                 takes_value: true
-                value_name: NUMMER
-                help: Nummer des Datein zu finden (Vorgabewert 20)
-            - tiefe: 
-                short: t
-                long: tiefe
+                value_name: ANZAHL
+                help: Anzahl an Dateien die gefunden werden sollen (Standard 20)
+            - depth: 
+                short: d
+                long: depth
                 takes_value: true
-                value_name: NUMMER
-                help: Wie tief zu durchqueren
+                value_name: ANZAHL
+                help: Wie tief verschachtelt gesucht werden soll
             - excludes:
-                short: a
-                long: ausklammern
+                short: e
+                long: exclude
                 takes_value: true
-                value_name: PFADNAME
-                help: Pfade zu ausklammern
+                value_name: PFAD
+                help: Pfade die ignoriert werden sollen
             - silent:
-                short: x
-                long: schwiegend
-                help: Drucken keine Warnungen.
-            - threshold:
                 short: s
-                long: schwelle
+                long: silent
+                help: Keine Warnungen ausgeben
+            - threshold:
+                short: t
+                long: threshold
                 takes_value: true
                 value_name: DATEIGRÖßE
-                help: Ein Schwelle für Dateigröße angeben.
+                help: Schwellwert für Dateigröße (Standard 1MB)
     - fat:
-        about: Größe Datein/Verzeichnis anzeigen
+        about: Große Dateien/Verzeichnisse anzeigen
         args:
             - dir:
                 value_name: VERZEICHNIS
-                help: Verzeichnis zu suchen in
+                help: Verzeichnis indem gesucht wird
             - threshold:
-                short: s
-                long: schwelle
+                short: t
+                long: threshold
                 takes_value: true
                 value_name: DATEIGRÖßE
-                help: Ein Schwelle für Dateigröße angeben.
+                help: Schwellwert für Dateigröße (Standard 1MB)
             - silent:
-                short: x
-                long: schwiegend
-                help: Drucken keine Warnungen.
+                short: s
+                long: silent
+                help: Keine Warnungen ausgeben
             - excludes:
-                short: a
-                long: ausklammern
+                short: e
+                long: exclude
                 takes_value: true
-                value_name: PFADNAME
-                help: Pfade zu ausklammern
-            - tiefe: 
+                value_name: PFAD
+                help: Pfade die ignoriert werden sollen
+            - depth: 
                 short: d
-                long: tiefe
+                long: depth
                 takes_value: true
-                value_name: NUMMER
-                help: Wie tief zu durchqueren
+                value_name: ANZAHL
+                help: Wie tief verschachtelt gesucht werden soll
     - all:
         about: Alle Datein/Verzeichnis anzeigen
         args:
             - dir:
                 value_name: VERZEICHNIS
-                help: Verzeichnis zu suchen in
+                help: Verzeichnis indem gesucht wird
             - threshold:
-                short: s
-                long: schwelle
+                short: t
+                long: threshold
                 takes_value: true
                 value_name: DATEIGRÖßE
-                help: Ein Schwelle für Dateigröße angeben.
+                help: Schwellwert für Dateigröße (Standard 1MB)
             - silent:
-                short: x
-                long: schwiegend
-                help: Drucken keine Warnungen.
+                short: s
+                long: silent
+                help: Keine Warnungen ausgeben
             - excludes:
-                short: a
-                long: ausklammern
+                short: e
+                long: exclude
                 takes_value: true
-                value_name: PFADNAME
-                help: Pfade zu ausklammern
-            - tiefe: 
-                short: t
-                long: tiefe
+                value_name: PFAD
+                help: Pfade die ignoriert werden sollen
+            - depth: 
+                short: d
+                long: depth
                 takes_value: true
-                value_name: NUMMER
-                help: Wie tief zu durchqueren
+                value_name: ANZAHL
+                help: Wie tief verschachtelt gesucht werden soll
     - ar:
         about: Verzeichnis mit Artefakte anzeigen
         args:
             - dir:
                 value_name: VERZEICHNIS
-                help: Verzeichnis zu suchen in
+                help: Verzeichnis indem gesucht wird
             - threshold:
-                short: s
-                long: schwelle
+                short: t
+                long: threshold
                 takes_value: true
                 value_name: DATEIGRÖßE
-                help: Ein Schwelle für Dateigröße angeben.
+                help: Schwellwert für Dateigröße (Standard 1MB)
             - silent:
-                short: x
-                long: schwiegend
-                help: Drucken keine Warnungen.
+                short: s
+                long: silent
+                help: Keine Warnungen ausgeben
             - excludes:
-                short: a
-                long: ausklammern
+                short: e
+                long: exclude
                 takes_value: true
-                value_name: PFADNAME
-                help: Pfade zu ausklammern
+                value_name: PFAD
+                help: Pfade die ignoriert werden sollen
             - sort:
                 short: o
                 long: sort
-                help: Sortieren Ergebnisse nach Größe
+                help: Sortiere Ergebnisse nach Größe
             - gitignore:
                 short: g
-                long: keine-gitignore
-                help: Nicht Angaben aus '.gitignore' benutzen 
+                long: no-gitignore
+                help: Angaben aus '.gitignore' Dateien *nicht* benutzen
             - regex:
                 short: r
                 long: regex
                 takes_value: true
                 value_name: REGEX
-                help: Regulärer Ausdruck 
-            - tiefe: 
-                short: t
-                long: tiefe
+                help: Eigenen reguläreren Ausdruck verwenden um Artefakte zu finden. So kann z.B. `sniff ar -r .*?rlib$` verwendet werden, um `.rlib` Dateien zu finden.
+            - depth: 
+                short: d
+                long: depth
                 takes_value: true
-                value_name: NUMMER
-                help: Wie tief zu durchqueren
+                value_name: ANZAHL
+                help: Wie tief verschachtelt gesucht werden soll
