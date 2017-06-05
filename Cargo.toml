@@ -17,6 +17,7 @@ default = ["english"]
 english = []
 deutsch = []
 francais = []
+verbose = []
 
 [dependencies]
 nom = "3.0"

@@ -5,10 +5,25 @@ use std::process::exit;
 use regex::RegexSet;
 use nom::IResult;
 
+#[cfg(feature = "verbose")]
+macro_rules! debugln {
+    ($fmt:expr) => (println!($fmt));
+    ($fmt:expr, $($arg:tt)*) => (println!($fmt, $($arg)*));
+}
+
+#[cfg(not(feature = "verbose"))]
+macro_rules! debugln {
+    ($fmt:expr) => ();
+    ($fmt:expr, $($arg:tt)*) => ();
+}
+
 pub fn file_contents_to_regex(file: &str) -> RegexSet {
     let processed_vec: Vec<&str> = process_to_vector(file);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
+
+    debugln!("{:?}", lines.clone().collect::<Vec<&str>>());
+    
     if let Ok(s) = RegexSet::new(lines) {
         s
     }
@@ -39,8 +54,8 @@ named!(options<&str, &str>,
     alt!(
         gitignore_comment |
         is_not!("*?.") |
-        parse_period |
         parse_asterix |
+        parse_period |
         parse_questionmark
     )
 );

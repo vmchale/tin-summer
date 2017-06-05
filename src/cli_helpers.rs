@@ -8,9 +8,8 @@ use regex::Regex;
 use error::check_regex;
 
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
-    //lazy_static! { // TODO fix this with an enum?
-    let regex_git: Regex = 
-        Regex::new(r"\.git/")
+    //lazy_static! { // TODO fix this?
+    let regex_git: Regex = Regex::new(r"\.git/")
         .unwrap();
     //}
     match cli_excludes {
