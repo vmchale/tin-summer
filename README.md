@@ -30,6 +30,12 @@ If you want the absolute latest version:
  $ cargo install --git https://github.com/vmchale/file-sniffer 
 ```
 
+Make sure you are on nightly; if in doubt run
+
+```bash
+rustup default nightly
+```
+
 ## Use
 
 Search current directory for directories with build artifacts:
