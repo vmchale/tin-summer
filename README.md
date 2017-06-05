@@ -24,6 +24,12 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
  $ cargo install file-sniffer
 ```
 
+If you want the absolute latest version:
+
+```bash
+ $ cargo install --git https://github.com/vmchale/file-sniffer 
+```
+
 ## Use
 
 Search current directory for directories with build artifacts:
