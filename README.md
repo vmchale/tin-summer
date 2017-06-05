@@ -33,7 +33,7 @@ If you want the absolute latest version:
 Make sure you are on nightly; if in doubt run
 
 ```bash
-rustup default nightly
+rustup run nightly cargo install file-sniffer
 ```
 
 ## Use

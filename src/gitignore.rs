@@ -23,11 +23,37 @@ pub fn process_to_vector(input: &str) -> Vec<&str> {
 named!(process<&str, Vec<&str>>, many0!(get_glob_as_regex));
 
 named!(get_glob_as_regex<&str, &str>,
+    do_parse!(
+        opt!(first_line) >>
+        r: options >>
+        (r)
+    )
+);
+
+named!(options<&str, &str>,
     alt!(
+        gitignore_comment |
         is_not!("*?.") |
         parse_period |
         parse_asterix |
         parse_questionmark
+    )
+);
+
+named!(first_line<&str, &str>,
+    do_parse!(
+        tag!("#") >>
+        is_not!("\n") >>
+        ("")
+    )
+);
+
+
+named!(gitignore_comment<&str, &str>,
+    do_parse!(
+        tag!("\n#") >>
+        is_not!("\n") >>
+        ("")
     )
 );
 
