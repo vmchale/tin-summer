@@ -31,7 +31,7 @@ named!(process<&str, Vec<&str>>,
 named!(options<&str, &str>,
     alt!(
         gitignore_comment |
-        is_not!("*?.\n") |
+        is_not!("*?.") |
         parse_period |
         parse_asterix |
         parse_questionmark
@@ -42,7 +42,8 @@ named!(first_line<&str, &str>,
     do_parse!(
         tag!("#") >>
         is_not!("\n") >>
-        ("")
+        tag!("\n") >>
+        ("\n")
     )
 );
 
@@ -51,7 +52,8 @@ named!(gitignore_comment<&str, &str>,
     do_parse!(
         tag!("\n#") >>
         is_not!("\n") >>
-        ("")
+        tag!("\n") >>
+        ("\n")
     )
 );
 
@@ -65,6 +67,7 @@ named!(parse_period<&str, &str>,
 named!(parse_asterix<&str, &str>,
     do_parse!(
         tag!("*") >>
+        opt!(tag!("\n")) >> // FIXME return \n 
         (".*")
     )
 );
@@ -72,6 +75,7 @@ named!(parse_asterix<&str, &str>,
 named!(parse_questionmark<&str, &str>,
     do_parse!(
         tag!("?") >>
+        opt!(tag!("\n")) >>
         (".")
     )
 );
