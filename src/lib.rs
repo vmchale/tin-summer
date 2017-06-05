@@ -9,6 +9,7 @@
 extern crate regex;
 extern crate colored;
 
+#[macro_use] mod macros;
 pub mod test;
 pub mod types;
 pub mod error;

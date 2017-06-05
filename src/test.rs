@@ -9,6 +9,18 @@ use std::mem::replace;
 use test::test::Bencher;
 use prelude::*;
 use gitignore::*;
+use std::fs::File;
+use std::io::prelude::*;
+
+#[bench]
+fn bench_gitignore_parse_file(b: &mut Bencher) {
+    b.iter(|| { 
+        let mut file = File::open("src/testdata/.gitignore").unwrap();
+        let mut contents = String::new();
+        let _ = file.read_to_string(&mut contents);
+        process_to_vector(&contents);
+        () } )
+}
 
 #[bench]
 fn bench_gitignore_parse(b: &mut Bencher) {
@@ -42,6 +54,7 @@ fn bench_traversal_sort (b: &mut Bencher) {
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
+    //let p = PathBuf::from("/home/vanessa/programming/haskell/forks/cabal");
     b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, true))
 }
 
