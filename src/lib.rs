@@ -41,23 +41,23 @@ pub mod prelude {
     /// - return false otherwise
     ///
     /// Explanation of extensions:
-    /// - .a, .la, .o, .lo, .so.*:
-    /// - .ll, .bc: llvm
-    /// - .keter: keter
-    /// - .d: make
-    /// - .rlib, .crate: rust
-    /// - .hi, .dyn_hi, .dyn_o, .p_hi, .p_o, .prof, .dump-.*, .tix: GHC
-    /// - .webapp: Web app manifest
-    /// - .js.externs, .jsexe, .min.js:
-    /// - .ibc: Idris
-    /// - .toc, .aux, .fdb_latexmk, .fls: TeX
-    /// - .egg-info, .whl, .pyc: python
-    /// - .js_a, .js_hi, .js_o: GHCJS
-    /// - .vmb: Vim
-    /// - .crx: chrome
-    /// - .elmo, .elmi: Elm
-    /// - .mod: FORTRAN
-    /// - .ji, .jld: julia
+    /// - `.a`, `.la`, `.o`, `.lo`, `.so.*`:
+    /// - .ll, `.bc`: llvm
+    /// - `.keter`: keter
+    /// - `.d`: make
+    /// - `.rlib`, `.crate`: rust
+    /// - `.hi`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`: GHC
+    /// - `.webapp`: Web app manifest
+    /// - `.js.externs`, `.jsexe`, `.min.js`:
+    /// - `.ibc`: Idris
+    /// - `.toc`, `.aux`, `.fdb_latexmk`, `.fls`: TeX
+    /// - `.egg-info`, `.whl`, `.pyc`: python
+    /// - `.js_a`, `.js_hi`, `.js_o`: GHCJS
+    /// - `.vmb`: Vim
+    /// - `.crx`: chrome
+    /// - `.elmo`, `.elmi`: Elm
+    /// - `.mod`: FORTRAN
+    /// - `.ji`, `.jld`: julia
     #[cfg(not(target_os = "windows"))]
     pub fn is_artifact(path_str: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
 

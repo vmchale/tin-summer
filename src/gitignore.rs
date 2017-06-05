@@ -9,8 +9,15 @@ pub fn file_contents_to_regex(file: &str) -> RegexSet {
     let processed_vec: Vec<&str> = process_to_vector(file);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
-    RegexSet::new(lines)
-        .expect("Error parsing .gitignore") // TODO nicer error message here
+    if let Ok(s) = RegexSet::new(lines) {
+        s
+    }
+    else {
+        eprintln!("{}: failed to parse .gitignore, ignoring", "Warning".yellow());
+        let empty: Vec<&str> = Vec::new();
+        RegexSet::new(empty)
+            .expect("Error creating regex from empty vector")
+    }
 }
 
 pub fn process_to_vector(input: &str) -> Vec<&str> {
@@ -67,7 +74,7 @@ named!(parse_period<&str, &str>,
 named!(parse_asterix<&str, &str>,
     do_parse!(
         tag!("*") >>
-        opt!(do_parse!(tag!("\n") >> eof!() >> (""))) >> // FIXME only for end of file
+        opt!(do_parse!(tag!("\n") >> eof!() >> (""))) >>
         (".*")
     )
 );
