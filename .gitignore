@@ -1,4 +1,3 @@
-#dir
 boring
 *.lock
 target/
