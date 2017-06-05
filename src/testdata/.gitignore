@@ -1,1 +1,5 @@
+# comment to not parse (
 subdir
+dist-*
+# another comment to not parse (
+dist-*

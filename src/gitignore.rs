@@ -67,7 +67,7 @@ named!(parse_period<&str, &str>,
 named!(parse_asterix<&str, &str>,
     do_parse!(
         tag!("*") >>
-        opt!(tag!("\n")) >> // FIXME return \n 
+        opt!(do_parse!(tag!("\n") >> eof!() >> (""))) >> // FIXME only for end of file
         (".*")
     )
 );
@@ -75,7 +75,7 @@ named!(parse_asterix<&str, &str>,
 named!(parse_questionmark<&str, &str>,
     do_parse!(
         tag!("?") >>
-        opt!(tag!("\n")) >>
+        opt!(do_parse!(tag!("\n") >> eof!() >> (""))) >>
         (".")
     )
 );
