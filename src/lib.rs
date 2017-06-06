@@ -131,7 +131,7 @@ pub mod prelude {
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
         let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) }
+            if let Some(ref gitignore) = maybe_gitignore { Some(gitignore.to_owned()) }
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");

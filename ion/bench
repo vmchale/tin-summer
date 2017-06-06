@@ -2,7 +2,9 @@
 
 # set path to include sniff
 let PATH=$HOME/.cargo/bin:$PATH
-let CLICOLOR=0
+
+#export CLICOLOR=0
+#let CLICOLOR=0
 
 # set to a suitable path & decide whether to produce reports
 let reports = "false"
