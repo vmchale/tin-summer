@@ -1,0 +1,2 @@
+[target.i686-unknown-linux]
+rustflags = ["-C", "target-cpu=native"]
