@@ -5,93 +5,26 @@ let PATH=$HOME/.cargo/bin:$PATH
 let CLICOLOR=0
 
 # set to a suitable path & decide whether to produce reports
-let path_arg = "false"
 let reports = "false"
 for x in @args
-    if test $x = "+path"
-        let path_arg = "true"
-    else if test $x = "+reports"
+    if test $x = "+reports"
         let reports = "true"
     end
 end
 
-if test $path_arg = "true"
-    let path = @args[2]
-else
-    let path = /home/vanessa/programming/haskell/forks/cabal
-end
+let path = /home/vanessa/programming/haskell/forks/cabal
 
 # set regex to compare to
 let regex = '\'(.*?\\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)\$|total)\' '
 
+# set the benches
+let benches = ["du -ha $path" "sniff all $path" "du -had2 -t1M $path" "sniff fat $path" "du -had2 -t1M $path --exclude target/debug" "sniff fat $path --exclude target/debug" "du --bytes -a -d2 $path | sort -nr | head -n20" "sniff sort $path" "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20" "sniff sort $path --exclude target/debug" "du -hac -t1M $path | rg $regex" "du -hac -t1M $path | grep -P $regex" "sniff ar -g -t1M $path" "du -hac $path | rg $regex" "du -hac $path | grep -P $regex" "sniff ar -g $path"]
 #do the actual benchmarks
 
 if test $reports = "true"
-
     echo 'generating reports with benchmarks...'
     mkdir -p reports/
-
-    echo 'find everything'
-    bench --output reports/du-all.html "du -ha $path"
-    bench --output reports/sniff-all.html "sniff all $path"
-
-    echo 'show all files over 1M'
-    bench --output reports/du-thresh.html "du -had2 -t1M $path"
-    bench --output reports/sniff-fat.html "sniff fat $path"
-
-    echo 'show all files over 1M & exclude w/ simple regex'
-    bench --output reports/du-thresh-exclude.html "du -had2 -t1M $path --exclude target/debug"
-    bench --output reports/sniff-fat-exclude.html "sniff fat $path --exclude target/debug"
-
-    echo 'show the 20 biggest files/directories'
-    bench --output reports/du-sort.html "du --bytes -a -d2 $path | sort -nr | head -n20"
-    bench --output reports/sort.html "sniff sort $path"
-
-    echo 'sort files & exclude w/ simple regex'
-    bench --output reports/du-sort-exclude.html "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
-    bench --output reports/sniff-sort-exclude.html "sniff sort $path --exclude target/debug"
-
-    echo 'find artifacts greater than 1M'
-    bench --output reports/du-rg-thresh.html "du -hac -t1M $path | rg $regex"
-    bench --output reports/du-rg-thresh.html "du -hac -t1M $path | grep -P $regex"
-    bench --output reports/sniff-artifacts-thresh.html "sniff ar -g -t1M $path"
-
-    echo 'find artifacts'
-    bench --output reports/du-rg.html "du -hac $path | rg $regex"
-    bench --output reports/du-rg.html "du -hac $path | grep -P $regex"
-    bench --output reports/sniff-artifacts.html "sniff ar -g $path"
-
+    bench --output reports/bench.html @benches
 else
-
-    echo 'find everything'
-    bench "du -ha $path"
-    bench "sniff all $path"
-
-    echo 'show all files over 1M'
-    bench "du -had2 -t1M $path"
-    bench "sniff fat $path"
-
-    echo 'show all files over 1M & exclude w/ simple regex'
-    bench "du -had2 -t1M $path --exclude target/debug"
-    bench "sniff fat $path --exclude target/debug"
-
-    echo 'show the 20 biggest files/directories'
-    bench "du --bytes -a -d2 $path | sort -nr | head -n20"
-    bench "sniff sort $path"
-
-    echo 'sort files & exclude w/ simple regex'
-    bench "du --bytes -a -d2 $path --exclude target/debug | sort -nr | head -n20"
-    bench "sniff sort $path --exclude target/debug"
-
-    echo 'find artifacts greater than 1M'
-    bench "du -hac -t1M $path | rg $regex"
-    bench "du -hac -t1M $path | grep -P $regex"
-    bench "sniff ar -g -t1M $path"
-
-    echo 'find artifacts'
-    bench "du -hac $path | rg $regex"
-    bench "du -hac $path | grep -P $regex"
-    bench "sniff ar -g $path"
-    bench "sniff ar $path"
-
+    bench @benches
 end

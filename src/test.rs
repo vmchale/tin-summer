@@ -29,6 +29,12 @@ fn bench_gitignore_parse(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_gitignore_clone(b: &mut Bencher) {
+    let file_contents = include_str!("testdata/.gitignore");
+    let gitignore_structure = &process_to_vector(file_contents);
+    b.iter(|| gitignore_structure.to_owned())
+}
+#[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");
     b.iter(|| file_contents_to_regex(file_contents))

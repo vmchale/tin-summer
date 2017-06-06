@@ -32,5 +32,5 @@ bench "sniff sort $path"
 bench "$binpath sort $path"
 
 echo 'sniff for build artifacts & compare to self'
-bench "$HOME/.cargo/bin/sniff artifacts --sort /home/vanessa/programming/haskell/forks/cabal"
-bench "$binpath artifacts --sort $path"
+bench "$HOME/.cargo/bin/sniff ar --sort /home/vanessa/programming/haskell/forks/cabal"
+bench "$binpath ar --sort $path"

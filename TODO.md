@@ -25,6 +25,8 @@
   - [ ] set include paths w/ glob
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [ ] use .gitignore to set recursion depth/set it intelligently
+- [ ] use darcs boring file?
+- [ ] global gitignore
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] flag to follow symlinks
 - [ ] output machine-generated config files as well? in e.g. yellow
