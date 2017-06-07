@@ -1,2 +1,5 @@
+[target.arm-unknown-linux-gnueabihf]
+rustflags = ["-C", "target-cpu=cortex-a53"]
+
 [target.i686-unknown-linux]
 rustflags = ["-C", "target-cpu=native"]

@@ -4,7 +4,7 @@
 let PATH=$HOME/.cargo/bin:$PATH
 
 #export CLICOLOR=0
-#let CLICOLOR=0
+let CLICOLOR=0
 
 # set to a suitable path & decide whether to produce reports
 let reports = "false"

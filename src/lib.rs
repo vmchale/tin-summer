@@ -150,11 +150,17 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let path_string = path.clone().into_os_string().into_string() // avoid a clone here??
-                    .expect("OS String invalid.");
-                let bool_loop = match excludes {
-                    Some(ex) => !ex.is_match(&path_string),
-                    _ => true,
+                let (path_string, bool_loop): (String, bool) = if let Ok(x) = path.clone().into_os_string().into_string() {
+                    let bool_loop = match excludes {
+                        Some(ex) => !ex.is_match(&x),
+                        _ => true,
+                    };
+
+                    (x, bool_loop)
+                }
+                else {
+                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path);
+                    ("".to_string(), false)
                 };
 
                 // only consider path if we're not using regex excludes or if they don't match the
