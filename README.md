@@ -38,6 +38,9 @@ rustup run nightly cargo install file-sniffer
 
 ## Use
 
+Currently, `sniff` looks for files that either have an extension associated with artifacts
+or executable files listed in the relevant `.gitignore`. 
+
 Search current directory for directories with build artifacts:
 
 ```bash
@@ -90,3 +93,4 @@ list, feel free to open a PR or start an issue.
   - [x] Vimscript
   - [x] Idris
   - [ ] FORTRAN
+  - [ ] C

@@ -24,6 +24,7 @@
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob
 - [x] make threshhold accept number w/ M/G tag (nom).
+- [ ] don't mark shell scripts as build artifacts
 - [ ] use .gitignore to set recursion depth/set it intelligently
 - [ ] use darcs boring file?
 - [ ] global gitignore
