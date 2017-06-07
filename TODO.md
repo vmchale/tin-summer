@@ -26,10 +26,13 @@
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [ ] don't mark shell scripts as build artifacts
 - [ ] use .gitignore to set recursion depth/set it intelligently
-- [ ] use darcs boring file?
+- [ ] compare to performance of `unused`.
+- [ ] change french/german binary name
+  - [ ] upsteam PR to clap-rs?
 - [ ] global gitignore
+  - [ ] darcs boring file?
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] flag to follow symlinks
-- [ ] output machine-generated config files as well? in e.g. yellow
 - [ ] replace du
   - [ ] figure out how to fork 'ignore'? 
+  - [ ] consider using block sizes instead

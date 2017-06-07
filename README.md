@@ -94,3 +94,17 @@ list, feel free to open a PR or start an issue.
   - [x] Idris
   - [ ] FORTRAN
   - [ ] C
+
+#### Foreign-language binaries
+
+Français:
+
+```bash
+cargo install file-sniffer --no-default-features --feature francais # crates.io doesn't permit unicode there
+```
+
+Deutsch:
+
+```bash
+cargo install file-sniffer --no-default-features --feature deutsch
+```

@@ -37,6 +37,19 @@ ignore = "0.2"
 path = "src/lib.rs"
 name = "libsniff"
 
+# german: schnüffeln/schnüffle
+
 [[bin]]
+required-features = ["english"]
 path = "src/main.rs"
 name = "sniff"
+
+[[bin]]
+required-features = ["francais"]
+path = "src/main.rs"
+name = "renifle"
+
+[[bin]]
+required-features = ["deutsch"]
+path = "src/main.rs"
+name = "schnüffle"
