@@ -28,23 +28,24 @@ is on the same order of magnitude, which is auspicious.
 ### File extensions
 
 This is where `sniff` pulls ahead - but only sometimes. For the rust build,
-`sniff` was considerably faster. For the Haskell build, it was slightly slower
+`sniff ar -g` was considerably faster. For the Haskell build, it was slightly slower
 than `du` combined with `rg`, and considerably faster than `du` with `grep`. It
 also gave considerably cleaner output:
 
 ### Excludes
 
-`du` handles excludes *really* poorly. I'm not sure why, but that's one area
-where `sniff` doesn't need 
+`du` handles excludes poorly. I'm not sure why, but that's one area
+where `sniff` already beats the competition pretty handily.
 
-## Steps forward
+## Looking forward
 
-Long-term, I want to make `sniff` a viable replacement for `du`3. That's going to
-take awhile.  
+Long-term, I want to make `sniff` a viable replacement for `du`. That's going to
+take awhile, and it's going to require speed improvements.
 
 In the meantime, I think parallel directory traversals are probably
-the most important factor when it comes to performance. This will likely involve
-forking BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate.
+worthwhile. This will likely involve
+forking BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate, and
+it will probably be a lot of work.
 
 <sup>1: Running `sniff ar` on my projects took 7min34s the first time and then 736 ms thereafter.</sup>
 
