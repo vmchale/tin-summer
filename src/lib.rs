@@ -144,20 +144,26 @@ pub mod prelude {
 
             if let Ok(p) = path {
                 if p.path().is_file() {
-                    if let Ok (s) = p.path().as_os_str().to_owned().into_string() {
+                    if let Ok (f) = p.file_name().to_owned().into_string() {
                         if let Ok(metadata) = p.metadata() {
-                            if !artifacts_only || is_artifact(&s, None, &metadata, &None) {
+                            if !artifacts_only || is_artifact(&f, None, &metadata, &None) {
                                 let file_size = FileSize::new(metadata.len());
                                 filesize_dir.add(file_size);
                                 let formatted = format!("{}", file_size);
-                                println!("{}\t {}", formatted.green(), s);
+                                if let Ok(s) = p.path().as_os_str().to_owned().into_string() {
+                                    println!("{}\t {}", formatted.green(), s);
+                                }
+                                else {
+                                    eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
+                                }
                             }
                         }
                         else if follow_symlinks {
+                            let s = p.path().as_os_str().to_owned().into_string().expect("OS String failed to resolve");
                             eprintln!("{}: ignoring broken symlink at {}", "Warning".yellow(), s);
                         }
                     }
-                    else { 
+                    else {
                         eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
                     }
                 }
