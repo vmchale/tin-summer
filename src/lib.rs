@@ -236,7 +236,7 @@ pub mod prelude {
                         // append file size/name for a file
                         if metadata.is_file() {
                             if !artifacts_only || is_artifact(&path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
-                                let file_size = FileSize::new(metadata.len());//metadata.blocks() * 512);
+                                let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
                                             tree.push(path_string, file_size, None, depth + 1, min_size);
