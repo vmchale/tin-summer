@@ -159,7 +159,7 @@ pub mod prelude {
                     (x, bool_loop)
                 }
                 else {
-                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path);
+                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path); // TODO consider byte matching here?
                     ("".to_string(), false)
                 };
 
