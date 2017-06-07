@@ -87,7 +87,7 @@ fn main() {
 
     }
 
-    else if let Some(command) = matches.subcommand_matches("line") {
+    else if let Some(command) = matches.subcommand_matches("lines") {
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));

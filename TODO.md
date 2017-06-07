@@ -30,3 +30,5 @@
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] flag to follow symlinks
 - [ ] output machine-generated config files as well? in e.g. yellow
+- [ ] replace du
+  - [ ] figure out how to fork 'ignore'? 

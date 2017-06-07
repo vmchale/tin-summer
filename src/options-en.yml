@@ -61,7 +61,7 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
-    - line:
+    - lines:
         about: Show all files/directories
         args:
             - dir:
@@ -72,6 +72,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - silent:
+                short: a
+                long: all
+                help: Show all files, not just artifacts
             - depth: 
                 short: d
                 long: depth

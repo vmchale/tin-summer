@@ -72,6 +72,7 @@ export CLICOLOR=0
   - [ ] match speed of gnu utils on traversals
     - [x] faster when finding artifacts
     - [x] faster with excludes
+    - [x] faster on small directories
   - [x] colorized output
   - [x] sort results by size
 
