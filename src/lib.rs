@@ -6,6 +6,7 @@
 #[macro_use] extern crate nom;
 #[macro_use] extern crate lazy_static;
 
+extern crate ignore;
 extern crate regex;
 extern crate colored;
 
@@ -19,13 +20,14 @@ pub mod gitignore;
 pub mod prelude {
 
     use std::fs;
-    use std::path::PathBuf;
+    use std::path::{PathBuf, Path};
     use regex::{Regex, RegexSet};
     use types::*;
-    use colored::*;
     use gitignore::*;
+    use colored::*;
     use std::io::prelude::*;
     use std::process::exit;
+    use ignore::{WalkBuilder, WalkState};
     use std::fs::{Metadata, File};
 
     #[cfg(not(target_os = "windows"))]
@@ -114,6 +116,59 @@ pub mod prelude {
             }
             else { false }
         }
+    }
+
+    pub fn read_parallel(in_paths: &Path,
+                         max_depth: Option<usize>, // optionally include a max depth to which to recurse
+                         _: Option<&Regex>,
+                         show_hidden: bool,
+                         //maybe_gitignore: Option<RegexSet>,
+                         //with_gitignore: bool,
+                         artifacts_only: bool,
+                         follow_symlinks: bool) -> FileSize {
+        // create new walk + set file size to zero
+        let mut filesize_dir = FileSize::new(0);
+        let mut builder = WalkBuilder::new(in_paths);
+
+        // set options for our walk
+        builder.max_depth(max_depth);
+        builder.hidden(show_hidden);
+        builder.follow_links(follow_symlinks);
+        builder.ignore(false);
+        builder.git_ignore(false);
+        builder.git_exclude(false);
+        builder.git_global(false);
+
+        // runs loop
+        builder.build_parallel().run(|| Box::new(move |path| {
+
+            if let Ok(p) = path {
+                if p.path().is_file() {
+                    if let Ok (s) = p.path().as_os_str().to_owned().into_string() {
+                        if let Ok(metadata) = p.metadata() {
+                            if !artifacts_only || is_artifact(&s, None, &metadata, &None) {
+                                let file_size = FileSize::new(metadata.len());
+                                filesize_dir.add(file_size);
+                                let formatted = format!("{}", file_size);
+                                println!("{}\t {}", formatted.green(), s);
+                            }
+                        }
+                        else if follow_symlinks {
+                            eprintln!("{}: ignoring broken symlink at {}", "Warning".yellow(), s);
+                        }
+                    }
+                    else { 
+                        eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
+                    }
+                }
+                // instead, consider a BTreeMap with parent directory sizes? might have to modify
+                // burntsushi's crate
+            }
+            else if let Err(e) = path {
+                eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
+            }
+            ; WalkState::Continue }));
+        filesize_dir
     }
 
     /// Function to process directory contents and return a `FileTree` struct.

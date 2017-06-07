@@ -26,6 +26,7 @@ clap = {version = "2.24", features = ["yaml"]}
 regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"
+ignore = "0.2"
 
 #[dependencies.clap]
 #git = "https://github.com/vmchale/clap-rs.git"

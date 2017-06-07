@@ -61,6 +61,23 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+    - line:
+        about: Show all files/directories
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default arbitrarily far)
     - all:
         about: Show all files/directories
         args:

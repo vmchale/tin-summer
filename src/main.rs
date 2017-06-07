@@ -84,7 +84,23 @@ fn main() {
 
         // display results
         v_filtered.display_tree(init_dir);
+
     }
+
+    else if let Some(command) = matches.subcommand_matches("line") {
+
+        // set path to dir
+        let init_dir = get_dir(command.value_of("dir"));
+
+        // set regex for exclusions
+        let regex = command.value_of("excludes"); 
+
+        let _ = match regex {
+            Some(r) => read_parallel(&init_dir, None, Some(&check_regex(r)), true, true, false),
+            _ => read_parallel(&init_dir, None, None, true, true, false),
+        };
+    }
+
 
     else if let Some(command) = matches.subcommand_matches("ar") {
 
