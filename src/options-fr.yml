@@ -1,5 +1,5 @@
 name: sniff
-author: Vanessa McHale <tmchale@wisc.edu>
+author: Vanessa McHale <vamchale@gmail.com>
 about: Util pour trouver grands fichiers et artefacts de construction.
 subcommands:
     - sort:

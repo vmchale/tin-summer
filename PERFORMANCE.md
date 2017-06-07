@@ -4,7 +4,7 @@ As it stands, there aren't many comparable tools, so benchmarking is pretty
 hard. I'm not sure how useful benchmarking even is: the primary
 factor when running `sniff ar` is going to be the file system's page
 cache<sup>1</sup>, and unlike [ripgrep](http://blog.burntsushi.net/ripgrep/), the default use case
-isn't necessarily "repeatedly search the same directory or its subdirectories".
+isn't necessarily "repeatedly run in the same directory".
 
 And, realistically, you probably wouldn't actually type this in to find
 artifacts<sup>2</sup>:
@@ -42,10 +42,13 @@ where `sniff` already beats the competition pretty handily.
 Long-term, I want to make `sniff` a viable replacement for `du`. That's going to
 take awhile, and it's going to require speed improvements.
 
-In the meantime, I think parallel directory traversals are probably
-worthwhile. This will likely involve
-forking BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate, and
-it will probably be a lot of work.
+But I want to prioritize *features* in the short-term. Not many people are going to
+download "du with nice colors". If `sniff` is the best tool for finding
+artifacts (it is), a lot more people will. If it "just works" out of the box, 
+
+<!--In the meantime, I think parallel directory traversals are probably
+worthwhile. BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate
+shows they're possible. -->
 
 <sup>1: Running `sniff ar` on my projects took 7min34s the first time and then 736 ms thereafter.</sup>
 

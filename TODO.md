@@ -25,6 +25,7 @@
   - [ ] set include paths w/ glob
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [ ] don't mark shell scripts as build artifacts
+- [ ] errors should be translated!
 - [ ] use .gitignore to set recursion depth/set it intelligently
 - [ ] compare to performance of `unused`.
 - [ ] change french/german binary name
