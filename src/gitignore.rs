@@ -42,8 +42,8 @@ named!(process<&str, Vec<&str>>,
 
 named!(options<&str, &str>,
     alt!(
-        gitignore_comment |
         tag!("\n") |
+        gitignore_comment |
         is_not!("*?.#") |
         parse_asterix |
         parse_period |
