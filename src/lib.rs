@@ -231,7 +231,7 @@ pub mod prelude {
                 if bool_loop {
 
                     // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = fs::metadata(&path) {
+                    if let Ok(metadata) = fs::symlink_metadata(&path) {
 
                         // append file size/name for a file
                         if metadata.is_file() {

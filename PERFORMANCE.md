@@ -42,13 +42,16 @@ where `sniff` already beats the competition pretty handily.
 Long-term, I want to make `sniff` a viable replacement for `du`. That's going to
 take awhile, and it's going to require speed improvements.
 
-But I want to prioritize *features* in the short-term. Not many people are going to
+In the short term, I want to prioritize features. Not many people are going to
 download "du with nice colors". If `sniff` is the best tool for finding
-artifacts (it is), a lot more people will. If it "just works" out of the box, 
+artifacts (it is), a lot more people will. If it "just works" out of the box,
+that's probably better than being fast. Tons of people use [exa](https://github.com/ogham/exa)
+despite it being slower. 
 
-<!--In the meantime, I think parallel directory traversals are probably
-worthwhile. BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate
-shows they're possible. -->
+Of course, even more people use [ripgrep](https://github.com/BurntSushi/ripgrep). Performance-wise, the main 
+improvement `sniff` still needs is parallel directory traversals. That's going
+to be significant work, but BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate
+at least shows it's possible in some cases.
 
 <sup>1: Running `sniff ar` on my projects took 7min34s the first time and then 736 ms thereafter.</sup>
 
