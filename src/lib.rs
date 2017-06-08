@@ -87,8 +87,7 @@ pub mod prelude {
             if REGEX.is_match(path_str) { true }
             else if let &Some(ref x) = gitignore {
                 if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str)
-                    { println!("{:?}", x);
-                      x.is_match(path_str) }
+                    { x.is_match(path_str) }
                 else { false }
             }
             else { false }

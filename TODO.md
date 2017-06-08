@@ -27,6 +27,7 @@
   - [ ] upsteam PR to clap-rs?
 - [ ] flag to follow symlinks
   - [x] ignore symlinks by default
+- [x] fix .gitignore parser
 - [x] excludes w/ regex
   - [ ] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
