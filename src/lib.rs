@@ -236,7 +236,8 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            if !artifacts_only || is_artifact(&path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // The first unwrap is ok but the second isn't
+                            if !artifacts_only || is_artifact(&file, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
