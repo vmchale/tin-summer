@@ -36,6 +36,8 @@
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] flag to follow symlinks
   - [x] ignore symlinks by default
+- [ ] test for unicode file extensions
+- [ ] test with a desired return value?
 - [ ] replace du
   - [ ] traverse a directory in parallel?
   - [ ] figure out block sizes vs. file sizes
