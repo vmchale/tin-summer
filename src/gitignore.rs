@@ -43,6 +43,7 @@ named!(process<&str, Vec<&str>>,
 named!(options<&str, &str>,
     alt!(
         gitignore_comment |
+        tag!("\n") |
         is_not!("*?.#") |
         parse_asterix |
         parse_period |
@@ -71,7 +72,6 @@ named!(gitignore_comment<&str, &str>,
     do_parse!(
         tag!("\n#") >>
         is_not!("\n") >>
-        //tag!("\n") >>
         ("\n")
     )
 );
