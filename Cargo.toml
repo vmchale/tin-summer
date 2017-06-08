@@ -1,6 +1,6 @@
 [package]
 name = "file-sniffer"
-version = "1.0.0"
+version = "1.0.1-pre"
 authors = ["Vanessa McHale <vamchale@gmail.com>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer."
