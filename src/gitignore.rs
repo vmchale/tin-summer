@@ -53,8 +53,7 @@ named!(options<&str, &str>,
 
 named!(parse_not_comment<&str, &str>,
     do_parse!(
-        //tag!("#") >>
-        is_not!("\n") >>
+        alt!(is_not!("\n") | tag!("#")) >>
         ("#")
     )
 );
