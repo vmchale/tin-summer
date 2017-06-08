@@ -239,7 +239,7 @@ pub mod prelude {
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                            tree.push(path_string, file_size, None, depth + 1, min_size);
+                                            tree.push(path_string, file_size, None, depth + 1, min_size); // TODO only print directory names?
                                         }
                                     }
                                 else {
@@ -249,8 +249,7 @@ pub mod prelude {
                         }
 
                         // otherwise, go deeper
-                        
-                        else if metadata.is_dir() {
+                        else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {

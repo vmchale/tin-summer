@@ -144,7 +144,7 @@ subcommands:
                 long: regex
                 takes_value: true
                 value_name: REGEX
-                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files, you could do 'sniff ar -r .*?rlib$'
+                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files only, you could do 'sniff ar -r .*?rlib$'
             - depth: 
                 short: d
                 long: depth

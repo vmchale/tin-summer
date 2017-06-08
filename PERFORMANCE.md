@@ -25,6 +25,10 @@ Benchmarking directory traversals makes sense because `du -had2` being faster
 than `sniff all` means that `sniff` has room to improve. That being said, `sniff`
 is on the same order of magnitude, which is auspicious.
 
+Complicating the traversals benchmarks is the fact that printing out paths can
+affect the benchmarks. This isn't terribly relevant, of course: the user
+probably only cares about a small number of them.
+
 ### File extensions
 
 This is where `sniff` pulls ahead - but only sometimes. For the rust build,
@@ -46,12 +50,14 @@ In the short term, I want to prioritize features. Not many people are going to
 download "du with nice colors". If `sniff` is the best tool for finding
 artifacts (it is), a lot more people will. If it "just works" out of the box,
 that's probably better than being fast. Tons of people use [exa](https://github.com/ogham/exa)
-despite it being slower. 
+despite it being slower.
 
 Of course, even more people use [ripgrep](https://github.com/BurntSushi/ripgrep). Performance-wise, the main 
 improvement `sniff` still needs is parallel directory traversals. That's going
 to be significant work, but BurntSushi's [ignore](https://docs.rs/ignore/0.2.0/ignore/) crate
-at least shows it's possible in some cases.
+at least shows it's possible in some cases. <!--Parallel directory traversals will
+likely be harmful in some cases, but the hope is these will be small directories
+with few files - which likely won't take very long anyhow. -->
 
 <sup>1: Running `sniff ar` on my projects took 7min34s the first time and then 736 ms thereafter.</sup>
 

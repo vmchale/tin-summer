@@ -24,16 +24,18 @@
 - [x] excludes w/ regex
   - [ ] set include paths w/ glob
 - [x] make threshhold accept number w/ M/G tag (nom).
-- [ ] don't mark shell scripts as build artifacts
-- [ ] errors should be translated!
+- [ ] improve ergonomics by guessing language of build?
+- [ ] don't mark shell scripts as build artifacts?
+- [ ] errors should be translated to french/german as well.
+  - [ ] make an error type & use that to organize things
 - [ ] use .gitignore to set recursion depth/set it intelligently
-- [ ] compare to performance of `unused`.
-- [ ] change french/german binary name
+- [x] change french/german binary name
   - [ ] upsteam PR to clap-rs?
 - [ ] global gitignore
   - [ ] darcs boring file?
 - [ ] flag to print all (e.g. no max depth/etc.)
 - [ ] flag to follow symlinks
+  - [x] ignore symlinks by default
 - [ ] replace du
-  - [ ] figure out how to fork 'ignore'? 
-  - [ ] consider using block sizes instead
+  - [ ] traverse a directory in parallel?
+  - [ ] figure out block sizes vs. file sizes
