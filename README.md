@@ -97,6 +97,9 @@ list, feel free to open a PR or start an issue.
 
 #### Foreign-language binaries
 
+These still need a bit of work; as of now errors and warnings are still in
+English.
+
 Français:
 
 ```bash

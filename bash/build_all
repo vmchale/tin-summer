@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
-export LDFLAGS=/home/vanessa/arm-bins/cross-compilation/zlib/
-cargo build --release
+cargo update
+cargo build --bin sniff --release
 cargo build --bin sniff --target=x86_64-pc-windows-gnu --release
 cargo build --bin sniff --target=arm-unknown-linux-gnueabihf --release
+cargo build --bin sniff --target=x86_64-unknown-linux-musl --release
+cross build --bin sniff --target=x86_64-unknown-freebsd --release
+cargo build --no-default-features --features deutsch --bin schnüffle --release
+cargo build --no-default-features --features deutsch --bin schnüffle --target=x86_64-pc-windows-gnu --release
+cargo build --no-default-features --features deutsch --bin schnüffle --target=arm-unknown-linux-gnueabihf --release
+cargo build --no-default-features --features deutsch --bin schnüffle --target=x86_64-unknown-linux-musl --release
+cross build --no-default-features --features deutsch --bin schnüffle --target=x86_64-unknown-freebsd --release
+cargo build --no-default-features --features francais --bin renifle --release
+cargo build --no-default-features --features francais --bin renifle --target=x86_64-pc-windows-gnu --release
+cargo build --no-default-features --features francais --bin renifle --target=arm-unknown-linux-gnueabihf --release
+cargo build --no-default-features --features francais --bin renifle --target=x86_64-unknown-linux-musl --release
+cross build --no-default-features --features francais --bin renifle --target=x86_64-unknown-freebsd --release

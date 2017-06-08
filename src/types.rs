@@ -86,7 +86,12 @@ impl FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
     
-    pub fn push(&mut self, path: String, size: FileSize, subtree: Option<&mut FileTree>, depth: u8, min_size: Option<FileSize>) -> () {
+    pub fn push(&mut self,
+                path: String,
+                size: FileSize,
+                subtree: Option<&mut FileTree>,
+                depth: u8,
+                min_size: Option<FileSize>) -> () {
 
         // add to total
         self.file_size.add(size);
@@ -108,6 +113,10 @@ impl FileTree {
 
     }
 
+    // TODO: make this more intelligent about what it displays
+    // 1: display only directories by default
+    // 2: if we display the child directory, don't show the parent
+    // 3: if we *are* displaying files, only display the first few in a directory
     pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
 
         // display stuff
@@ -130,6 +139,7 @@ impl FileTree {
 
 }
 
+// TODO print by significant figures
 impl fmt::Display for FileSize {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 
@@ -139,7 +149,7 @@ impl fmt::Display for FileSize {
         }
 
         else if self.size < 1048576 { // 2^20 = 1024 * 1024
-            let pre_size = format!("{}", self.size/1025);
+            let pre_size = format!("{}", self.size/1024);
             write!(f, "{} kB", &pre_size.pad_to_width(4))
         }
 

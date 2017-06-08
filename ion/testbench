@@ -1,7 +1,7 @@
 #!/usr/bin/env ion
-cargo run -- sort -t1M
-cargo run -- fat
-cargo run -- sort src/ # to make sure non-ascii displays correctly
+cargo run --bin sniff -- sort -t1M
+cargo run --bin sniff -- fat
+cargo run --bin sniff -- sort src/ # to make sure non-ascii displays correctly
 cargo build --release
 
 let binpath = target/release/sniff
