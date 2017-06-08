@@ -47,7 +47,8 @@ named!(options<&str, &str>,
         parse_asterix |
         parse_period |
         parse_questionmark |
-        parse_not_comment
+        parse_not_comment |
+        gitignore_comment
     )
 );
 
