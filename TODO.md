@@ -28,6 +28,7 @@
 - [ ] flag to follow symlinks
   - [x] ignore symlinks by default
 - [x] fix .gitignore parser
+- [ ] shake for cross builds?? parallel would b nice.
 - [x] excludes w/ regex
   - [ ] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
