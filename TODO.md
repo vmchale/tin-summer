@@ -22,6 +22,7 @@
 - [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
 - [x] excludes w/ regex
+  - [ ] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [ ] improve ergonomics by guessing language of build?
@@ -37,7 +38,10 @@
 - [ ] flag to follow symlinks
   - [x] ignore symlinks by default
 - [ ] test for unicode file extensions
+- [ ] file at /home/vanessa/git-builds/haskell/flrc/.gitignore fails because it
+  doesn't skip comment
 - [ ] test with a desired return value?
+- [ ] regex should only match against file name, not full path
 - [ ] replace du
   - [ ] traverse a directory in parallel?
   - [ ] figure out block sizes vs. file sizes

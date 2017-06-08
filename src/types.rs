@@ -28,6 +28,7 @@ pub struct NamePair {
     bytes: FileSize,
     depth: u8,
     name: String,
+    is_dir: bool,
 }
 
 fn sort_by_size(fst: &NamePair, snd: &NamePair) -> Ordering {
@@ -35,8 +36,8 @@ fn sort_by_size(fst: &NamePair, snd: &NamePair) -> Ordering {
 }
 
 impl NamePair {
-    pub fn new(path: String, bytes_in: FileSize, d: u8) -> NamePair {
-        NamePair { name: path, bytes: bytes_in, depth: d }
+    pub fn new(path: String, bytes_in: FileSize, d: u8, b: bool) -> NamePair {
+        NamePair { name: path, bytes: bytes_in, depth: d, is_dir: b }
     }
 }
 
@@ -91,6 +92,7 @@ impl FileTree {
                 size: FileSize,
                 subtree: Option<&mut FileTree>,
                 depth: u8,
+                is_dir: bool,
                 min_size: Option<FileSize>) -> () {
 
         // add to total
@@ -109,20 +111,22 @@ impl FileTree {
         }
 
         // return new file tree
-        self.files.push(NamePair::new(path, size, depth));
+        self.files.push(NamePair::new(path, size, depth, is_dir));
 
     }
 
     // TODO: make this more intelligent about what it displays
     // 1: display only directories by default
-    // 2: if we display the child directory, don't show the parent
+    // 2: if we display the child directory, don't show the parent? unless we display more than one
+    //    child, in which case it's probably best to display all 3. AND if a directory is on the
+    //    gitignore, it's best to not display its children.
     // 3: if we *are* displaying files, only display the first few in a directory
-    pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
+    pub fn display_tree(&mut self, init_dir: PathBuf, dirs_only: bool) -> () {
 
         // display stuff
         let vec = &self.files;
         for name_pair in vec {
-            if name_pair.bytes != FileSize::new(0) {
+            if name_pair.bytes != FileSize::new(0) && (!dirs_only || name_pair.is_dir) {
                 let to_formatted = format!("{}", name_pair.bytes);
                 println!("{}\t {}", &to_formatted.green(), name_pair.name);
             }
@@ -139,7 +143,7 @@ impl FileTree {
 
 }
 
-// TODO print by significant figures
+// TODO print by significant figures? 
 impl fmt::Display for FileSize {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 

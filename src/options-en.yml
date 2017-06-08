@@ -14,6 +14,10 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: Number of files to find (default 20)
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - depth: 
                 short: d
                 long: depth
@@ -55,6 +59,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - depth: 
                 short: d
                 long: depth
@@ -72,6 +80,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - all:
                 short: a
                 long: all
@@ -125,6 +137,10 @@ subcommands:
                 short: s
                 long: silent
                 help: Don't print warnings.
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - excludes:
                 short: e
                 long: exclude

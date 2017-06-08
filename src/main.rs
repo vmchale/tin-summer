@@ -36,6 +36,9 @@ fn main() {
         // don't print warnings
         let silent = command.is_present("silent");
 
+        // don't print warnings
+        let print_files = command.is_present("files");
+
         // set regex for exclusions
         let regex = command.value_of("excludes");
 
@@ -52,7 +55,7 @@ fn main() {
         let mut v_filtered = v.filtered(depth);
 
         // display results
-        v_filtered.display_tree(init_dir);
+        v_filtered.display_tree(init_dir, !print_files);
     }
 
     // find large files
@@ -70,6 +73,9 @@ fn main() {
         // set regex for exclusions
         let regex = command.value_of("excludes"); 
 
+        // don't print warnings
+        let print_files = command.is_present("files");
+
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
@@ -83,7 +89,7 @@ fn main() {
         let mut v_filtered = v.filtered(depth);
 
         // display results
-        v_filtered.display_tree(init_dir);
+        v_filtered.display_tree(init_dir, !print_files);
 
     }
 
@@ -122,6 +128,9 @@ fn main() {
         // don't print warnings
         let silent = command.is_present("silent");
 
+        // don't print warnings
+        let print_files = command.is_present("files");
+
         // set regex for artifacts
         let artifacts = command.value_of("regex"); 
 
@@ -149,7 +158,7 @@ fn main() {
                 v.filtered(depth)
             };
 
-        v_processed.display_tree(init_dir);
+        v_processed.display_tree(init_dir, !print_files);
     }
 
     // sort entities by size
@@ -166,6 +175,9 @@ fn main() {
 
         // decide whether to warnings
         let silent = command.is_present("silent");
+
+        // don't print warnings
+        let print_files = command.is_present("files");
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
@@ -189,7 +201,7 @@ fn main() {
         let mut v_sorted = v.sort(Some(num_int), depth);
 
         // display sorted filenames
-        v_sorted.display_tree(init_dir);
+        v_sorted.display_tree(init_dir, !print_files);
     }
 
     else {

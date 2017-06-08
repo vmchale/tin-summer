@@ -4,19 +4,21 @@ use colored::*;
 use std::process::exit;
 use regex::RegexSet;
 use nom::IResult;
+use std::path::PathBuf;
 
-pub fn file_contents_to_regex(file: &str) -> RegexSet {
+pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     let processed_vec: Vec<&str> = process_to_vector(file);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
     debugln!("{:?}", lines.clone().collect::<Vec<&str>>());
-    
-    if let Ok(s) = RegexSet::new(lines) {
+   
+    let maybe_set = RegexSet::new(lines);
+    if let Ok(s) = maybe_set {
         s
     }
     else {
-        eprintln!("{}: failed to parse .gitignore, ignoring", "Warning".yellow());
+        eprintln!("{}: failed to parse .gitignore at {:?}, ignoring", "Warning".yellow(), file_path);
         let empty: Vec<&str> = Vec::new();
         RegexSet::new(empty)
             .expect("Error creating regex from empty vector")

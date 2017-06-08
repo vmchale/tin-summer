@@ -47,6 +47,7 @@ pub mod prelude {
     ///
     /// Explanation of extensions:
     /// - `.a`, `.la`, `.o`, `.lo`, `.so.*`:
+    /// - `.S`: assembly
     /// - .ll, `.bc`: llvm
     /// - `.keter`: keter
     /// - `.d`: make
@@ -75,7 +76,7 @@ pub mod prelude {
         else {
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$") // TODO reorder regex
+                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$") // TODO reorder regex
                     .unwrap();
             }
             lazy_static! {
@@ -194,15 +195,15 @@ pub mod prelude {
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
         let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) }
+            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) } // TODO get rid of this
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
-                if let Ok(mut file) = File::open(gitignore_path) {
+                if let Ok(mut file) = File::open(gitignore_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
-                    Some(file_contents_to_regex(&contents))
+                    Some(file_contents_to_regex(&contents, &gitignore_path))
                 } else { None }
             }
         } else { None };
@@ -239,11 +240,11 @@ pub mod prelude {
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                            tree.push(path_string, file_size, None, depth + 1, min_size); // TODO only print directory names?
+                                            tree.push(path_string, file_size, None, depth + 1, false, min_size); // TODO only print directory names?
                                         }
                                     }
                                 else {
-                                    tree.push(path_string, file_size, None, depth + 1, min_size);
+                                    tree.push(path_string, file_size, None, depth + 1, false, min_size);
                                 }
                             }
                         }
@@ -254,10 +255,10 @@ pub mod prelude {
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {
-                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, min_size);
+                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
                                 }
                             }
-                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, min_size); }
+                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
                         }
                     }
                     else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }

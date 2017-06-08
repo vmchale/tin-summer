@@ -92,7 +92,7 @@ list, feel free to open a PR or start an issue.
   - [x] nim
   - [x] Vimscript
   - [x] Idris
-  - [ ] FORTRAN
+  - [x] FORTRAN
   - [ ] C
 
 #### Foreign-language binaries

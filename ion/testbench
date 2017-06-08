@@ -2,7 +2,7 @@
 cargo run --bin sniff -- sort -t1M
 cargo run --bin sniff -- fat
 cargo run --bin sniff -- sort src/ # to make sure non-ascii displays correctly
-cargo build --release
+cargo build --bin sniff --release
 
 let binpath = target/release/sniff
 
