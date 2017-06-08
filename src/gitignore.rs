@@ -47,15 +47,14 @@ named!(options<&str, &str>,
         parse_asterix |
         parse_period |
         parse_questionmark |
-        parse_not_comment |
-        gitignore_comment
+        parse_not_comment
     )
 );
 
 named!(parse_not_comment<&str, &str>,
     do_parse!(
         //tag!("#") >>
-        is_not!("\n#") >>
+        is_not!("\n") >>
         ("#")
     )
 );
@@ -73,7 +72,7 @@ named!(gitignore_comment<&str, &str>,
     do_parse!(
         tag!("\n#") >>
         is_not!("\n") >>
-        tag!("\n") >>
+        //tag!("\n") >>
         ("\n")
     )
 );
