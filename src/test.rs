@@ -28,6 +28,18 @@ fn bench_gitignore_parse(b: &mut Bencher) {
     b.iter(|| process_to_vector(file_contents))
 }
 
+#[test]
+fn cabal_gitignore() {
+    let file_contents = include_str!("testdata/gitignore-tests/cabal-gitignore");
+    let _ = process_to_vector(file_contents);
+}
+
+#[test]
+fn profunctor_gitignore() {
+    let file_contents = include_str!("testdata/gitignore-tests/profunctor-gitignore");
+    let _ = process_to_vector(file_contents);
+}
+
 #[bench]
 fn bench_gitignore_clone(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");
@@ -37,7 +49,7 @@ fn bench_gitignore_clone(b: &mut Bencher) {
 #[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");
-    b.iter(|| file_contents_to_regex(file_contents))
+    b.iter(|| file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore")))
 }
 
 #[bench]

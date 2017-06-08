@@ -15,6 +15,7 @@ pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
    
     let maybe_set = RegexSet::new(lines);
     if let Ok(s) = maybe_set {
+        debugln!("{:?}",s);
         s
     }
     else {
