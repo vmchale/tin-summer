@@ -69,7 +69,7 @@ pub mod prelude {
 
         // match on the user's expression if it exists
         if let Some(r) = re {
-            r.is_match(path_str)
+            r.is_match(path_str) // FIXME include .gitignore as well?
         }
 
         // otherwise, use builtin expressions
@@ -236,12 +236,12 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // The first unwrap is ok but the second isn't
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked
                             if !artifacts_only || is_artifact(&file, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
-                                            tree.push(path_string, file_size, None, depth + 1, false, min_size); // TODO only print directory names?
+                                            tree.push(path_string, file_size, None, depth + 1, false, min_size);
                                         }
                                     }
                                 else {
