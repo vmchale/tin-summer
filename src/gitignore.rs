@@ -43,10 +43,19 @@ named!(process<&str, Vec<&str>>,
 named!(options<&str, &str>,
     alt!(
         gitignore_comment |
-        is_not!("*?.") |
+        is_not!("*?.#") |
         parse_asterix |
         parse_period |
-        parse_questionmark
+        parse_questionmark |
+        parse_not_comment
+    )
+);
+
+named!(parse_not_comment<&str, &str>,
+    do_parse!(
+        //tag!("#") >>
+        is_not!("\n#") >>
+        ("#")
     )
 );
 

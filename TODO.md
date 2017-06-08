@@ -9,6 +9,8 @@
 - [x] currently panics on symlinks, which is bad
 - [x] output error messages to stderr
 - [x] add tests
+- [x] flag to print files
+- [x] make threshhold accept number w/ M/G tag (nom).
 - [x] test w/ non-ascii characters in filenames
   - [x] non-ascii regex
 - [x] travis ci
@@ -21,22 +23,22 @@
   - [x] regex
 - [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
+- [x] change french/german binary name
+  - [ ] upsteam PR to clap-rs?
+- [ ] flag to follow symlinks
+  - [x] ignore symlinks by default
 - [x] excludes w/ regex
   - [ ] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
-- [x] make threshhold accept number w/ M/G tag (nom).
-- [ ] improve ergonomics by guessing language of build?
+- [ ] improve ergonomics (and possibly speed) by guessing language of build?
 - [ ] don't mark shell scripts as build artifacts?
+- [ ] cool feature: highlight extensions
+  - [ ] optionally color-coded by language
 - [ ] errors should be translated to french/german as well.
   - [ ] make an error type & use that to organize things
-- [ ] use .gitignore to set recursion depth/set it intelligently
-- [x] change french/german binary name
-  - [ ] upsteam PR to clap-rs?
 - [ ] global gitignore
   - [ ] darcs boring file?
 - [ ] flag to print all (e.g. no max depth/etc.)
-- [ ] flag to follow symlinks
-  - [x] ignore symlinks by default
 - [ ] test for unicode file extensions
 - [ ] file at /home/vanessa/git-builds/haskell/flrc/.gitignore fails because it
   doesn't skip comment
