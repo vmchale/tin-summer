@@ -200,6 +200,9 @@ pub mod prelude {
                           with_gitignore: bool,
                           artifacts_only: bool) -> FileTree {
 
+        // make this an input later
+        let force_parallel = false;
+
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
         let min_size = min_bytes.map(FileSize::new);
@@ -263,7 +266,7 @@ pub mod prelude {
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
                                 if depth + 1 > d {
-                                    let dir_size = if !artifacts_only {
+                                    let dir_size = if !artifacts_only && force_parallel {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
                                     else {

@@ -105,6 +105,12 @@ fn bench_extension_regex_long(b: &mut Bencher) {
                           &None) )
 }
 
+#[test]
+fn test_parser() {
+    let cli_input = "30M";
+    assert_eq!(Some(30*1024*1024), threshold(Some(cli_input)));
+}
+
 #[bench]
 fn bench_parser(b:&mut Bencher) {
     let cli_input = "1M";
