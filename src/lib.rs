@@ -65,7 +65,7 @@ pub mod prelude {
     /// - `.mod`: FORTRAN
     /// - `.ji`, `.jld`: julia
     #[cfg(not(target_os = "windows"))]
-    pub fn is_artifact(path_str: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
+    pub fn is_artifact(path_str: &str, full_path: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
 
         // match on the user's expression if it exists
         if let Some(r) = re {
@@ -87,7 +87,7 @@ pub mod prelude {
             if REGEX.is_match(path_str) { true }
             else if let &Some(ref x) = gitignore {
                 if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str)
-                    { x.is_match(path_str) }
+                    { x.is_match(full_path) }
                 else { false }
             }
             else { false }
@@ -95,7 +95,7 @@ pub mod prelude {
     }
 
     #[cfg(target_os = "windows")]
-    pub fn is_artifact(path_str: &str, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
+    pub fn is_artifact(path_str: &str, full_path: &str, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
         if let Some(r) = re {
             r.is_match(path_str)
         }
@@ -114,7 +114,7 @@ pub mod prelude {
             
             else if let &Some(ref x) = gitignore {
                 if REGEX_GITIGNORE.is_match(path_str) {
-                    x.is_match(path_str)
+                    x.is_match(full_path)
                 } else { false }
             }
             else { false }
@@ -127,8 +127,10 @@ pub mod prelude {
                          show_hidden: bool,
                          //maybe_gitignore: Option<RegexSet>,
                          //with_gitignore: bool,
+                         _:bool,
                          artifacts_only: bool,
-                         follow_symlinks: bool) -> FileSize {
+                         follow_symlinks: bool) -> () {
+
         // create new walk + set file size to zero
         let mut filesize_dir = FileSize::new(0);
         let mut builder = WalkBuilder::new(in_paths);
@@ -149,9 +151,9 @@ pub mod prelude {
                 if p.path().is_file() {
                     if let Ok (f) = p.file_name().to_owned().into_string() {
                         if let Ok(metadata) = p.metadata() {
-                            if !artifacts_only || is_artifact(&f, None, &metadata, &None) {
+                            if !artifacts_only || is_artifact(&f, &f, None, &metadata, &None) {
                                 let file_size = FileSize::new(metadata.len());
-                                filesize_dir.add(file_size);
+                                filesize_dir.add(file_size); // this needs to work better
                                 let formatted = format!("{}", file_size);
                                 if let Ok(s) = p.path().as_os_str().to_owned().into_string() {
                                     println!("{}\t {}", formatted.green(), s);
@@ -176,13 +178,13 @@ pub mod prelude {
             else if let Err(e) = path {
                 eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
             }
-            ; WalkState::Continue }));
-        filesize_dir
+            ; WalkState::Continue }) );
     }
 
     /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_all(in_paths: &PathBuf,
                           depth: u8,
+                          max_depth: Option<u8>,
                           min_bytes: Option<u64>,
                           artifact_regex: Option<&Regex>,
                           excludes: Option<&Regex>,
@@ -237,7 +239,7 @@ pub mod prelude {
                         // append file size/name for a file
                         if metadata.is_file() {
                             let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked
-                            if !artifacts_only || is_artifact(&file, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
+                            if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
                                     if file_size >= FileSize::new(b) {
@@ -252,7 +254,7 @@ pub mod prelude {
 
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
-                            let mut subtree = read_all(&path, depth + 1, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                            let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                             let dir_size = subtree.file_size;
                             if let Some(b) = min_bytes {
                                 if dir_size >= FileSize::new(b) {

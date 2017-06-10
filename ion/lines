@@ -24,7 +24,7 @@ let path = .
 let regex = '\'(.*?\\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)\$|total)\' '
 
 # set the benches
-let benches = ["du -hc $path | rg $regex" "du -hc $path | grep -P $regex" "target/release/sniff fast $path" "target/release/sniff ar -g $path" "target/release/sniff ar $path" "target/release/sniff fast $path"]
+let benches = ["du -hac $path | rg $regex" "du -hac $path | grep -P $regex" "target/release/sniff ar -g $path" "target/release/sniff ar $path" "target/release/sniff fast $path"]
 
 
 #do the actual benchmarks
