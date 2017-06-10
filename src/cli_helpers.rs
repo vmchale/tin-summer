@@ -33,7 +33,7 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
         num.parse::<usize>().expect("Please enter a positive whole number")
     }
     else {
-        20
+        8
     }
 }
 

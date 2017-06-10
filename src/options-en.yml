@@ -13,7 +13,7 @@ subcommands:
                 long: count
                 takes_value: true
                 value_name: NUMBER
-                help: Number of files to find (default 20)
+                help: Number of files to find (default 8)
             - files:
                 short: f
                 long: files

@@ -1,4 +1,5 @@
 #![feature(test)]
+#![feature(integer_atomics)] 
 #![allow(match_ref_pats)]
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
@@ -21,6 +22,7 @@ pub mod prelude {
 
 
     //use std::os::unix::fs::{MetadataExt};
+    use std::sync::Arc;
     use std::fs;
     use std::path::{PathBuf, Path};
     use regex::{Regex, RegexSet};
@@ -31,6 +33,7 @@ pub mod prelude {
     use std::process::exit;
     use ignore::{WalkBuilder, WalkState};
     use std::fs::{Metadata, File};
+    use std::sync::atomic::{AtomicU64, Ordering};
 
     #[cfg(not(target_os = "windows"))]
     use std::os::unix::fs::PermissionsExt;
@@ -127,13 +130,14 @@ pub mod prelude {
                          show_hidden: bool,
                          //maybe_gitignore: Option<RegexSet>,
                          //with_gitignore: bool,
-                         _:bool,
+                         silent: bool,
                          artifacts_only: bool,
-                         follow_symlinks: bool) -> () {
+                         follow_symlinks: bool) -> FileSize {
 
         // create new walk + set file size to zero
-        let mut filesize_dir = FileSize::new(0);
         let mut builder = WalkBuilder::new(in_paths);
+        //let mut dir_size = AtomicU64::new(0);
+        let dir_size = Arc::new(AtomicU64::new(0));
 
         // set options for our walk
         builder.max_depth(max_depth);
@@ -145,21 +149,23 @@ pub mod prelude {
         builder.git_global(false);
 
         // runs loop
-        builder.build_parallel().run(|| Box::new(move |path| {
+        builder.build_parallel().run(|| { let filesize_dir = dir_size.clone() ; Box::new(move |path| {
 
             if let Ok(p) = path {
                 if p.path().is_file() {
                     if let Ok (f) = p.file_name().to_owned().into_string() {
                         if let Ok(metadata) = p.metadata() {
-                            if !artifacts_only || is_artifact(&f, &f, None, &metadata, &None) {
+                            if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
                                 let file_size = FileSize::new(metadata.len());
-                                filesize_dir.add(file_size); // this needs to work better
-                                let formatted = format!("{}", file_size);
-                                if let Ok(s) = p.path().as_os_str().to_owned().into_string() {
-                                    println!("{}\t {}", formatted.green(), s);
-                                }
-                                else {
-                                    eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
+                                filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
+                                if !silent {
+                                    let formatted = format!("{}", file_size);
+                                    if let Ok(s) = p.path().as_os_str().to_owned().into_string() {
+                                        println!("{}\t {}", formatted.green(), s);
+                                    }
+                                    else {
+                                        eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
+                                    }
                                 }
                             }
                         }
@@ -172,13 +178,14 @@ pub mod prelude {
                         eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
                     }
                 }
-                // instead, consider a BTreeMap with parent directory sizes? might have to modify
-                // burntsushi's crate
             }
             else if let Err(e) = path {
                 eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
             }
-            ; WalkState::Continue }) );
+            ; WalkState::Continue }) } );
+
+        FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
+
     }
 
     /// Function to process directory contents and return a `FileTree` struct.
@@ -238,7 +245,7 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
                             if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
                                 if let Some(b) = min_bytes {
@@ -254,14 +261,43 @@ pub mod prelude {
 
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
-                            let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
-                            let dir_size = subtree.file_size;
-                            if let Some(b) = min_bytes {
-                                if dir_size >= FileSize::new(b) {
-                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
+                            if let Some(d) = max_depth {
+                                if depth + 1 > d {
+                                    let dir_size = if !artifacts_only {
+                                        read_parallel(&path, None, None, true, true, artifacts_only, false)
+                                    }
+                                    else {
+                                        let subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                        subtree.file_size
+                                    };
+                                    if let Some(b) = min_bytes {
+                                        if dir_size >= FileSize::new(b) {
+                                            tree.push(path_string, dir_size, None, depth + 1, true, min_size);
+                                        }
+                                    }
+                                    else { tree.push(path_string, dir_size, None, depth + 1, true, min_size); }
+                                }
+                                else {
+                                    let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                    let dir_size = subtree.file_size;
+                                    if let Some(b) = min_bytes {
+                                        if dir_size >= FileSize::new(b) {
+                                            tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
+                                        }
+                                    }
+                                    else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
                                 }
                             }
-                            else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
+                            else {
+                                let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                let dir_size = subtree.file_size;
+                                if let Some(b) = min_bytes {
+                                    if dir_size >= FileSize::new(b) {
+                                        tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
+                                    }
+                                }
+                                else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
+                            }
                         }
                     }
                     else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }

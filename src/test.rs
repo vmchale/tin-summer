@@ -11,6 +11,7 @@ use prelude::*;
 use gitignore::*;
 use std::fs::File;
 use std::io::prelude::*;
+use regex::RegexSet;
 
 #[bench]
 fn bench_gitignore_parse_file(b: &mut Bencher) {
@@ -35,6 +36,13 @@ fn cabal_gitignore() {
 }
 
 #[test]
+fn cabal_regex_ignore() {
+    let file_contents = include_str!("testdata/gitignore-tests/cabal-gitignore");
+    let path = PathBuf::from("testdata/gitignore-tests/cabal-gitignore");
+    let _ = file_contents_to_regex(file_contents, &path);
+}
+
+#[test]
 fn profunctor_gitignore() {
     let file_contents = include_str!("testdata/gitignore-tests/profunctor-gitignore");
     let _ = process_to_vector(file_contents);
@@ -55,39 +63,46 @@ fn bench_gitignore(b: &mut Bencher) {
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
+    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, false, false))
 }
 
 #[bench]
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, true, true))
+    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, true, true))
 }
 #[bench]
 fn bench_traversal_sort (b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, 4, None, None, None, true, &None, false, true); v.sort(None, 2) })
+    b.iter(|| { let v = read_all(&p, 4, None, None, None, None, true, &None, false, true); v.sort(None, 2) })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     //let p = PathBuf::from("/home/vanessa/programming/haskell/forks/cabal");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, true))
+    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, false, true))
 }
 
 
 #[bench]
 fn bench_extension_regex(b: &mut Bencher) {
     let metadata = fs::metadata("src/main.rs").unwrap();
-    b.iter(|| is_artifact("target/release/libdoggo.rlib", None, &metadata, &None) )
+    b.iter(|| is_artifact("libdoggo.rlib",
+                          "target/release/libdoggo.rlib",
+                          None,
+                          &metadata,
+                          &None) )
 }
 
 #[bench]
 fn bench_extension_regex_long(b: &mut Bencher) {
     let metadata = fs::metadata("src/main.rs").unwrap();
-    b.iter(|| is_artifact("./target/release/.fingerprint/kernel32-sys-5ee1259db1228dbc/build-script-build_script_build-5ee1259db1228dbc.json", 
-                          None, &metadata, &None) )
+    b.iter(|| is_artifact("sniff",
+                          "target/arm-unknown-linux-musleabi/release/sniff",
+                          None,
+                          &metadata,
+                          &None) )
 }
 
 #[bench]
