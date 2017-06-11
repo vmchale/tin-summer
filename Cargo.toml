@@ -9,6 +9,11 @@ repository = "https://github.com/vmchale/file-sniffer"
 documentation = "https://github.com/vmchale/file-sniffer#README"
 homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
 
+build = "build.rs"
+
+[build-dependencies]
+clap = {version = "2.24", features = ["yaml"]}
+
 [profile.release]
 lto = true
 
@@ -17,7 +22,10 @@ default = ["english"]
 english = []
 deutsch = []
 francais = []
+bash = []
+fish = []
 verbose = []
+
 
 [dependencies]
 nom = "3.0"
@@ -28,16 +36,9 @@ pad = "0.1"
 lazy_static = "0.2"
 ignore = "0.2"
 
-#[dependencies.clap]
-#git = "https://github.com/vmchale/clap-rs.git"
-#rev = "b733f701bd9bf7e777281c596845da9d673a6d98"
-#features = ["yaml"]
-
 [lib]
 path = "src/lib.rs"
 name = "libsniff"
-
-# german: schnüffeln/schnüffle
 
 [[bin]]
 required-features = ["english"]

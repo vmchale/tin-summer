@@ -10,6 +10,7 @@
 - [x] output error messages to stderr
 - [x] add tests
 - [x] flag to print files
+- [x] feature for bash completions
 - [x] make threshhold accept number w/ M/G tag (nom).
 - [x] test w/ non-ascii characters in filenames
   - [x] non-ascii regex
@@ -28,7 +29,8 @@
 - [ ] flag to follow symlinks
   - [x] ignore symlinks by default
 - [x] fix .gitignore parser
-- [ ] shake for cross builds?? parallel would b nice.
+- [ ] shake for cross builds?? parallel would b nice, plus finer control of
+  fish/bash stuff
 - [x] excludes w/ regex
   - [ ] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob

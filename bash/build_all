@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
+mkdir -p target/completions
 export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
+export BASH_COMPLETIONS_DIR="target/completions"
+export FISH_COMPLETIONS_DIR="target/completions"
 cargo update
-cargo build --bin sniff --release
+cargo build --bin sniff --features "bash, fish" --release
 cargo build --bin sniff --target=x86_64-pc-windows-gnu --release
 cargo build --bin sniff --target=arm-unknown-linux-gnueabihf --release
 cargo build --bin sniff --target=x86_64-unknown-linux-musl --release
