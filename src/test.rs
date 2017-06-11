@@ -74,7 +74,7 @@ fn bench_traversal_gitignore(b: &mut Bencher) {
 #[bench]
 fn bench_traversal_sort (b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, 4, None, None, None, None, true, &None, false, true); v.sort(None, 2) })
+    b.iter(|| { let v = read_all(&p, 4, None, None, None, None, true, &None, false, true); v.sort(None, 2, false) })
 }
 
 #[bench]
