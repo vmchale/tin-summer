@@ -58,7 +58,7 @@ impl FileTree {
     pub fn sort(mut self, maybe_num: Option<usize>, d: u8, min_bytes:Option<u64>, dirs_only: bool) -> FileTree {
 
         let min_size = if let Some(x) = min_bytes.map(FileSize::new) { x }
-            else { FileSize::new(100000) };
+            else { FileSize::new(1) };
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
@@ -82,7 +82,7 @@ impl FileTree {
     pub fn filtered(mut self, d: u8, min_bytes: Option<u64>, dirs_only: bool) -> FileTree {
 
         let min_size = if let Some(x) = min_bytes.map(FileSize::new) { x }
-            else { FileSize::new(100000) };
+            else { FileSize::new(1) };
 
         self.files = self.files.into_iter()
             .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size )
