@@ -8,14 +8,9 @@ use regex::Regex;
 use error::check_regex;
 
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
-    //lazy_static! { // TODO fix this?
-    let regex_git: Regex = Regex::new(r"\.git/")
-        .unwrap();
-    //}
     match cli_excludes {
-        Some(x) => { x.to_owned().push_str(r"|\.git"); check_regex(x) }
-        _ => regex_git,
-
+        Some(s) => { let mut x = "(".to_string(); x.push_str(s); x.push_str(r")|\.git$"); check_regex(&x) }
+        _ => Regex::new(r"\.git$").unwrap(),
     }
 }
 
@@ -60,8 +55,7 @@ fn pre_threshold(t_from_cli: &str) -> u64 {
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
     let pre: String = nums.into_iter().collect();
     let n = pre.parse::<u64>()
-        .expect("Error parsing integer at cli_helpers.rs:48");
-    //let n = u64::from_str_radix(num_slice, 10)
+        .expect("Error parsing integer at cli_helpers.rs:58");
     match size_tag {
         b"G" => n * 1073741824,
         b"M" => n * 1048576,

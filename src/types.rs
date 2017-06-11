@@ -117,7 +117,6 @@ impl FileTree {
     }
 
     // TODO: make this more intelligent about what it displays
-    // 1: display only directories by default
     // 2: if we display the child directory, don't show the parent? unless we display more than one
     //    child, in which case it's probably best to display all 3. AND if a directory is on the
     //    gitignore, it's best to not display its children.
