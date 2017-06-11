@@ -192,7 +192,6 @@ pub mod prelude {
     pub fn read_all(in_paths: &PathBuf,
                           depth: u8,
                           max_depth: Option<u8>,
-                          min_bytes: Option<u64>,
                           artifact_regex: Option<&Regex>,
                           excludes: Option<&Regex>,
                           silent: bool,
@@ -205,7 +204,6 @@ pub mod prelude {
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
-        let min_size = min_bytes.map(FileSize::new);
         let gitignore = if with_gitignore {
             if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) } // TODO get rid of this
             else {
@@ -251,14 +249,7 @@ pub mod prelude {
                             let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
                             if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
                                 let file_size = FileSize::new(metadata.len());//blocks() * 512);
-                                if let Some(b) = min_bytes {
-                                    if file_size >= FileSize::new(b) {
-                                            tree.push(path_string, file_size, None, depth + 1, false, min_size);
-                                        }
-                                    }
-                                else {
-                                    tree.push(path_string, file_size, None, depth + 1, false, min_size);
-                                }
+                                tree.push(path_string, file_size, None, depth + 1, false);
                             }
                         }
 
@@ -270,37 +261,21 @@ pub mod prelude {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
                                     else {
-                                        let subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                        let subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                         subtree.file_size
                                     };
-                                    if let Some(b) = min_bytes {
-                                        if dir_size >= FileSize::new(b) {
-                                            tree.push(path_string, dir_size, None, depth + 1, true, min_size);
-                                        }
-                                    }
-                                    else {
-                                    tree.push(path_string, dir_size, None, depth + 1, true, min_size); }
+                                    tree.push(path_string, dir_size, None, depth + 1, true);
                                 }
                                 else {
-                                    let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                    let mut subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                     let dir_size = subtree.file_size;
-                                    if let Some(b) = min_bytes {
-                                        if dir_size >= FileSize::new(b) {
-                                            tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
-                                        }
-                                    }
-                                    else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
+                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                                 }
                             }
                             else {
-                                let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                let mut subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                 let dir_size = subtree.file_size;
-                                if let Some(b) = min_bytes {
-                                    if dir_size >= FileSize::new(b) {
-                                        tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size);
-                                    }
-                                }
-                                else { tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true, min_size); }
+                                tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                             }
                         }
                     }

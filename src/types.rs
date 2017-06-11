@@ -55,13 +55,16 @@ impl Default for FileTree {
 impl FileTree {
 
     // for whatever reason, it's faster to display smallest files first
-    pub fn sort(mut self, maybe_num: Option<usize>, d: u8, dirs_only: bool) -> FileTree {
+    pub fn sort(mut self, maybe_num: Option<usize>, d: u8, min_bytes:Option<u64>, dirs_only: bool) -> FileTree {
+
+        let min_size = if let Some(x) = min_bytes.map(FileSize::new) { x }
+            else { FileSize::new(100000) };
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
             self.files.sort_by(|a, b| sort_by_size(b, a));
             let new = self.files.into_iter()
-                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
+                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size )
                 .take(n).collect::<Vec<NamePair>>();
             FileTree { file_size: self.file_size, files: new }
         }
@@ -70,17 +73,22 @@ impl FileTree {
         else {
             self.files.sort_by(|a, b| sort_by_size(a, b));
             let new = self.files.into_iter()
-                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
+                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size )
                 .collect::<Vec<NamePair>>();
             FileTree { file_size: self.file_size, files: new }
         }
     }
 
-    pub fn filtered(mut self, d: u8, dirs_only: bool) -> FileTree {
+    pub fn filtered(mut self, d: u8, min_bytes: Option<u64>, dirs_only: bool) -> FileTree {
+
+        let min_size = if let Some(x) = min_bytes.map(FileSize::new) { x }
+            else { FileSize::new(100000) };
+
         self.files = self.files.into_iter()
-            .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
+            .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size )
             .filter(|a| a.depth <= d)
             .collect::<Vec<NamePair>>();
+
         FileTree { file_size: self.file_size, files: self.files }
     }
 
@@ -93,22 +101,14 @@ impl FileTree {
                 size: FileSize,
                 subtree: Option<&mut FileTree>,
                 depth: u8,
-                is_dir: bool,
-                min_size: Option<FileSize>) -> () {
+                is_dir: bool) -> () {
 
         // add to total
         self.file_size.add(size);
 
         // append subtree if appropriate
-        if let Some(min) = min_size {
-            if let Some(s) = subtree {
-                if size > min {
-                    self.files.append(&mut s.files);
-                }
-            }
-        }
-        else if let Some(s) = subtree {
-            self.files.append(&mut s.files);
+        if let Some(s) = subtree {
+                self.files.append(&mut s.files);
         }
 
         // return new file tree
