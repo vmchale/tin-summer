@@ -23,5 +23,5 @@ end
 #export CLICOLOR=0
 
 #do the actual benchmarks
-let benches = ["sniff fat $path" "$binpath fat $path" "sniff sort $path" "$binpath sort $path" "$HOME/.cargo/bin/sniff ar --sort /home/vanessa/programming/haskell/forks/cabal" "$binpath ar --sort $path"]
+let benches = ["sniff fat $path" "$binpath fat $path" "sniff sort $path" "$binpath sort $path" "$HOME/.cargo/bin/sniff ar --sort $path" "$binpath ar --sort $path"]
 bench @benches
