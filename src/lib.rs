@@ -265,8 +265,8 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if depth + 1 > d && force_parallel {
-                                    let dir_size = if !artifacts_only {
+                                if depth + 1 > d {
+                                    let dir_size = if !artifacts_only && force_parallel {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
                                     else {
