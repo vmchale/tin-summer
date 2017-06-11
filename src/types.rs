@@ -55,13 +55,13 @@ impl Default for FileTree {
 impl FileTree {
 
     // for whatever reason, it's faster to display smallest files first
-    pub fn sort(mut self, maybe_num: Option<usize>, d: u8) -> FileTree {
+    pub fn sort(mut self, maybe_num: Option<usize>, d: u8, dirs_only: bool) -> FileTree {
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
             self.files.sort_by(|a, b| sort_by_size(b, a));
             let new = self.files.into_iter()
-                .filter(|a| a.depth <= d )
+                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
                 .take(n).collect::<Vec<NamePair>>();
             FileTree { file_size: self.file_size, files: new }
         }
@@ -70,14 +70,15 @@ impl FileTree {
         else {
             self.files.sort_by(|a, b| sort_by_size(a, b));
             let new = self.files.into_iter()
-                .filter(|a| a.depth <= d )
+                .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
                 .collect::<Vec<NamePair>>();
             FileTree { file_size: self.file_size, files: new }
         }
     }
 
-    pub fn filtered(mut self, d: u8) -> FileTree {
+    pub fn filtered(mut self, d: u8, dirs_only: bool) -> FileTree {
         self.files = self.files.into_iter()
+            .filter(|a| a.depth <= d && (if dirs_only { a.is_dir } else { true }) )
             .filter(|a| a.depth <= d)
             .collect::<Vec<NamePair>>();
         FileTree { file_size: self.file_size, files: self.files }
@@ -121,12 +122,12 @@ impl FileTree {
     //    child, in which case it's probably best to display all 3. AND if a directory is on the
     //    gitignore, it's best to not display its children.
     // 3: if we *are* displaying files, only display the first few in a directory
-    pub fn display_tree(&mut self, init_dir: PathBuf, dirs_only: bool) -> () {
+    pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
 
         // display stuff
         let vec = &self.files;
         for name_pair in vec {
-            if name_pair.bytes != FileSize::new(0) && (!dirs_only || name_pair.is_dir) {
+            if name_pair.bytes != FileSize::new(0) {
                 let to_formatted = format!("{}", name_pair.bytes);
                 println!("{}\t {}", &to_formatted.green(), name_pair.name);
             }

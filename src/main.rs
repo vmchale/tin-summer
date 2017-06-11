@@ -52,10 +52,10 @@ fn main() {
         };
 
         // filter by depth
-        let mut v_filtered = v.filtered(depth);
+        let mut v_filtered = v.filtered(depth, !print_files);
 
         // display results
-        v_filtered.display_tree(init_dir, !print_files);
+        v_filtered.display_tree(init_dir);
     }
 
     // find large files
@@ -86,10 +86,10 @@ fn main() {
         };
 
         // filter by depth
-        let mut v_filtered = v.filtered(depth);
+        let mut v_filtered = v.filtered(depth, !print_files);
 
         // display results
-        v_filtered.display_tree(init_dir, !print_files);
+        v_filtered.display_tree(init_dir);
 
     }
 
@@ -152,13 +152,13 @@ fn main() {
             };
 
         let mut v_processed = if should_sort {
-                v.sort(Some(num_int), depth)
+                v.sort(Some(num_int), depth, !print_files)
             }
             else {
-                v.filtered(depth)
+                v.filtered(depth, !print_files)
             };
 
-        v_processed.display_tree(init_dir, !print_files);
+        v_processed.display_tree(init_dir);
     }
 
     // sort entities by size
@@ -198,10 +198,10 @@ fn main() {
         };
 
         // sort them
-        let mut v_sorted = v.sort(Some(num_int), depth);
+        let mut v_sorted = v.sort(Some(num_int), depth, !print_files);
 
         // display sorted filenames
-        v_sorted.display_tree(init_dir, !print_files);
+        v_sorted.display_tree(init_dir);
     }
 
     else {

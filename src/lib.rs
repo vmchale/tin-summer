@@ -265,8 +265,8 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if depth + 1 > d {
-                                    let dir_size = if !artifacts_only && force_parallel {
+                                if depth + 1 > d && force_parallel {
+                                    let dir_size = if !artifacts_only {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
                                     else {
@@ -278,7 +278,8 @@ pub mod prelude {
                                             tree.push(path_string, dir_size, None, depth + 1, true, min_size);
                                         }
                                     }
-                                    else { tree.push(path_string, dir_size, None, depth + 1, true, min_size); }
+                                    else {
+                                    tree.push(path_string, dir_size, None, depth + 1, true, min_size); }
                                 }
                                 else {
                                     let mut subtree = read_all(&path, depth + 1, max_depth, min_bytes, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);

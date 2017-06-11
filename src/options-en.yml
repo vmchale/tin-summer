@@ -115,6 +115,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - depth: 
                 short: d
                 long: depth
