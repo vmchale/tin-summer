@@ -12,6 +12,12 @@ use gitignore::*;
 use std::fs::File;
 use std::io::prelude::*;
 use regex::RegexSet;
+use colored::*;
+
+#[bench]
+fn bench_colorization(b: &mut Bencher) {
+    b.iter(|| "428 MB".green())
+}
 
 #[bench]
 fn bench_gitignore_parse_file(b: &mut Bencher) {
@@ -63,25 +69,25 @@ fn bench_gitignore(b: &mut Bencher) {
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, false, false))
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
 }
 
 #[bench]
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, true, true))
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, true, true))
 }
 #[bench]
 fn bench_traversal_sort (b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, 4, None, None, None, None, true, &None, false, true); v.sort(None, 2, false) })
+    b.iter(|| { let v = read_all(&p, 4, None, None, None, true, &None, false, true); v.sort(None, 2, None, false) })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     //let p = PathBuf::from("/home/vanessa/programming/haskell/forks/cabal");
-    b.iter(|| read_all(&p, 4, None, None, None, None, true, &None, false, true))
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, true))
 }
 
 

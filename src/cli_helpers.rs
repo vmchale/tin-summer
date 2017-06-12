@@ -10,7 +10,7 @@ use error::check_regex;
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
     match cli_excludes {
         Some(s) => { let mut x = "(".to_string(); x.push_str(s); x.push_str(r")|\.git$"); check_regex(&x) }
-        _ => Regex::new(r"\.git$").unwrap(),
+        _ => Regex::new(r"(_darcs|.pijul|\.git)$").unwrap(),
     }
 }
 
@@ -57,10 +57,10 @@ fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
     let n = pre.parse::<u64>()
         .expect("Error parsing integer at cli_helpers.rs:58");
     match size_tag {
-        b"G" => n * 1073741824,
-        b"M" => n * 1048576,
-        b"k" => n * 1024,
-        b"b" => n,
+        b"G" | b"g" => n * 1073741824,
+        b"M" | b"m" => n * 1048576,
+        b"k" | b"K" => n * 1024,
+        b"b" | b"B" => n,
         _ => exit(0x0f01),
     }
 }
@@ -83,7 +83,7 @@ named!(digit_char<&[u8], char>,
 named!(get_threshold<&[u8],u64>,
     do_parse!(
         nums:     many1!(digit_char) >>
-        size_tag: alt!(tag!("M") | tag!("G") | tag!("k") | tag!("b")) >>
+        size_tag: alt!(tag!("M") | tag!("G") | tag!("k") | tag!("b") | tag!("B") | tag!("K") | tag!("g") | tag!("m")) >>
         (to_u64(nums, size_tag))
     )
 );

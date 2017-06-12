@@ -7,8 +7,6 @@ build artifacts scattered about. `sniff` is a tool to help you find those
 artifacts. It's especially useful when you're writing build systems, 
 because you can make sure your `clean` command gets everything.
 
-Anecdotally, I found around 2GB of junk with this tool.
-
 ## Installation
 
 ### Binary install
@@ -34,6 +32,15 @@ Make sure you are on nightly; if in doubt run
 
 ```bash
 rustup run nightly cargo install file-sniffer
+```
+
+### Shell completions
+
+After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can use the
+`bash` or `fish` features like so:
+
+```bash
+ $ cargo install --features fish file-sniffer
 ```
 
 ## Use
@@ -72,6 +79,7 @@ export CLICOLOR=0
 
   - [x] find "likely build artifact" directories
     - [x] use .gitignore/path to make decision
+    - [ ] smart output (only first few files per dir)
   - [ ] match speed of gnu utils on traversals
     - [x] faster when finding artifacts
     - [x] faster with excludes
@@ -97,13 +105,13 @@ list, feel free to open a PR or start an issue.
 
 #### Foreign-language binaries
 
-These still need a bit of work; as of now errors and warnings are still in
+These are still very much works in progress; as of now errors and warnings are still in
 English. Binaries will be available once things stabilize.
 
 Français:
 
 ```bash
-cargo install file-sniffer --no-default-features --feature francais # crates.io doesn't permit unicode there
+cargo install file-sniffer --no-default-features --feature francais # crates.io doesn't permit unicode in feature names 
 ```
 
 Deutsch:

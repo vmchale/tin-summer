@@ -128,8 +128,6 @@ pub mod prelude {
                          max_depth: Option<usize>, // optionally include a max depth to which to recurse
                          _: Option<&Regex>,
                          show_hidden: bool,
-                         //maybe_gitignore: Option<RegexSet>,
-                         //with_gitignore: bool,
                          silent: bool,
                          artifacts_only: bool,
                          follow_symlinks: bool) -> FileSize {

@@ -58,7 +58,7 @@ impl FileTree {
     pub fn sort(mut self, maybe_num: Option<usize>, d: u8, min_bytes:Option<u64>, dirs_only: bool) -> FileTree {
 
         let min_size = if let Some(x) = min_bytes.map(FileSize::new) { x }
-            else { FileSize::new(1) };
+            else { FileSize::new(1) }; // FIXME no compare
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
@@ -133,6 +133,7 @@ impl FileTree {
         }
 
         // display total if it's nonzero
+        // FIXME include threshold here
         if self.file_size != FileSize::new(0) {
             let to_formatted = format!("{}", self.file_size);
             let path = init_dir.display();
