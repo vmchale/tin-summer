@@ -67,6 +67,24 @@ fn bench_gitignore(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_parallel_traversal(b: &mut Bencher) {
+    let p = PathBuf::from("src/testdata");
+    b.iter(|| read_parallel(&p, None, None, true, true, false, false))
+}
+
+#[bench]
+fn bench_traversal_large(b: &mut Bencher) {
+    let p = PathBuf::from(".");
+    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
+}
+
+#[bench]
+fn bench_parallel_traversal_large(b: &mut Bencher) {
+    let p = PathBuf::from(".");
+    b.iter(|| read_parallel(&p, None, None, true, true, false, false))
+}
+
+#[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
