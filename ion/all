@@ -3,9 +3,6 @@
 # set path to include sniff
 let PATH=$HOME/.cargo/bin:$PATH
 
-# make sure build is up to date
-cargo build --bin sniff --release
-
 #export CLICOLOR=0
 let CLICOLOR=0
 
@@ -18,10 +15,10 @@ for x in @args
 end
 
 #let path = .
-let path = /home/vanessa/programming/haskell
+let path = /home/vanessa/programming
 
 # set the benches
-let benches = ["target/release/sniff all $path" "target/release/sniff all -d1 $path" "target/release/sniff all -p -d1 $path" "sniff all $path" "du -hcd2 $path" "du -hcd1 $path"]
+let benches = ["sniff all $path" "sniff all -d1 $path" "sniff all -p -d1 $path" "du -hcd2 $path" "du -hcd1 $path"]
 
 
 #do the actual benchmarks

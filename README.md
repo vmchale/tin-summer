@@ -84,6 +84,7 @@ export CLICOLOR=0
     - [x] faster when finding artifacts
     - [x] faster with excludes
     - [x] faster on small directories
+    - [x] beat du on large directories
   - [x] colorized output
   - [x] sort results by size
 

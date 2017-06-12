@@ -153,10 +153,6 @@ subcommands:
                 short: s
                 long: silent
                 help: Don't print warnings.
-            - parallel:
-                short: p
-                long: parallel
-                help: Force parallel directory traversals
             - files:
                 short: f
                 long: files
