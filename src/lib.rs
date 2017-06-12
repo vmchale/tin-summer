@@ -4,6 +4,8 @@
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
 
+#[allow(unused_imports)]
+#[macro_use] extern crate clap;
 #[macro_use] extern crate nom;
 #[macro_use] extern crate lazy_static;
 
@@ -188,6 +190,98 @@ pub mod prelude {
     }
 
     /// Function to process directory contents and return a `FileTree` struct.
+    pub fn read_size(in_paths: &PathBuf,
+                          depth: u8,
+                          max_depth: Option<u8>,
+                          artifact_regex: Option<&Regex>,
+                          excludes: Option<&Regex>,
+                          silent: bool,
+                          maybe_gitignore: &Option<RegexSet>,
+                          with_gitignore: bool,
+                          artifacts_only: bool) -> FileSize {
+
+        // attempt to read the .gitignore
+        let mut size = FileSize::new(0);
+        let gitignore = if with_gitignore {
+            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) } // TODO get rid of this
+            else {
+                let mut gitignore_path = in_paths.clone();
+                gitignore_path.push(".gitignore");
+                if let Ok(mut file) = File::open(gitignore_path.clone()) {
+                    let mut contents = String::new();
+                    file.read_to_string(&mut contents)
+                        .expect("File read failed.");
+                    Some(file_contents_to_regex(&contents, &gitignore_path))
+                } else { None }
+            }
+        } else { None };
+
+        // try to read directory contents
+        if let Ok(paths) = fs::read_dir(in_paths) {
+
+            // iterate over all the entries in the directory
+            for p in paths {
+                let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
+                let (path_string, bool_loop): (String, bool) = if let Ok(x) = path.clone().into_os_string().into_string() {
+                    let bool_loop = match excludes {
+                        Some(ex) => !ex.is_match(&x),
+                        _ => true,
+                    };
+
+                    (x, bool_loop)
+                }
+                else {
+                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path); // TODO consider byte matching here?
+                    ("".to_string(), false)
+                };
+
+                // only consider path if we're not using regex excludes or if they don't match the
+                // exclusion regex
+                if bool_loop {
+
+                    // if this fails, it's probably because `path` is a broken symlink
+                    if let Ok(metadata) = fs::symlink_metadata(&path) {
+
+                        // append file size/name for a file
+                        if metadata.is_file() {
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
+                            if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
+                                let file_size = FileSize::new(metadata.len());//blocks() * 512);
+                                size.add(file_size);
+                            }
+                        }
+
+                        // otherwise, go deeper
+                        else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
+                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                            size.add(dir_size);
+                        }
+                    }
+                    else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
+                }
+            }
+        }
+
+        // if we can't read the directory contents, figure out why
+        // 1: check the path exists
+        else if !in_paths.exists() {
+            eprintln!("{}: path '{}' does not exist.", "Error".red(), &in_paths.display());
+            exit(0x0001);
+        }
+        // 2: check the path is actually a directory
+        else if !in_paths.is_dir() {
+            eprintln!("{}: {} is not a directory.", "Error".red(), &in_paths.display());
+            exit(0x0001);
+        }
+        // 3: otherwise, give a warning about permissions
+        else if !silent {
+            eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+        }
+
+        size
+    }
+
+    /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_all(in_paths: &PathBuf,
                           depth: u8,
                           max_depth: Option<u8>,
@@ -260,8 +354,7 @@ pub mod prelude {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
                                     else {
-                                        let subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
-                                        subtree.file_size
+                                        read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only)
                                     };
                                     tree.push(path_string, dir_size, None, depth + 1, true);
                                 }

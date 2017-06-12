@@ -2,6 +2,7 @@
 extern crate test;
 extern crate regex;
 
+use clap::App;
 use std::fs;
 use regex::Regex;
 use std::path::PathBuf;
@@ -13,6 +14,12 @@ use std::fs::File;
 use std::io::prelude::*;
 use regex::RegexSet;
 use colored::*;
+
+#[bench]
+fn bench_cli_options(b:&mut Bencher) {
+    let yaml = load_yaml!("options-de.yml");
+    b.iter(|| App::from_yaml(yaml).version(crate_version!()).get_matches_from(vec!["sniff","ar","-g","."]))
+}
 
 #[bench]
 fn bench_colorization(b: &mut Bencher) {
