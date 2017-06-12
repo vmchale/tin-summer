@@ -2,7 +2,7 @@
 cargo run --bin sniff -- sort -t1M
 cargo run --bin sniff -- fat
 cargo run --bin sniff -- sort src/ # to make sure non-ascii displays correctly
-cargo build --bin sniff --release
+cargo build --release
 
 let binpath = target/release/sniff
 
@@ -23,5 +23,5 @@ end
 #export CLICOLOR=0
 
 #do the actual benchmarks
-let benches = ["sniff fat $path" "$binpath fat $path" "sniff sort $path" "$binpath sort $path" "$HOME/.cargo/bin/sniff ar --sort $path" "$binpath ar --sort $path"]
+let benches = ["sniff fat $path" "$binpath fat $path" "sniff sort $path" "$binpath sort $path" "sniff ar --sort $path" "$binpath ar --sort $path"]
 bench @benches
