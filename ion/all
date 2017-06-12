@@ -1,0 +1,34 @@
+#!/usr/bin/env ion
+
+# set path to include sniff
+let PATH=$HOME/.cargo/bin:$PATH
+
+# make sure build is up to date
+cargo build --bin sniff --release
+
+#export CLICOLOR=0
+let CLICOLOR=0
+
+# set to a suitable path & decide whether to produce reports
+let reports = "false"
+for x in @args
+    if test $x = "+reports"
+        let reports = "true"
+    end
+end
+
+#let path = .
+let path = /home/vanessa/programming/haskell
+
+# set the benches
+let benches = ["target/release/sniff all $path" "sniff all $path" "du -hcd2 $path"]
+
+
+#do the actual benchmarks
+if test $reports = "true"
+    echo 'generating reports with benchmarks...'
+    mkdir -p reports/
+    bench --output reports/fast.html @benches
+else
+    bench @benches
+end
