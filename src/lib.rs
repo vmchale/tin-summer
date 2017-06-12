@@ -35,7 +35,6 @@ pub mod prelude {
     use std::process::exit;
     use ignore::{WalkBuilder, WalkState};
     use std::fs::{Metadata, File};
-    use std::cmp::min;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     #[cfg(not(target_os = "windows"))]
@@ -137,7 +136,6 @@ pub mod prelude {
 
         // create new walk + set file size to zero
         let mut builder = WalkBuilder::new(in_paths);
-        //let mut dir_size = AtomicU64::new(0);
         let dir_size = Arc::new(AtomicU64::new(0));
 
         // set options for our walk
@@ -242,17 +240,17 @@ pub mod prelude {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = fs::symlink_metadata(&path) {
 
-                        // append file size/name for a file
+                        // append file size for a file
                         if metadata.is_file() {
                             let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
                             if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
-                                let file_size = FileSize::new(metadata.len());//blocks() * 512);
+                                let file_size = FileSize::new(metadata.len());
                                 size.add(file_size);
                             }
                         }
 
                         // otherwise, go deeper
-                        else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
+                        else if metadata.is_dir() {
                             let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                             size.add(dir_size);
                         }
@@ -349,7 +347,7 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if depth > d - min(depth, d) {
+                                if d == 0 || depth > d - 1 {
                                     let dir_size = if !artifacts_only && force_parallel {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
@@ -359,6 +357,7 @@ pub mod prelude {
                                     tree.push(path_string, dir_size, None, depth + 1, true);
                                 }
                                 else {
+                                    //println!("{}", &path.display());
                                     let mut subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                     let dir_size = subtree.file_size;
                                     tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);

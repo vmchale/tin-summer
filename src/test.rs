@@ -82,7 +82,7 @@ fn bench_parallel_traversal(b: &mut Bencher) {
 #[bench]
 fn bench_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_all(&p, 4, None, None, None, true, &None, false, false))
+    b.iter(|| read_size(&p, 4, None, None, None, true, &None, false, false))
 }
 
 #[bench]

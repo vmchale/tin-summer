@@ -85,6 +85,7 @@ fn main() {
                 _ => read_all(&init_dir, 0, Some(depth), None, None, silent, &None, false, false),
         };
 
+        
         // filter by depth
         let mut v_filtered = v.filtered(depth, min_bytes, !print_files);
 
