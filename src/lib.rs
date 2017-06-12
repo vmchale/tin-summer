@@ -33,6 +33,7 @@ pub mod prelude {
     use std::process::exit;
     use ignore::{WalkBuilder, WalkState};
     use std::fs::{Metadata, File};
+    use std::cmp::min;
     use std::sync::atomic::{AtomicU64, Ordering};
 
     #[cfg(not(target_os = "windows"))]
@@ -254,7 +255,7 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if depth > d - 1 {
+                                if depth > d - min(depth, d) {
                                     let dir_size = if !artifacts_only && force_parallel {
                                         read_parallel(&path, None, None, true, true, artifacts_only, false)
                                     }
