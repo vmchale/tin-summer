@@ -39,6 +39,9 @@ fn main() {
         // don't print warnings
         let print_files = command.is_present("files");
 
+        // whether to use parallel directory traversals
+        let force_parallel = command.is_present("parallel");
+
         // set regex for exclusions
         let regex = command.value_of("excludes");
 
@@ -47,8 +50,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-                _ => read_all(&init_dir, 0, Some(depth), None, None, silent, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
         };
 
         // filter by depth
@@ -67,6 +70,9 @@ fn main() {
         // set depth
         let depth = get_depth(command.value_of("depth"));
 
+        // whether to use parallel directory traversals
+        let force_parallel = command.is_present("parallel");
+
         // don't print warnings
         let silent = command.is_present("silent");
 
@@ -81,8 +87,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-                _ => read_all(&init_dir, 0, Some(depth), None, None, silent, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
         };
 
         
@@ -120,6 +126,9 @@ fn main() {
         // set depth
         let depth = get_depth(command.value_of("depth"));
 
+        // whether to use parallel directory traversals
+        let force_parallel = command.is_present("parallel");
+
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count")); 
 
@@ -145,11 +154,11 @@ fn main() {
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, 0, Some(depth), Some(&re), Some(&excludes), silent, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), silent, &None, !no_gitignore, true)
             }
             else {
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, 0, Some(depth), None, Some(&excludes), silent, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), silent, &None, !no_gitignore, true)
             };
 
         let mut v_processed = if should_sort {
@@ -177,6 +186,9 @@ fn main() {
         // decide whether to warnings
         let silent = command.is_present("silent");
 
+        // whether to use parallel directory traversals
+        let force_parallel = command.is_present("parallel");
+
         // don't print warnings
         let print_files = command.is_present("files");
 
@@ -194,8 +206,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-            Some(r) => read_all(&init_dir, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-            _ => read_all(&init_dir, 0, Some(depth), None, None, silent, &None, false, false),
+            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
+            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
         };
 
         // sort them

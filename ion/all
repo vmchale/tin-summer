@@ -21,7 +21,7 @@ end
 let path = /home/vanessa/programming/haskell
 
 # set the benches
-let benches = ["target/release/sniff all $path" "sniff all $path" "du -hcd2 $path"]
+let benches = ["target/release/sniff all $path" "target/release/sniff all -d1 $path" "target/release/sniff all -p -d1 $path" "sniff all $path" "du -hcd2 $path" "du -hcd1 $path"]
 
 
 #do the actual benchmarks

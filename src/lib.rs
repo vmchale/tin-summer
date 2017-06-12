@@ -189,14 +189,14 @@ pub mod prelude {
 
     /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_size(in_paths: &PathBuf,
-                          depth: u8,
-                          max_depth: Option<u8>,
-                          artifact_regex: Option<&Regex>,
-                          excludes: Option<&Regex>,
-                          silent: bool,
-                          maybe_gitignore: &Option<RegexSet>,
-                          with_gitignore: bool,
-                          artifacts_only: bool) -> FileSize {
+                     depth: u8,
+                     max_depth: Option<u8>,
+                     artifact_regex: Option<&Regex>,
+                     excludes: Option<&Regex>,
+                     silent: bool,
+                     maybe_gitignore: &Option<RegexSet>,
+                     with_gitignore: bool,
+                     artifacts_only: bool) -> FileSize {
 
         // attempt to read the .gitignore
         let mut size = FileSize::new(0);
@@ -281,17 +281,15 @@ pub mod prelude {
 
     /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_all(in_paths: &PathBuf,
-                          depth: u8,
-                          max_depth: Option<u8>,
-                          artifact_regex: Option<&Regex>,
-                          excludes: Option<&Regex>,
-                          silent: bool,
-                          maybe_gitignore: &Option<RegexSet>,
-                          with_gitignore: bool,
-                          artifacts_only: bool) -> FileTree {
-
-        // make this an input later
-        let force_parallel = false;
+                    force_parallel: bool,
+                    depth: u8,
+                    max_depth: Option<u8>,
+                    artifact_regex: Option<&Regex>,
+                    excludes: Option<&Regex>,
+                    silent: bool,
+                    maybe_gitignore: &Option<RegexSet>,
+                    with_gitignore: bool,
+                    artifacts_only: bool) -> FileTree {
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
@@ -358,13 +356,13 @@ pub mod prelude {
                                 }
                                 else {
                                     //println!("{}", &path.display());
-                                    let mut subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                    let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                     let dir_size = subtree.file_size;
                                     tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                                 }
                             }
                             else {
-                                let mut subtree = read_all(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                 let dir_size = subtree.file_size;
                                 tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                             }
