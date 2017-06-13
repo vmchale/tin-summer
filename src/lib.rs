@@ -155,17 +155,7 @@ pub mod prelude {
                     if let Ok (f) = p.file_name().to_owned().into_string() {
                         if let Ok(metadata) = p.metadata() {
                             if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
-                                let file_size = FileSize::new(metadata.len());
                                 filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
-                                if !silent {
-                                    let formatted = format!("{}", file_size);
-                                    if let Ok(s) = p.path().as_os_str().to_owned().into_string() {
-                                        println!("{}\t {}", formatted.green(), s);
-                                    }
-                                    else {
-                                        eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
-                                    }
-                                }
                             }
                         }
                         else if follow_symlinks {
@@ -183,7 +173,15 @@ pub mod prelude {
             }
             ; WalkState::Continue }) } );
 
-        FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
+        let size = FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner());
+
+        if !silent && size != FileSize::new(0) {
+            let to_formatted = format!("{}", size);
+            let path = in_paths.display();
+            println!("{}\t {}", &to_formatted.green(), path);
+        }
+
+        size
 
     }
 
@@ -255,7 +253,7 @@ pub mod prelude {
                             size.add(dir_size);
                         }
                     }
-                    else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
+                    else { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }
             }
         }
@@ -272,8 +270,14 @@ pub mod prelude {
             exit(0x0001);
         }
         // 3: otherwise, give a warning about permissions
-        else if !silent {
+        else {
             eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+        }
+
+        if !silent && size != FileSize::new(0) {
+            let to_formatted = format!("{}", size);
+            let path = in_paths.display();
+            println!("{}\t {}", &to_formatted.green(), path);
         }
 
         size
@@ -345,9 +349,9 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if d == 0 || depth > d - 1 {
+                                if d == 0 || d == 1 || depth > d - 2 {
                                     let dir_size = if !artifacts_only && force_parallel {
-                                        read_parallel(&path, None, None, true, true, artifacts_only, false)
+                                        read_parallel(&path, None, None, true, silent, artifacts_only, false)
                                     }
                                     else {
                                         read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only)
@@ -355,7 +359,6 @@ pub mod prelude {
                                     tree.push(path_string, dir_size, None, depth + 1, true);
                                 }
                                 else {
-                                    //println!("{}", &path.display());
                                     let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
                                     let dir_size = subtree.file_size;
                                     tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
@@ -368,7 +371,7 @@ pub mod prelude {
                             }
                         }
                     }
-                    else if !silent { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
+                    else { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }
             }
         }
@@ -385,7 +388,7 @@ pub mod prelude {
             exit(0x0001);
         }
         // 3: otherwise, give a warning about permissions
-        else if !silent {
+        else {
             eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
         }
 

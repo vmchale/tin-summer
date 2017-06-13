@@ -50,8 +50,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
         };
 
         // filter by depth
@@ -87,8 +87,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
         };
 
         
@@ -154,11 +154,11 @@ fn main() {
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), silent, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), true, &None, !no_gitignore, true)
             }
             else {
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), silent, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), true, &None, !no_gitignore, true)
             };
 
         let mut v_processed = if should_sort {
@@ -206,8 +206,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), silent, &None, false, false),
-            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, silent, &None, false, false),
+            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
+            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
         };
 
         // sort them
