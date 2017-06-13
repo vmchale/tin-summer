@@ -48,3 +48,4 @@
   - [ ] traverse a directory in parallel?
   - [ ] figure out block sizes vs. file sizes
 - [ ] consider: hardcoded gitignore, from global & supporting various languages?
+- [ ] intelligent selection of parallel flag

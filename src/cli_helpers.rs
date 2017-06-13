@@ -16,7 +16,8 @@ pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
 
 pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
     if let Some(n) = depth_from_cli {
-        n.parse::<u8>().expect("Please enter a positive whole number")
+        let m = n.parse::<u8>().expect("Please enter a positive whole number");
+        if m == 0 { 1 } else { m }
     }
     else {
         2

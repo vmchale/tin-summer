@@ -136,16 +136,19 @@ pub mod prelude {
 
         // create new walk + set file size to zero
         let mut builder = WalkBuilder::new(in_paths);
-        let dir_size = Arc::new(AtomicU64::new(0));
+        let dir_size = Arc::new(AtomicU64::new(0)); // currently, this is not working because of the clone
+        // it's resetting itself. Follow the example in the ignore crate?
 
         // set options for our walk
         builder.max_depth(max_depth);
         builder.hidden(show_hidden);
         builder.follow_links(follow_symlinks);
+        //builder.max_filesize(None);
         builder.ignore(false);
         builder.git_ignore(false);
         builder.git_exclude(false);
         builder.git_global(false);
+        builder.parents(false);
 
         // runs loop
         builder.build_parallel().run(|| { let filesize_dir = dir_size.clone() ; Box::new(move |path| {
@@ -249,7 +252,7 @@ pub mod prelude {
 
                         // otherwise, go deeper
                         else if metadata.is_dir() {
-                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, true, &gitignore, with_gitignore, artifacts_only);
                             size.add(dir_size);
                         }
                     }
@@ -349,7 +352,7 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if d == 0 || d == 1 || depth > d - 2 {
+                                if depth > d {
                                     let dir_size = if !artifacts_only && force_parallel {
                                         read_parallel(&path, None, None, true, silent, artifacts_only, false)
                                     }

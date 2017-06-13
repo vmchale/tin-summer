@@ -32,10 +32,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
+              #- silent:
+              #short: s
+              #long: silent
+              #help: Don't print warnings.
             - threshold:
                 short: t
                 long: threshold
@@ -54,10 +54,6 @@ subcommands:
                 takes_value: true
                 value_name: SIZE
                 help: Specify a threshold for file size (default 1M)
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
             - excludes:
                 short: e
                 long: exclude
@@ -118,10 +114,6 @@ subcommands:
                 short: p
                 long: parallel
                 help: Force parallel directory traversals
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
             - excludes:
                 short: e
                 long: exclude
@@ -149,10 +141,6 @@ subcommands:
                 takes_value: true
                 value_name: SIZE
                 help: Specify a threshold for file size (default 1M)
-            - silent:
-                short: s
-                long: silent
-                help: Don't print warnings.
             - files:
                 short: f
                 long: files

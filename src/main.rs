@@ -34,7 +34,7 @@ fn main() {
         let depth = get_depth(command.value_of("depth"));
 
         // don't print warnings
-        let silent = command.is_present("silent");
+        //let silent = command.is_present("silent");
 
         // don't print warnings
         let print_files = command.is_present("files");
@@ -73,9 +73,6 @@ fn main() {
         // whether to use parallel directory traversals
         let force_parallel = command.is_present("parallel");
 
-        // don't print warnings
-        let silent = command.is_present("silent");
-
         // set regex for exclusions
         let regex = command.value_of("excludes"); 
 
@@ -93,7 +90,7 @@ fn main() {
 
         
         // filter by depth
-        let mut v_filtered = v.filtered(depth, min_bytes, !print_files);
+        let mut v_filtered = v.filtered(depth - 1, min_bytes, !print_files);
 
         // display results
         v_filtered.display_tree(init_dir);
@@ -134,9 +131,6 @@ fn main() {
 
         // decide whether to sort
         let should_sort = command.is_present("sort");
-
-        // don't print warnings
-        let silent = command.is_present("silent");
 
         // don't print warnings
         let print_files = command.is_present("files");
@@ -182,9 +176,6 @@ fn main() {
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
-
-        // decide whether to warnings
-        let silent = command.is_present("silent");
 
         // whether to use parallel directory traversals
         let force_parallel = command.is_present("parallel");
