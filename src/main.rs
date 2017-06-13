@@ -90,7 +90,7 @@ fn main() {
 
         
         // filter by depth
-        let mut v_filtered = v.filtered(depth - 1, min_bytes, !print_files);
+        let mut v_filtered = v.filtered(depth, min_bytes, !print_files);
 
         // display results
         v_filtered.display_tree(init_dir);
