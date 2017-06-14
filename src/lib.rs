@@ -147,25 +147,10 @@ pub mod prelude {
         builder.git_global(false);
         builder.parents(false);
 
-        println!("Traversing: {:?}", &in_paths);
-
-        // basically, because of the clone() this is worthless :(
-        // HOWEVER: I still am confused as to why this and particularly which directories are
-        // affected. 
-        //
-        // different result: sniff all -pd0 ~/programming/rust/forks/clap-rs/ vs. sniff all -pd1 ~/programming/rust/forks/
-        //
-        // tentative hypothesis: hidden files *within* hidden files fail? or perhaps hidden files
-        // within *ignored* files. Either way, it fails to enter /home/vanessa/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded/_u3OMjhH9kde/.stack-work
-        // via the command sniff all -pd0 ~/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded
-        //
-        // Oddly, with sniff -- all -pd0 ~/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded/_u3OMjhH9kde/ it works again!
-
         // runs loop
         // I think this messes something up
         builder.build_parallel().run(|| { 
 
-            //println!("new thread for {:?}", &in_paths); 
             let filesize_dir = dir_size.clone(); 
             Box::new(move |path| {
 
@@ -175,8 +160,6 @@ pub mod prelude {
                             if let Ok(metadata) = p.metadata() {
                                 if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
                                     filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
-                                    //println!("{:?}, {:?}", p, filesize_dir);
-                                    //println!("{:?}", filesize_dir);
                                 }
                             }
                             else if follow_symlinks {
