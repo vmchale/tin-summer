@@ -97,24 +97,6 @@ fn main() {
 
     }
 
-    else if let Some(command) = matches.subcommand_matches("fast") {
-
-        // set path to dir
-        let init_dir = get_dir(command.value_of("dir"));
-
-        // set regex for exclusions
-        let regex = command.value_of("excludes"); 
-
-        // don't print warnings
-        let all = command.is_present("all");
-
-        let _ = match regex {
-            Some(r) => read_parallel(&init_dir, None, Some(&check_regex(r)), true, false, !all, false),
-            _ => read_parallel(&init_dir, None, None, true, false, !all, false),
-        };
-    }
-
-
     else if let Some(command) = matches.subcommand_matches("ar") {
 
         // set threshold

@@ -19,8 +19,9 @@ else
     let path = /home/vanessa/programming/haskell/forks/cabal
 end
 
-# turn off color
-#export CLICOLOR=0
+# initialize cache
+echo 'initializing file system cache...'
+sniff all $path > /dev/null
 
 #do the actual benchmarks
 let benches = ["sniff fat $path" "$binpath fat $path" "sniff sort $path" "$binpath sort $path" "sniff ar --sort $path" "$binpath ar --sort $path"]

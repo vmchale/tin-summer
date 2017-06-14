@@ -96,6 +96,12 @@ impl FileTree {
         FileTree { file_size: FileSize::new(0), files: Vec::new() }
     }
     
+    pub fn add(&mut self,
+               size: FileSize) -> () {
+
+        self.file_size.add(size);
+    }
+
     pub fn push(&mut self,
                 path: String,
                 size: FileSize,

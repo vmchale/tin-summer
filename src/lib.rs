@@ -130,59 +130,79 @@ pub mod prelude {
                          max_depth: Option<usize>, // optionally include a max depth to which to recurse
                          _: Option<&Regex>,
                          show_hidden: bool,
-                         silent: bool,
                          artifacts_only: bool,
                          follow_symlinks: bool) -> FileSize {
 
         // create new walk + set file size to zero
         let mut builder = WalkBuilder::new(in_paths);
-        let dir_size = Arc::new(AtomicU64::new(0)); // currently, this is not working because of the clone
-        // it's resetting itself. Follow the example in the ignore crate?
+        let dir_size = Arc::new(AtomicU64::new(0));
 
         // set options for our walk
         builder.max_depth(max_depth);
-        builder.hidden(show_hidden);
+        builder.hidden(!show_hidden);
         builder.follow_links(follow_symlinks);
-        //builder.max_filesize(None);
         builder.ignore(false);
         builder.git_ignore(false);
         builder.git_exclude(false);
         builder.git_global(false);
         builder.parents(false);
 
-        // runs loop
-        builder.build_parallel().run(|| { let filesize_dir = dir_size.clone() ; Box::new(move |path| {
+        println!("Traversing: {:?}", &in_paths);
 
-            if let Ok(p) = path {
-                if p.path().is_file() {
-                    if let Ok (f) = p.file_name().to_owned().into_string() {
-                        if let Ok(metadata) = p.metadata() {
-                            if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
-                                filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
+        // basically, because of the clone() this is worthless :(
+        // HOWEVER: I still am confused as to why this and particularly which directories are
+        // affected. 
+        //
+        // different result: sniff all -pd0 ~/programming/rust/forks/clap-rs/ vs. sniff all -pd1 ~/programming/rust/forks/
+        //
+        // tentative hypothesis: hidden files *within* hidden files fail? or perhaps hidden files
+        // within *ignored* files. Either way, it fails to enter /home/vanessa/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded/_u3OMjhH9kde/.stack-work
+        // via the command sniff all -pd0 ~/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded
+        //
+        // Oddly, with sniff -- all -pd0 ~/programming/haskell/websites/ephemera/frontend/.stack-work/downloaded/_u3OMjhH9kde/ it works again!
+
+        // runs loop
+        // I think this messes something up
+        builder.build_parallel().run(|| { 
+
+            //println!("new thread for {:?}", &in_paths); 
+            let filesize_dir = dir_size.clone(); 
+            Box::new(move |path| {
+
+                if let Ok(p) = path {
+                    if p.path().is_file() {
+                        if let Ok (f) = p.file_name().to_owned().into_string() {
+                            if let Ok(metadata) = p.metadata() {
+                                if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
+                                    filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
+                                    //println!("{:?}, {:?}", p, filesize_dir);
+                                    //println!("{:?}", filesize_dir);
+                                }
+                            }
+                            else if follow_symlinks {
+                                let s = p.path().as_os_str().to_owned().into_string().expect("OS String failed to resolve");
+                                eprintln!("{}: ignoring broken symlink at {}", "Warning".yellow(), s);
                             }
                         }
-                        else if follow_symlinks {
-                            let s = p.path().as_os_str().to_owned().into_string().expect("OS String failed to resolve");
-                            eprintln!("{}: ignoring broken symlink at {}", "Warning".yellow(), s);
+                        else {
+                            eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
                         }
                     }
-                    else {
-                        eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
-                    }
                 }
-            }
-            else if let Err(e) = path {
-                eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
-            }
-            ; WalkState::Continue }) } );
+                else if let Err(e) = path {
+                    eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
+                }
+                ; WalkState::Continue })
+
+        } );
 
         let size = FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner());
 
-        if !silent && size != FileSize::new(0) {
+        /*if !silent && size != FileSize::new(0) {
             let to_formatted = format!("{}", size);
             let path = in_paths.display();
             println!("{}\t {}", &to_formatted.green(), path);
-        }
+        }*/
 
         size
 
@@ -194,7 +214,6 @@ pub mod prelude {
                      max_depth: Option<u8>,
                      artifact_regex: Option<&Regex>,
                      excludes: Option<&Regex>,
-                     silent: bool,
                      maybe_gitignore: &Option<RegexSet>,
                      with_gitignore: bool,
                      artifacts_only: bool) -> FileSize {
@@ -252,7 +271,7 @@ pub mod prelude {
 
                         // otherwise, go deeper
                         else if metadata.is_dir() {
-                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, true, &gitignore, with_gitignore, artifacts_only);
+                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, &gitignore, with_gitignore, artifacts_only);
                             size.add(dir_size);
                         }
                     }
@@ -277,11 +296,11 @@ pub mod prelude {
             eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
         }
 
-        if !silent && size != FileSize::new(0) {
+        /*if !silent && size != FileSize::new(0) {
             let to_formatted = format!("{}", size);
             let path = in_paths.display();
             println!("{}\t {}", &to_formatted.green(), path);
-        }
+        }*/
 
         size
     }
@@ -352,12 +371,12 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
-                                if depth > d {
+                                if depth + 1 >= d {
                                     let dir_size = if !artifacts_only && force_parallel {
-                                        read_parallel(&path, None, None, true, silent, artifacts_only, false)
+                                        read_parallel(&path, None, None, true, artifacts_only, false)
                                     }
                                     else {
-                                        read_size(&path, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only)
+                                        read_size(&path, depth + 1, max_depth, artifact_regex, excludes, &gitignore, with_gitignore, artifacts_only)
                                     };
                                     tree.push(path_string, dir_size, None, depth + 1, true);
                                 }

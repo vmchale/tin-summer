@@ -36,6 +36,7 @@
   - [ ] set include paths w/ glob
 - [ ] improve ergonomics (and possibly speed) by guessing language of build?
 - [ ] don't mark shell scripts as build artifacts?
+- [ ] 597 kB displayed later as 1MB?
 - [ ] cool feature: highlight extensions
   - [ ] optionally color-coded by language
 - [ ] errors should be translated to french/german as well.

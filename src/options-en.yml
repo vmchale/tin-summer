@@ -73,31 +73,6 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
-    - fast:
-        about: Iterate over directories in parallel and avoid printing directory totals.
-        args:
-            - dir:
-                value_name: DIRECTORY
-                help: Directory to search
-            - excludes:
-                short: e
-                long: exclude
-                takes_value: true
-                value_name: PATH
-            - files:
-                short: f
-                long: files
-                help: Whether to print files in addition to directories (default false)
-            - all:
-                short: a
-                long: all
-                help: Show all files, not just artifacts
-            - depth: 
-                short: d
-                long: depth
-                takes_value: true
-                value_name: NUMBER
-                help: How far to recurse (default arbitrarily far)
     - all:
         about: Show all files/directories
         args:
