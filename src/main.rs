@@ -42,6 +42,9 @@ fn main() {
         // whether to use parallel directory traversals
         let force_parallel = command.is_present("parallel");
 
+        // get the number of processors to be used
+        let nproc = if force_parallel { get_processors() } else { 0 };
+
         // set regex for exclusions
         let regex = command.value_of("excludes");
 
@@ -50,8 +53,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
         };
 
         // filter by depth
@@ -73,6 +76,9 @@ fn main() {
         // whether to use parallel directory traversals
         let force_parallel = command.is_present("parallel");
 
+        // get the number of processors to be used
+        let nproc = if force_parallel { get_processors() } else { 0 };
+
         // set regex for exclusions
         let regex = command.value_of("excludes"); 
 
@@ -84,8 +90,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
+                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
+                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
         };
 
         
@@ -126,15 +132,18 @@ fn main() {
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
+        // get the number of processors to be used
+        let nproc = 0;
+
         // get relevant filenames &c.
         let v = if let Some(r) = artifacts {
                 let re = check_regex(r);
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), true, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), nproc, &None, !no_gitignore, true)
             }
             else {
                 let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), true, &None, !no_gitignore, true)
+                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), nproc, &None, !no_gitignore, true)
             };
 
         let mut v_processed = if should_sort {
@@ -162,6 +171,9 @@ fn main() {
         // whether to use parallel directory traversals
         let force_parallel = command.is_present("parallel");
 
+        // get the number of processors to be used
+        let nproc = if force_parallel { get_processors() } else { 0 };
+
         // don't print warnings
         let print_files = command.is_present("files");
 
@@ -179,8 +191,8 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), true, &None, false, false),
-            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, true, &None, false, false),
+            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
+            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
         };
 
         // sort them

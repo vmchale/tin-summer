@@ -3,6 +3,7 @@
 #![allow(match_ref_pats)]
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
+#![allow(useless_attribute)]
 
 #[allow(unused_imports)]
 #[macro_use] extern crate clap;
@@ -19,6 +20,7 @@ pub mod types;
 pub mod error;
 pub mod cli_helpers;
 pub mod gitignore;
+pub mod utils;
 
 pub mod prelude {
 
@@ -42,6 +44,7 @@ pub mod prelude {
 
     pub use cli_helpers::*;
     pub use error::*;
+    pub use utils::*;
 
     /// Helper function to determine whether a path points  
     ///
@@ -130,6 +133,7 @@ pub mod prelude {
                          max_depth: Option<usize>, // optionally include a max depth to which to recurse
                          _: Option<&Regex>,
                          show_hidden: bool,
+                         nproc: usize,
                          artifacts_only: bool,
                          follow_symlinks: bool) -> FileSize {
 
@@ -138,17 +142,17 @@ pub mod prelude {
         let dir_size = Arc::new(AtomicU64::new(0));
 
         // set options for our walk
-        builder.max_depth(max_depth);
-        builder.hidden(!show_hidden);
-        builder.follow_links(follow_symlinks);
-        builder.ignore(false);
-        builder.git_ignore(false);
-        builder.git_exclude(false);
-        builder.git_global(false);
-        builder.parents(false);
+        builder.max_depth(max_depth)
+            .hidden(!show_hidden)
+            .follow_links(follow_symlinks)
+            .ignore(false)
+            .threads(nproc) // set this dynamically before release (via nproc or something)
+            .git_ignore(false)
+            .git_exclude(false)
+            .git_global(false)
+            .parents(false);
 
         // runs loop
-        // I think this messes something up
         builder.build_parallel().run(|| { 
 
             let filesize_dir = dir_size.clone(); 
@@ -179,15 +183,7 @@ pub mod prelude {
 
         } );
 
-        let size = FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner());
-
-        /*if !silent && size != FileSize::new(0) {
-            let to_formatted = format!("{}", size);
-            let path = in_paths.display();
-            println!("{}\t {}", &to_formatted.green(), path);
-        }*/
-
-        size
+        FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
 
     }
 
@@ -279,12 +275,6 @@ pub mod prelude {
             eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
         }
 
-        /*if !silent && size != FileSize::new(0) {
-            let to_formatted = format!("{}", size);
-            let path = in_paths.display();
-            println!("{}\t {}", &to_formatted.green(), path);
-        }*/
-
         size
     }
 
@@ -295,7 +285,7 @@ pub mod prelude {
                     max_depth: Option<u8>,
                     artifact_regex: Option<&Regex>,
                     excludes: Option<&Regex>,
-                    silent: bool,
+                    nproc: usize,
                     maybe_gitignore: &Option<RegexSet>,
                     with_gitignore: bool,
                     artifacts_only: bool) -> FileTree {
@@ -356,7 +346,7 @@ pub mod prelude {
                             if let Some(d) = max_depth {
                                 if depth + 1 >= d {
                                     let dir_size = if !artifacts_only && force_parallel {
-                                        read_parallel(&path, None, None, true, artifacts_only, false)
+                                        read_parallel(&path, None, None, true, nproc, artifacts_only, false)
                                     }
                                     else {
                                         read_size(&path, depth + 1, max_depth, artifact_regex, excludes, &gitignore, with_gitignore, artifacts_only)
@@ -364,13 +354,13 @@ pub mod prelude {
                                     tree.push(path_string, dir_size, None, depth + 1, true);
                                 }
                                 else {
-                                    let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                    let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, nproc, &gitignore, with_gitignore, artifacts_only);
                                     let dir_size = subtree.file_size;
                                     tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                                 }
                             }
                             else {
-                                let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, silent, &gitignore, with_gitignore, artifacts_only);
+                                let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, nproc, &gitignore, with_gitignore, artifacts_only);
                                 let dir_size = subtree.file_size;
                                 tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
                             }

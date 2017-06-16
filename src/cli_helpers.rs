@@ -9,8 +9,8 @@ use error::check_regex;
 
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
     match cli_excludes {
-        Some(s) => { let mut x = "(".to_string(); x.push_str(s); x.push_str(r")|\.git$"); check_regex(&x) }
-        _ => Regex::new(r"(_darcs|.pijul|\.git)$").unwrap(),
+        Some(s) => { let mut x = "(".to_string(); x.push_str(s); x.push_str(r")|(\.git|\.pijul|_darcs|\.hg)$"); check_regex(&x) }
+        _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg)$").unwrap(),
     }
 }
 
