@@ -73,12 +73,13 @@ fn bench_gitignore(b: &mut Bencher) {
     b.iter(|| file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore")))
 }
 
+/*
 #[bench]
 fn bench_parallel_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     let nproc = get_processors();
     b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
-}
+}*/
 
 #[bench]
 fn bench_traversal_large(b: &mut Bencher) {
@@ -86,12 +87,13 @@ fn bench_traversal_large(b: &mut Bencher) {
     b.iter(|| read_size(&p, 4, None, None, None, &None, false, false))
 }
 
+/*
 #[bench]
 fn bench_parallel_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
     let nproc = get_processors();
     b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
-}
+}*/
 
 #[bench]
 fn bench_traversal(b: &mut Bencher) {

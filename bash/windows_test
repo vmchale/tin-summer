@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-cargo build --bin sniff --target=x86_64-pc-windows-gnu
+cargo build --target=x86_64-pc-windows-gnu

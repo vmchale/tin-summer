@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
-export LDFLAGS=/home/vanessa/arm-bins/cross-compilation/zlib/
-cargo build
-cargo build --bin sniff --target=x86_64-pc-windows-gnu
-cargo build --bin sniff --target=arm-unknown-linux-gnueabihf
