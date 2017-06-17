@@ -1,10 +1,10 @@
 #[macro_use] extern crate clap;
 
-extern crate libsniff;
+extern crate liboskar;
 extern crate colored;
 extern crate regex;
 
-use libsniff::prelude::*;
+use liboskar::prelude::*;
 use clap::App;
 use colored::*;
 

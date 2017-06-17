@@ -1,10 +1,10 @@
 #!/usr/bin/env ion
-cargo run --bin sniff -- sort -t1M
-cargo run --bin sniff -- fat
-cargo run --bin sniff -- sort src/ # to make sure non-ascii displays correctly
+cargo run --bin sn -- sort -t1M
+cargo run --bin sn -- fat
+cargo run --bin sn -- sort src/ # to make sure non-ascii displays correctly
 cargo build --release
 
-let binpath = target/release/sniff
+let binpath = target/release/sn
 
 # set to a suitable path
 let path_arg = "false"
@@ -21,8 +21,8 @@ end
 
 # initialize cache
 echo 'initializing file system cache...'
-sniff all $path > /dev/null
+sn all $path > /dev/null
 
 #do the actual benchmarks
-let benches = ["sniff all $path -p" "$binpath all $path -p" "sniff sort $path" "$binpath sort $path" "sniff ar $path" "$binpath ar $path"]
+let benches = ["sn all $path -p" "$binpath all $path -p" "sn sort $path -p" "$binpath sort $path -p" "sn ar $path" "$binpath ar $path"]
 bench @benches

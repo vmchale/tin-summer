@@ -82,16 +82,19 @@ pub mod prelude {
 
         // otherwise, use builtin expressions
         else {
+
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$") // TODO reorder regex
+                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$") // TODO reorder regex
                     .unwrap();
             }
+
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(stats|conf|h|cache.*|dat|pc|info)$")
+                    Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
                     .unwrap();
             }
+
             if REGEX.is_match(path_str) { true }
             else if let &Some(ref x) = gitignore {
                 if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str)
@@ -108,16 +111,19 @@ pub mod prelude {
             r.is_match(path_str)
         }
         else {
+
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
+                    Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
                     .unwrap();
             }
+
             lazy_static! {
                 static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(stats|conf|h|cache.*)$")
+                    Regex::new(r".*?\.(stats|conf|h|out|cache.*|\.js)$")
                     .unwrap();
             }
+
             if REGEX.is_match(&path_str) { true }
             
             else if let &Some(ref x) = gitignore {
@@ -204,11 +210,19 @@ pub mod prelude {
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
+                let mut darcs_path = in_paths.clone();
+                darcs_path.push("_darcs/prefs/boring");
                 if let Ok(mut file) = File::open(gitignore_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(file_contents_to_regex(&contents, &gitignore_path))
+                }
+                else if let Ok(mut file) = File::open(darcs_path.clone()) {
+                    let mut contents = String::new();
+                    file.read_to_string(&mut contents)
+                        .expect("File read failed.");
+                    Some(darcs_contents_to_regex(&contents, &darcs_path))
                 } else { None }
             }
         } else { None };
@@ -297,11 +311,19 @@ pub mod prelude {
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
+                let mut darcs_path = in_paths.clone();
+                darcs_path.push("_darcs/prefs/boring");
                 if let Ok(mut file) = File::open(gitignore_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(file_contents_to_regex(&contents, &gitignore_path))
+                }
+                else if let Ok(mut file) = File::open(darcs_path.clone()) {
+                    let mut contents = String::new();
+                    file.read_to_string(&mut contents)
+                        .expect("File read failed.");
+                    Some(darcs_contents_to_regex(&contents, &darcs_path))
                 } else { None }
             }
         } else { None };
@@ -345,7 +367,7 @@ pub mod prelude {
                         else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
                                 if depth + 1 >= d {
-                                    let dir_size = if !artifacts_only && force_parallel {
+                                    let dir_size = if (!artifacts_only || !with_gitignore) && force_parallel {
                                         read_parallel(&path, None, None, true, nproc, artifacts_only, false)
                                     }
                                     else {

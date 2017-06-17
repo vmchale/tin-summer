@@ -32,7 +32,7 @@
 - [ ] shake for cross builds?? parallel would b nice, plus finer control of
   fish/bash stuff
 - [x] excludes w/ regex
-  - [ ] fix bugs w/ excludes & overzealous use of .gitignores
+  - [x] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
 - [ ] improve ergonomics (and possibly speed) by guessing language of build?
 - [ ] don't mark shell scripts as build artifacts?
@@ -50,4 +50,12 @@
   - [ ] figure out block sizes vs. file sizes
 - [ ] consider: hardcoded gitignore, from global & supporting various languages?
 - [ ] intelligent selection of parallel flag
+- [ ] fix darcs parser
 - [ ] add windows support
+- [ ] add option to *only* search gitignore
+- [ ] autoclean option
+  - [ ] haskell
+  - [ ] rust
+  - [ ] idris
+  - [ ] elm
+- [ ] make a pun about the tin drum?

@@ -1,6 +1,6 @@
-name: sniff
-author: Vanessa McHale <vamchale@gmail.com>
-about: Tool to find large files and project build artifacts. 
+name: The Tin Drummer
+author: Vanessa McHale <vanessa.mchale@reconfigure.io>
+about: Tool to find large files and project build artifacts. Probably won't shatter glass.
 subcommands:
     - sort:
         about: Find the biggest files/directories
@@ -120,6 +120,10 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
+            - parallel:
+                short: p
+                long: parallel
+                help: Force parallel directory traversals
             - excludes:
                 short: e
                 long: exclude
@@ -133,7 +137,7 @@ subcommands:
             - gitignore:
                 short: g
                 long: no-gitignore
-                help: Don't bother using .gitignore information for faster traversal
+                help: Don't bother using .gitignore or darcs boring file information for faster traversal
             - regex:
                 short: r
                 long: regex

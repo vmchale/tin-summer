@@ -1,5 +1,5 @@
-name: sniff
-author: Vanessa McHale <vamchale@gmail.com>
+name: Die Blechtrommeler
+author: Vanessa McHale <vanessa.mchale@reconfigure.io>
 about: Werkzeug um große Datein und Entwickungsartefakte zu finden.
 subcommands:
     - sort:

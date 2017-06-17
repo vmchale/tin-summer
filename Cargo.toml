@@ -1,11 +1,11 @@
 [package]
-name = "file-sniffer"
-version = "3.0.2-pre"
-authors = ["Vanessa McHale <vamchale@gmail.com>"]
+name = "tin-drummer"
+version = "0.1.0"
+authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer."
 readme = "README.md"
-repository = "https://github.com/vmchale/file-sniffer"
+repository = "https://nest.pijul.com/vamchale/file-sniffer"
 documentation = "https://github.com/vmchale/file-sniffer#README"
 homepage = "https://github.com/vmchale/file-sniffer" # consider hosting on http://vmchale.com/ ?
 
@@ -26,7 +26,6 @@ bash = []
 fish = []
 verbose = []
 
-
 [dependencies]
 nom = "3.0"
 colored = "1.5"
@@ -34,23 +33,15 @@ clap = {version = "2.24", features = ["yaml"]}
 regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"
-ignore = "0.2"
+#ignore = "0.2"
+
+[dependencies.ignore]
+path = "./ignore"
 
 [lib]
 path = "src/lib.rs"
-name = "libsniff"
+name = "liboskar"
 
 [[bin]]
-required-features = ["english"]
 path = "src/main.rs"
-name = "sniff"
-
-[[bin]]
-required-features = ["francais"]
-path = "src/main.rs"
-name = "renifle"
-
-[[bin]]
-required-features = ["deutsch"]
-path = "src/main.rs"
-name = "schnüffle"
+name = "sn"

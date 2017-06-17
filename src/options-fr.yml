@@ -1,5 +1,5 @@
 name: sniff
-author: Vanessa McHale <vamchale@gmail.com>
+author: Vanessa McHale <vanessa.mchale@reconfigure.io>
 about: Util pour trouver grands fichiers et artefacts de construction.
 subcommands:
     - sort:

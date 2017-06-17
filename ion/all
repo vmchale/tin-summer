@@ -1,6 +1,6 @@
 #!/usr/bin/env ion
 
-# set path to include sniff
+# set path to include sn
 let PATH=$HOME/.cargo/bin:$PATH
 
 #export CLICOLOR=0
@@ -17,11 +17,11 @@ end
 let path = $HOME/programming
 
 # set the benches
-let benches = ["sniff all $path" "du -hcd2 $path" "sniff all -pd2 $path" "sniff all -d1 $path" "sniff all -pd1 $path" "du -hcd1 $path" "sniff all -pfd1 $path" "du -hacd1 $path"]
+let benches = ["sn all $path" "du -hcd2 $path" "sn all -p $path" "sn all -d1 $path" "sn all -pd1 $path" "du -hcd1 $path" "sn all -pfd1 $path" "du -hacd1 $path"]
 
 # initialize cache
 echo 'initializing file system cache...'
-sniff all ~/programming > /dev/null
+sn all ~/programming > /dev/null
 
 #do the actual benchmarks
 if test $reports = "true"

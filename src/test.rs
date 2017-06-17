@@ -76,7 +76,8 @@ fn bench_gitignore(b: &mut Bencher) {
 #[bench]
 fn bench_parallel_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_parallel(&p, None, None, true, false, false))
+    let nproc = get_processors();
+    b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
 }
 
 #[bench]
@@ -88,33 +89,32 @@ fn bench_traversal_large(b: &mut Bencher) {
 #[bench]
 fn bench_parallel_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_parallel(&p, None, None, true, false, false))
+    let nproc = get_processors();
+    b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
 }
 
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, false, 4, None, None, None, true, &None, false, false))
+    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, false))
 }
 
 #[bench]
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, false, 4, None, None, None, true, &None, true, true))
+    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, true, true))
 }
 #[bench]
 fn bench_traversal_sort (b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, false, 4, None, None, None, true, &None, false, true); v.sort(None, 2, None, false) })
+    b.iter(|| { let v = read_all(&p, false, 4, None, None, None, 0, &None, false, true); v.sort(None, 2, None, false) })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    //let p = PathBuf::from("/home/vanessa/programming/haskell/forks/cabal");
-    b.iter(|| read_all(&p, false, 4, None, None, None, true, &None, false, true))
+    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, true))
 }
-
 
 #[bench]
 fn bench_extension_regex(b: &mut Bencher) {
