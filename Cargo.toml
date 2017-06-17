@@ -37,6 +37,7 @@ lazy_static = "0.2"
 
 [dependencies.ignore]
 path = "./ignore"
+version = "0.2"
 
 [lib]
 path = "src/lib.rs"
