@@ -15,5 +15,5 @@ rust:
 script:
   - cargo build
   - cargo doc
-  - cargo test
-  - cargo bench
+    #- cargo test
+    #- cargo bench
