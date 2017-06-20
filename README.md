@@ -1,6 +1,6 @@
-# The Tin Drummer
+# The Tin Summer
 
-[![Build Status](https://travis-ci.org/vmchale/file-sniffer.svg?branch=master)](https://travis-ci.org/vmchale/file-sniffer)
+[![Build Status](https://travis-ci.org/vmchale/tin-summer.svg?branch=master)](https://travis-ci.org/vmchale/tin-summer)
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those
@@ -12,26 +12,28 @@ because you can make sure your `clean` command gets everything.
 ### Binary install
 
 The easiest way to install for Linux or Windows is to download a binary from the [releases
-page](https://github.com/vmchale/tin-drummer/releases).
+page](https://github.com/vmchale/tin-summer/releases).
 
 ### Cargo
 
 If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
 
 ```bash
- $ cargo install tin-drummer
+ $ cargo install tin-summer
 ```
 
 If you want the absolute latest version:
 
 ```bash
- $ cargo install --git https://github.com/vmchale/tin-drummer 
+ $ pijul clone https://nest.pijul.com/vamchale/file-sniffer
+ $ cd file-sniffer
+ $ cargo install
 ```
 
-Make sure you are on nightly; if in doubt run
+Make sure you are on nightly; if in doubt
 
 ```bash
-rustup run nightly cargo install tin-drummer
+rustup run nightly cargo install tin-summer
 ```
 
 ### Shell completions
@@ -40,7 +42,7 @@ After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can use the
 `bash` or `fish` features like so:
 
 ```bash
- $ cargo install --features fish tin-drummer
+ $ cargo install --features fish tin-summer
 ```
 
 ## Use
@@ -107,11 +109,11 @@ English. Binaries will be available once things stabilize.
 Français:
 
 ```bash
-cargo install tin-drummer --no-default-features --feature francais # crates.io doesn't permit unicode in feature names 
+cargo install tin-summer --no-default-features --feature francais # crates.io doesn't permit unicode in feature names 
 ```
 
 Deutsch:
 
 ```bash
-cargo install tin-drummer --no-default-features --feature deutsch
+cargo install tin-summer --no-default-features --feature deutsch
 ```
