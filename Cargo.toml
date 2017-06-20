@@ -1,6 +1,6 @@
 [package]
 name = "tin-drummer"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer. Shatters records not glass."
