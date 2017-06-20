@@ -1,11 +1,14 @@
 # The Tin Summer
 
-[![Build Status](https://travis-ci.org/vmchale/tin-summer.svg?branch=master)](https://travis-ci.org/vmchale/tin-summer)
+[![Build Status](https://travis-ci.org/vmchale/tin-drummer.svg?branch=master)](https://travis-ci.org/vmchale/tin-drummer)
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those
 artifacts. It's especially useful when you're writing build systems, 
 because you can make sure your `clean` command gets everything.
+
+As of recently, `sn` is also an adequate competitor for `du`. It has far nicer
+output, saner commands, and runs faster on multicores. 
 
 ## Installation
 
