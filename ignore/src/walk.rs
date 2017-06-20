@@ -11,7 +11,7 @@ use std::time::Duration;
 use std::vec;
 
 use crossbeam::sync::MsQueue;
-use walkdir::{self, WalkDir, WalkDirIterator};//, is_same_file};
+use walkdir::{self, WalkDir, WalkDirIterator, is_same_file};
 
 use dir::{Ignore, IgnoreBuilder};
 use gitignore::GitignoreBuilder;
@@ -482,7 +482,6 @@ impl WalkBuilder {
     pub fn build_parallel(&self) -> WalkParallel {
         WalkParallel {
             paths: self.paths.clone().into_iter(),
-            //ig_root: self.ig_builder.build(),
             max_depth: self.max_depth,
             max_filesize: self.max_filesize,
             follow_links: self.follow_links,
@@ -846,7 +845,6 @@ impl WalkState {
 /// Unlike `Walk`, this uses multiple threads for traversing a directory.
 pub struct WalkParallel {
     paths: vec::IntoIter<PathBuf>,
-    //ig_root: Ignore,
     parents: bool,
     max_filesize: Option<u64>,
     max_depth: Option<usize>,
@@ -886,7 +884,6 @@ impl WalkParallel {
                 };
             queue.push(Message::Work(Work {
                 dent: dent,
-                //ignore: self.ig_root.clone(),
             }));
             any_work = true;
         }
@@ -947,8 +944,6 @@ enum Message {
 struct Work {
     /// The directory entry.
     dent: DirEntry,
-    // Any ignore matchers that have been built for this directory's parents.
-    //ignore: Ignore,
 }
 
 impl Work {
@@ -962,13 +957,11 @@ impl Work {
     /// Note that this only applies to entries at depth 0. On all other
     /// entries, this is a no-op.
     fn add_parents(&mut self) -> Option<Error> {
-        //if self.dent.depth() > 0 {
-        //    return None;
-        //}
+        if self.dent.depth() > 0 {
+            return None;
+        }
         // At depth 0, the path of this entry is a root path, so we can
         // use it directly to add parent ignore rules.
-        //let (ig, err) = self.ignore.add_parents(self.dent.path());
-        //self.ignore = ig;
         None
     }
 
@@ -989,9 +982,6 @@ impl Work {
                 return Err(err);
             }
         };
-        //let (ig, err) = self.ignore.add_child(self.dent.path());
-        //self.ignore = ig;
-        //self.dent.err = err;
         Ok(readdir)
     }
 }

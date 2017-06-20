@@ -6,37 +6,51 @@ use std::process::exit;
 use std::path::PathBuf;
 use regex::Regex;
 use error::check_regex;
+use utils::get_processors;
 
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
     match cli_excludes {
-        Some(s) => { let mut x = "(".to_string(); x.push_str(s); x.push_str(r")|(\.git|\.pijul|_darcs|\.hg)$"); check_regex(&x) }
+        Some(s) => {
+            let mut x = "(".to_string();
+            x.push_str(s);
+            x.push_str(r")|(\.git|\.pijul|_darcs|\.hg)$");
+            check_regex(&x)
+        }
         _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg)$").unwrap(),
     }
 }
 
 pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
     if let Some(n) = depth_from_cli {
-        n.parse::<u8>().expect("Please enter a positive whole number")
-    }
-    else {
+        n.parse::<u8>()
+            .expect("Please enter a positive whole number")
+    } else {
         2
     }
 }
 
 pub fn get_num(num_from_cli: Option<&str>) -> usize {
     if let Some(num) = num_from_cli {
-        num.parse::<usize>().expect("Please enter a positive whole number")
-    }
-    else {
+        num.parse::<usize>()
+            .expect("Please enter a positive whole number")
+    } else {
         8
+    }
+}
+
+pub fn get_threads(num_from_cli: Option<&str>) -> usize {
+    if let Some(num) = num_from_cli {
+        num.parse::<usize>()
+            .expect("Please enter a positive whole number")
+    } else {
+        get_processors()
     }
 }
 
 pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
     if let Some(read) = path_from_cli {
         PathBuf::from(read)
-    }
-    else {
+    } else {
         PathBuf::from(".")
     }
 }
@@ -47,9 +61,15 @@ pub fn threshold(s: Option<&str>) -> Option<u64> {
 
 fn pre_threshold(t_from_cli: &str) -> u64 {
     match get_threshold(t_from_cli.as_bytes()) {
-            IResult::Done(_,n) => n,
-            _ => { eprintln!("{}: failed to parse threshold. defaulting to 1M", "Warning".yellow()) ; 1048576 },
-            }
+        IResult::Done(_, n) => n,
+        _ => {
+            eprintln!(
+                "{}: failed to parse threshold. defaulting to 1M",
+                "Warning".yellow()
+            );
+            1048576
+        }
+    }
 }
 
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
@@ -83,7 +103,14 @@ named!(digit_char<&[u8], char>,
 named!(get_threshold<&[u8],u64>,
     do_parse!(
         nums:     many1!(digit_char) >>
-        size_tag: alt!(tag!("M") | tag!("G") | tag!("k") | tag!("b") | tag!("B") | tag!("K") | tag!("g") | tag!("m")) >>
+        size_tag: alt!(tag!("M") |
+                       tag!("G") |
+                       tag!("k") | 
+                       tag!("b") | 
+                       tag!("B") | 
+                       tag!("K") | 
+                       tag!("g") | 
+                       tag!("m")) >>
         (to_u64(nums, size_tag))
     )
 );

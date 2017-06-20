@@ -1,4 +1,5 @@
-#[macro_use] extern crate clap;
+#[macro_use]
+extern crate clap;
 
 extern crate liboskar;
 extern crate colored;
@@ -8,10 +9,10 @@ use liboskar::prelude::*;
 use clap::App;
 use colored::*;
 
-#[allow(unknown_lints)] 
+#[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
 fn main() {
-    
+
     // command-line parser
     #[cfg(feature = "english")]
     let yaml = load_yaml!("options-en.yml");
@@ -26,7 +27,7 @@ fn main() {
 
         // set threshold
         let min_bytes = match threshold(command.value_of("threshold")) {
-            Some(t) => t, 
+            Some(t) => t,
             _ => 1048576,
         };
 
@@ -40,7 +41,7 @@ fn main() {
         let print_files = command.is_present("files");
 
         // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel");
+        let force_parallel = false;
 
         // get the number of processors to be used
         let nproc = if force_parallel { get_processors() } else { 0 };
@@ -53,8 +54,34 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
+            Some(r) => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    Some(&check_regex(r)),
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
+            _ => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    None,
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
         };
 
         // filter by depth
@@ -63,7 +90,6 @@ fn main() {
         // display results
         v_filtered.display_tree(init_dir);
     }
-
     // find large files
     else if let Some(command) = matches.subcommand_matches("all") {
 
@@ -74,13 +100,13 @@ fn main() {
         let depth = get_depth(command.value_of("depth"));
 
         // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel");
+        let force_parallel = !command.is_present("parallel") && !min_bytes.is_some();
 
         // get the number of processors to be used
         let nproc = if force_parallel { get_processors() } else { 0 };
 
         // set regex for exclusions
-        let regex = command.value_of("excludes"); 
+        let regex = command.value_of("excludes");
 
         // don't print warnings
         let print_files = command.is_present("files");
@@ -90,20 +116,44 @@ fn main() {
 
         // get relevant filenames &c.
         let v = match regex {
-                Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
-                _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
+            Some(r) => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    Some(&check_regex(r)),
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
+            _ => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    None,
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
         };
 
-        
+
         // filter by depth
         let mut v_filtered = v.filtered(depth, min_bytes, !print_files);
 
         // display results
         v_filtered.display_tree(init_dir);
 
-    }
-
-    else if let Some(command) = matches.subcommand_matches("ar") {
+    } else if let Some(command) = matches.subcommand_matches("ar") {
 
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
@@ -112,10 +162,10 @@ fn main() {
         let depth = get_depth(command.value_of("depth"));
 
         // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel");
+        let force_parallel = false;
 
         // set number of things to fetch for sort
-        let num_int = get_num(command.value_of("count")); 
+        let num_int = get_num(command.value_of("count"));
 
         // decide whether to sort
         let should_sort = command.is_present("sort");
@@ -124,7 +174,7 @@ fn main() {
         let print_files = command.is_present("files");
 
         // set regex for artifacts
-        let artifacts = command.value_of("regex"); 
+        let artifacts = command.value_of("regex");
 
         // decide whether to use gitignore information
         let no_gitignore = command.is_present("gitignore");
@@ -137,25 +187,44 @@ fn main() {
 
         // get relevant filenames &c.
         let v = if let Some(r) = artifacts {
-                let re = check_regex(r);
-                let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), Some(&re), Some(&excludes), nproc, &None, !no_gitignore, true)
-            }
-            else {
-                let excludes = get_excludes(command.value_of("excludes"));
-                read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&excludes), nproc, &None, !no_gitignore, true)
-            };
+            let re = check_regex(r);
+            let excludes = get_excludes(command.value_of("excludes"));
+            read_all(
+                &init_dir,
+                force_parallel,
+                0,
+                Some(depth),
+                Some(&re),
+                Some(&excludes),
+                nproc,
+                &None,
+                !no_gitignore,
+                true,
+            )
+        } else {
+            let excludes = get_excludes(command.value_of("excludes"));
+            read_all(
+                &init_dir,
+                force_parallel,
+                0,
+                Some(depth),
+                None,
+                Some(&excludes),
+                nproc,
+                &None,
+                !no_gitignore,
+                true,
+            )
+        };
 
         let mut v_processed = if should_sort {
-                v.sort(Some(num_int), depth, min_bytes, !print_files)
-            }
-            else {
-                v.filtered(depth, min_bytes, !print_files)
-            };
+            v.sort(Some(num_int), depth, min_bytes, !print_files)
+        } else {
+            v.filtered(depth, min_bytes, !print_files)
+        };
 
         v_processed.display_tree(init_dir);
     }
-
     // sort entities by size
     else if let Some(command) = matches.subcommand_matches("sort") {
 
@@ -163,36 +232,65 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         // set number of things to fetch for sort
-        let num_int = get_num(command.value_of("count")); 
+        let num_int = get_num(command.value_of("count"));
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
 
         // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel");
-
-        // get the number of processors to be used
-        let nproc = if force_parallel { get_processors() } else { 0 };
+        let force_parallel = !command.is_present("parallel") && !min_bytes.is_some();
 
         // don't print warnings
         let print_files = command.is_present("files");
 
+        // get the number of processors to be used
+        let nproc = if force_parallel {
+            get_threads(command.value_of("threads"))
+        } else {
+            0
+        };
+
+        // set number of things to fetch for sort
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
         // set regex for exclusions
-        let regex = 
-            if let Some(n) = command.value_of("excludes") {
-                Some(n)
-            }
-            else {
-                None
-            };
+        let regex = if let Some(n) = command.value_of("excludes") {
+            Some(n)
+        } else {
+            None
+        };
 
         // get relevant filenames &c.
         let v = match regex {
-            Some(r) => read_all(&init_dir, force_parallel, 0, Some(depth), None, Some(&check_regex(r)), nproc, &None, false, false),
-            _ => read_all(&init_dir, force_parallel, 0, Some(depth), None, None, nproc, &None, false, false),
+            Some(r) => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    Some(&check_regex(r)),
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
+            _ => {
+                read_all(
+                    &init_dir,
+                    force_parallel,
+                    0,
+                    Some(depth),
+                    None,
+                    None,
+                    nproc,
+                    &None,
+                    false,
+                    false,
+                )
+            }
         };
 
         // sort them
@@ -200,9 +298,10 @@ fn main() {
 
         // display sorted filenames
         v_sorted.display_tree(init_dir);
-    }
-
-    else {
-        eprintln!("{}: Command not recognized. Try 'sniff --help' if you're stuck.", "Error".red());
+    } else {
+        eprintln!(
+            "{}: Command not recognized. Try 'sniff --help' if you're stuck.",
+            "Error".red()
+        );
     }
 }

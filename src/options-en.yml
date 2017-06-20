@@ -1,6 +1,6 @@
 name: The Tin Drummer
 author: Vanessa McHale <vanessa.mchale@reconfigure.io>
-about: Tool to find large files and project build artifacts. Probably won't shatter glass.
+about: Tool to find large files and project build artifacts. Unlikely to shatter glass.
 subcommands:
     - sort:
         about: Find the biggest files/directories
@@ -17,7 +17,7 @@ subcommands:
             - parallel:
                 short: p
                 long: parallel
-                help: Force parallel directory traversals
+                help: Forcibly disable parallel directory traversals
             - files:
                 short: f
                 long: files
@@ -62,7 +62,7 @@ subcommands:
             - parallel:
                 short: p
                 long: parallel
-                help: Force parallel directory traversals
+                help: Forcibly disable parallel directory traversals
             - files:
                 short: f
                 long: files
@@ -88,12 +88,17 @@ subcommands:
             - parallel:
                 short: p
                 long: parallel
-                help: Force parallel directory traversals
+                help: Forcibly disable parallel directory traversals
             - excludes:
                 short: e
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - threads:
+                short: j
+                long: threads
+                takes_value: true
+                value_name: NUM
             - files:
                 short: f
                 long: files
@@ -120,10 +125,6 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
-            - parallel:
-                short: p
-                long: parallel
-                help: Force parallel directory traversals
             - excludes:
                 short: e
                 long: exclude

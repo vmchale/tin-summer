@@ -1,20 +1,24 @@
 #![feature(test)]
-#![feature(integer_atomics)] 
+#![feature(integer_atomics)]
 #![allow(match_ref_pats)]
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
 #![allow(useless_attribute)]
 
 #[allow(unused_imports)]
-#[macro_use] extern crate clap;
-#[macro_use] extern crate nom;
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate clap;
+#[macro_use]
+extern crate nom;
+#[macro_use]
+extern crate lazy_static;
 
 extern crate ignore;
 extern crate regex;
 extern crate colored;
 
-#[macro_use] mod macros;
+#[macro_use]
+mod macros;
 pub mod test;
 pub mod types;
 pub mod error;
@@ -46,7 +50,7 @@ pub mod prelude {
     pub use error::*;
     pub use utils::*;
 
-    /// Helper function to determine whether a path points  
+    /// Helper function to determine whether a path points
     ///
     /// Rules:
     /// - if the file extension of that is that of an artifact, return true
@@ -73,13 +77,18 @@ pub mod prelude {
     /// - `.mod`: FORTRAN
     /// - `.ji`, `.jld`: julia
     #[cfg(not(target_os = "windows"))]
-    pub fn is_artifact(path_str: &str, full_path: &str, re: Option<&Regex>, metadata: &Metadata, gitignore: &Option<RegexSet>) -> bool {
+    pub fn is_artifact(
+        path_str: &str,
+        full_path: &str,
+        re: Option<&Regex>,
+        metadata: &Metadata,
+        gitignore: &Option<RegexSet>,
+    ) -> bool {
 
         // match on the user's expression if it exists
         if let Some(r) = re {
             r.is_match(path_str) // FIXME include .gitignore as well?
         }
-
         // otherwise, use builtin expressions
         else {
 
@@ -95,22 +104,31 @@ pub mod prelude {
                     .unwrap();
             }
 
-            if REGEX.is_match(path_str) { true }
-            else if let &Some(ref x) = gitignore {
-                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str)
-                    { x.is_match(full_path) }
-                else { false }
+            if REGEX.is_match(path_str) {
+                true
+            } else if let &Some(ref x) = gitignore {
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
+                    x.is_match(full_path)
+                } else {
+                    false
+                }
+            } else {
+                false
             }
-            else { false }
         }
     }
 
     #[cfg(target_os = "windows")]
-    pub fn is_artifact(path_str: &str, full_path: &str, re: Option<&Regex>, _: &Metadata, gitignore:&Option<RegexSet>) -> bool {
+    pub fn is_artifact(
+        path_str: &str,
+        full_path: &str,
+        re: Option<&Regex>,
+        _: &Metadata,
+        gitignore: &Option<RegexSet>,
+    ) -> bool {
         if let Some(r) = re {
             r.is_match(path_str)
-        }
-        else {
+        } else {
 
             lazy_static! {
                 static ref REGEX: Regex = 
@@ -124,32 +142,37 @@ pub mod prelude {
                     .unwrap();
             }
 
-            if REGEX.is_match(&path_str) { true }
-            
-            else if let &Some(ref x) = gitignore {
+            if REGEX.is_match(&path_str) {
+                true
+            } else if let &Some(ref x) = gitignore {
                 if REGEX_GITIGNORE.is_match(path_str) {
                     x.is_match(full_path)
-                } else { false }
+                } else {
+                    false
+                }
+            } else {
+                false
             }
-            else { false }
         }
     }
 
-    pub fn read_parallel(in_paths: &Path,
-                         max_depth: Option<usize>, // optionally include a max depth to which to recurse
-                         _: Option<&Regex>,
-                         show_hidden: bool,
-                         nproc: usize,
-                         artifacts_only: bool,
-                         follow_symlinks: bool) -> FileSize {
+    pub fn read_parallel(
+        in_paths: &Path,
+        _: Option<usize>, // optionally include a max depth to which to recurse
+        _: Option<&Regex>,
+        show_hidden: bool,
+        nproc: usize,
+        artifacts_only: bool,
+        follow_symlinks: bool,
+    ) -> FileSize {
 
         // create new walk + set file size to zero
         let mut builder = WalkBuilder::new(in_paths);
         let dir_size = Arc::new(AtomicU64::new(0));
 
         // set options for our walk
-        builder.max_depth(max_depth)
-            .hidden(!show_hidden)
+        // TODO make this a lazy_static?
+        builder.hidden(!show_hidden)
             .follow_links(follow_symlinks)
             .ignore(false)
             .threads(nproc) // set this dynamically before release (via nproc or something)
@@ -159,54 +182,73 @@ pub mod prelude {
             .parents(false);
 
         // runs loop
-        builder.build_parallel().run(|| { 
+        builder.build_parallel().run(|| {
 
-            let filesize_dir = dir_size.clone(); 
+            let filesize_dir = dir_size.clone();
             Box::new(move |path| {
 
                 if let Ok(p) = path {
                     if p.path().is_file() {
-                        if let Ok (f) = p.file_name().to_owned().into_string() {
+                        if let Ok(f) = p.file_name().to_owned().into_string() {
                             if let Ok(metadata) = p.metadata() {
                                 if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
-                                    filesize_dir.fetch_add(metadata.len(), Ordering::SeqCst);
+                                    filesize_dir.fetch_add(metadata.len(), Ordering::Relaxed);
                                 }
+                            } else if follow_symlinks {
+                                let s = p.path()
+                                    .as_os_str()
+                                    .to_owned()
+                                    .into_string()
+                                    .expect("OS String failed to resolve");
+                                eprintln!(
+                                    "{}: ignoring broken symlink at {}",
+                                    "Warning".yellow(),
+                                    s
+                                );
                             }
-                            else if follow_symlinks {
-                                let s = p.path().as_os_str().to_owned().into_string().expect("OS String failed to resolve");
-                                eprintln!("{}: ignoring broken symlink at {}", "Warning".yellow(), s);
-                            }
-                        }
-                        else {
-                            eprintln!("{}: ignoring invalid unicode {:?}", "Warning".yellow(), p.path()) 
+                        } else {
+                            eprintln!(
+                                "{}: ignoring invalid unicode {:?}",
+                                "Warning".yellow(),
+                                p.path()
+                            )
                         }
                     }
-                }
-                else if let Err(e) = path {
-                    eprintln!("{}: failed to get path data from:\n{:?}", "Warning".yellow(), e);
-                }
-                ; WalkState::Continue })
+                } else if let Err(e) = path {
+                    eprintln!(
+                        "{}: failed to get path data from:\n{:?}",
+                        "Warning".yellow(),
+                        e
+                    );
+                };
+                WalkState::Continue
+            })
 
-        } );
+        });
 
         FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
 
     }
 
     /// Function to process directory contents and return a `FileTree` struct.
-    pub fn read_size(in_paths: &PathBuf,
-                     depth: u8,
-                     max_depth: Option<u8>,
-                     artifact_regex: Option<&Regex>,
-                     excludes: Option<&Regex>,
-                     maybe_gitignore: &Option<RegexSet>,
-                     with_gitignore: bool,
-                     artifacts_only: bool) -> FileSize {
+    pub fn read_size(
+        in_paths: &PathBuf,
+        depth: u8,
+        max_depth: Option<u8>,
+        artifact_regex: Option<&Regex>,
+        excludes: Option<&Regex>,
+        maybe_gitignore: &Option<RegexSet>,
+        with_gitignore: bool,
+        artifacts_only: bool,
+    ) -> FileSize {
 
         // attempt to read the .gitignore
         let mut size = FileSize::new(0);
         let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) } // TODO get rid of this
+            if let Some(ref gitignore) = *maybe_gitignore {
+                Some(gitignore.to_owned())
+            }
+            // TODO get rid of this
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
@@ -217,37 +259,44 @@ pub mod prelude {
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(file_contents_to_regex(&contents, &gitignore_path))
-                }
-                else if let Ok(mut file) = File::open(darcs_path.clone()) {
+                } else if let Ok(mut file) = File::open(darcs_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(darcs_contents_to_regex(&contents, &darcs_path))
-                } else { None }
+                } else {
+                    None
+                }
             }
-        } else { None };
+        } else {
+            None
+        };
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
 
             // iterate over all the entries in the directory
             for p in paths {
-                let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let (path_string, bool_loop): (String, bool) = if let Ok(x) = path.clone().into_os_string().into_string() {
-                    let bool_loop = match excludes {
-                        Some(ex) => !ex.is_match(&x),
-                        _ => true,
+                let path = p.unwrap().path(); // TODO no unwraps
+                let (path_string, bool_loop): (String, bool) =
+                    if let Ok(x) = path.clone().into_os_string().into_string() {
+                        let bool_loop = match excludes {
+                            Some(ex) => !ex.is_match(&x),
+                            _ => true,
+                        };
+
+                        (x, bool_loop)
+                    } else {
+                        eprintln!(
+                            "{}: skipping invalid unicode filepath at {:?}",
+                            "Warning".yellow(),
+                            path
+                        ); // TODO consider byte matching here?
+                        ("".to_string(), false)
                     };
 
-                    (x, bool_loop)
-                }
-                else {
-                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path); // TODO consider byte matching here?
-                    ("".to_string(), false)
-                };
-
-                // only consider path if we're not using regex excludes or if they don't match the
-                // exclusion regex
+                // only consider path if we're not using regex excludes or
+                // if they don't match the exclusion regex
                 if bool_loop {
 
                     // if this fails, it's probably because `path` is a broken symlink
@@ -255,59 +304,104 @@ pub mod prelude {
 
                         // append file size for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
-                            if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // okay because we already checked
+                            if !artifacts_only ||
+                                is_artifact(
+                                    &file,
+                                    &path_string,
+                                    artifact_regex,
+                                    &metadata,
+                                    &gitignore,
+                                )
+                            {
+                                // should check size before whether it's an artifact?
                                 let file_size = FileSize::new(metadata.len());
                                 size.add(file_size);
                             }
                         }
-
                         // otherwise, go deeper
                         else if metadata.is_dir() {
-                            let dir_size = read_size(&path, depth + 1, max_depth, artifact_regex, excludes, &gitignore, with_gitignore, artifacts_only);
+                            let dir_size = read_size(
+                                &path,
+                                depth + 1,
+                                max_depth,
+                                artifact_regex,
+                                excludes,
+                                &gitignore,
+                                with_gitignore,
+                                artifacts_only,
+                            );
                             size.add(dir_size);
                         }
+                    } else {
+                        eprintln!(
+                            "{}: ignoring symlink at {}",
+                            "Warning".yellow(),
+                            path.display()
+                        );
                     }
-                    else { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }
             }
         }
-
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
         else if !in_paths.exists() {
-            eprintln!("{}: path '{}' does not exist.", "Error".red(), &in_paths.display());
+            eprintln!(
+                "{}: path '{}' does not exist.",
+                "Error".red(),
+                &in_paths.display()
+            );
             exit(0x0001);
         }
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
-            eprintln!("{}: {} is not a directory.", "Error".red(), &in_paths.display());
+            eprintln!(
+                "{}: {} is not a directory.",
+                "Error".red(),
+                &in_paths.display()
+            );
             exit(0x0001);
         }
         // 3: otherwise, give a warning about permissions
         else {
-            eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+            eprintln!(
+                "{}: permission denied for directory: {}",
+                "Warning".yellow(),
+                &in_paths.display()
+            );
         }
 
         size
     }
 
     /// Function to process directory contents and return a `FileTree` struct.
-    pub fn read_all(in_paths: &PathBuf,
-                    force_parallel: bool,
-                    depth: u8,
-                    max_depth: Option<u8>,
-                    artifact_regex: Option<&Regex>,
-                    excludes: Option<&Regex>,
-                    nproc: usize,
-                    maybe_gitignore: &Option<RegexSet>,
-                    with_gitignore: bool,
-                    artifacts_only: bool) -> FileTree {
+    pub fn read_all(
+        in_paths: &PathBuf,
+        force_parallel: bool,
+        depth: u8,
+        max_depth: Option<u8>,
+        artifact_regex: Option<&Regex>,
+        excludes: Option<&Regex>,
+        nproc: usize,
+        maybe_gitignore: &Option<RegexSet>,
+        with_gitignore: bool,
+        artifacts_only: bool,
+    ) -> FileTree {
+
+        if let Some(0) = max_depth { // FIXME shouldn't descend if user wants to print files too
+            let size = read_parallel(&Path::new(&in_paths), None, None, true, nproc, artifacts_only, false);
+            let to_formatted = format!("{}", size);
+            println!("{}\t {}", &to_formatted.green(), ".");
+            exit(0x0000);
+        }
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
         let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore { Some(gitignore.to_owned()) } // TODO get rid of this
+            if let Some(ref gitignore) = *maybe_gitignore {
+                Some(gitignore.to_owned())
+            }
+            // TODO get rid of this
             else {
                 let mut gitignore_path = in_paths.clone();
                 gitignore_path.push(".gitignore");
@@ -318,15 +412,18 @@ pub mod prelude {
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(file_contents_to_regex(&contents, &gitignore_path))
-                }
-                else if let Ok(mut file) = File::open(darcs_path.clone()) {
+                } else if let Ok(mut file) = File::open(darcs_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(darcs_contents_to_regex(&contents, &darcs_path))
-                } else { None }
+                } else {
+                    None
+                }
             }
-        } else { None };
+        } else {
+            None
+        };
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -334,18 +431,22 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let (path_string, bool_loop): (String, bool) = if let Ok(x) = path.clone().into_os_string().into_string() {
-                    let bool_loop = match excludes {
-                        Some(ex) => !ex.is_match(&x),
-                        _ => true,
-                    };
+                let (path_string, bool_loop): (String, bool) =
+                    if let Ok(x) = path.clone().into_os_string().into_string() {
+                        let bool_loop = match excludes {
+                            Some(ex) => !ex.is_match(&x),
+                            _ => true,
+                        };
 
-                    (x, bool_loop)
-                }
-                else {
-                    eprintln!("{}: skipping invalid unicode filepath at {:?}", "Warning".yellow(), path); // TODO consider byte matching here?
-                    ("".to_string(), false)
-                };
+                        (x, bool_loop)
+                    } else {
+                        eprintln!(
+                            "{}: skipping invalid unicode filepath at {:?}",
+                            "Warning".yellow(),
+                            path
+                        ); // TODO consider byte matching here?
+                        ("".to_string(), false)
+                    };
 
                 // only consider path if we're not using regex excludes or if they don't match the
                 // exclusion regex
@@ -356,57 +457,131 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO 
-                            if !artifacts_only || is_artifact(&file, &path_string, artifact_regex, &metadata, &gitignore) { // should check size before whether it's an artifact? 
-                                let file_size = FileSize::new(metadata.len());//blocks() * 512);
+                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO
+                            if !artifacts_only ||
+                                is_artifact(
+                                    &file,
+                                    &path_string,
+                                    artifact_regex,
+                                    &metadata,
+                                    &gitignore,
+                                )
+                            {
+                                // should check size before whether it's an artifact?
+                                let file_size = FileSize::new(metadata.len()); //blocks() * 512);
                                 tree.push(path_string, file_size, None, depth + 1, false);
                             }
                         }
-
                         // otherwise, go deeper
-                        else if metadata.is_dir() { // TODO iterate in parallel if we've hit max depth.
+                        else if metadata.is_dir() {
+                            // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
                                 if depth + 1 >= d {
-                                    let dir_size = if (!artifacts_only || !with_gitignore) && force_parallel {
-                                        read_parallel(&path, None, None, true, nproc, artifacts_only, false)
-                                    }
-                                    else {
-                                        read_size(&path, depth + 1, max_depth, artifact_regex, excludes, &gitignore, with_gitignore, artifacts_only)
-                                    };
+                                    let dir_size =
+                                        if (!artifacts_only || !with_gitignore) && force_parallel {
+                                            read_parallel(
+                                                &path,
+                                                None,
+                                                None,
+                                                true,
+                                                nproc,
+                                                artifacts_only,
+                                                false,
+                                            )
+                                        } else {
+                                            read_size(
+                                                &path,
+                                                depth + 1,
+                                                max_depth,
+                                                artifact_regex,
+                                                excludes,
+                                                &gitignore,
+                                                with_gitignore,
+                                                artifacts_only,
+                                            )
+                                        };
                                     tree.push(path_string, dir_size, None, depth + 1, true);
-                                }
-                                else {
-                                    let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, nproc, &gitignore, with_gitignore, artifacts_only);
+                                } else {
+                                    let mut subtree = read_all(
+                                        &path,
+                                        force_parallel,
+                                        depth + 1,
+                                        max_depth,
+                                        artifact_regex,
+                                        excludes,
+                                        nproc,
+                                        &gitignore,
+                                        with_gitignore,
+                                        artifacts_only,
+                                    );
                                     let dir_size = subtree.file_size;
-                                    tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
+                                    tree.push(
+                                        path_string,
+                                        dir_size,
+                                        Some(&mut subtree),
+                                        depth + 1,
+                                        true,
+                                    );
                                 }
-                            }
-                            else {
-                                let mut subtree = read_all(&path, force_parallel, depth + 1, max_depth, artifact_regex, excludes, nproc, &gitignore, with_gitignore, artifacts_only);
+                            } else {
+                                let mut subtree = read_all(
+                                    &path,
+                                    force_parallel,
+                                    depth + 1,
+                                    max_depth,
+                                    artifact_regex,
+                                    excludes,
+                                    nproc,
+                                    &gitignore,
+                                    with_gitignore,
+                                    artifacts_only,
+                                );
                                 let dir_size = subtree.file_size;
-                                tree.push(path_string, dir_size, Some(&mut subtree), depth + 1, true);
+                                tree.push(
+                                    path_string,
+                                    dir_size,
+                                    Some(&mut subtree),
+                                    depth + 1,
+                                    true,
+                                );
                             }
                         }
+                    } else {
+                        eprintln!(
+                            "{}: ignoring symlink at {}",
+                            "Warning".yellow(),
+                            path.display()
+                        );
                     }
-                    else { eprintln!("{}: ignoring symlink at {}", "Warning".yellow(), path.display()); }
                 }
             }
         }
-
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
         else if !in_paths.exists() {
-            eprintln!("{}: path '{}' does not exist.", "Error".red(), &in_paths.display());
+            eprintln!(
+                "{}: path '{}' does not exist.",
+                "Error".red(),
+                &in_paths.display()
+            );
             exit(0x0001);
         }
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
-            eprintln!("{}: {} is not a directory.", "Error".red(), &in_paths.display());
+            eprintln!(
+                "{}: {} is not a directory.",
+                "Error".red(),
+                &in_paths.display()
+            );
             exit(0x0001);
         }
         // 3: otherwise, give a warning about permissions
         else {
-            eprintln!("{}: permission denied for directory: {}", "Warning".yellow(), &in_paths.display());
+            eprintln!(
+                "{}: permission denied for directory: {}",
+                "Warning".yellow(),
+                &in_paths.display()
+            );
         }
 
         tree

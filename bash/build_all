@@ -3,13 +3,14 @@ mkdir -p target/completions
 export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
 export BASH_COMPLETIONS_DIR="target/completions"
 export FISH_COMPLETIONS_DIR="target/completions"
-cargo build --bin sn --features "bash, fish" --release
-cargo build --bin sn --target=x86_64-pc-windows-gnu --release
-cargo build --bin sn --target=arm-unknown-linux-gnueabihf --release
-cargo build --bin sn --target=x86_64-unknown-linux-musl --release
-cross build --bin sn --target=arm-unknown-linux-musleabi --release
-cross build --bin sn --target=x86_64-unknown-freebsd --release
-cross build --bin sn --target=x86_64-unknown-netbsd --release
+cargo build --features "bash, fish"
+cargo build --release
+cargo build --target=x86_64-pc-windows-gnu --release
+cargo build --target=arm-unknown-linux-gnueabihf --release
+cargo build --target=x86_64-unknown-linux-musl --release
+cross build --target=arm-unknown-linux-musleabi --release
+cross build --target=x86_64-unknown-freebsd --release
+cross build --target=x86_64-unknown-netbsd --release
 #cargo build --no-default-features --features deutsch --bin schnüffle --release
 #cargo build --no-default-features --features deutsch --bin schnüffle --target=x86_64-pc-windows-gnu --release
 #cargo build --no-default-features --features deutsch --bin schnüffle --target=arm-unknown-linux-gnueabihf --release

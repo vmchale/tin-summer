@@ -17,7 +17,7 @@ end
 let path = $HOME/programming
 
 # set the benches
-let benches = ["sn all $path" "du -hcd2 $path" "sn all -p $path" "sn all -d1 $path" "sn all -pd1 $path" "du -hcd1 $path" "sn all -pfd1 $path" "du -hacd1 $path"]
+let benches = ["sn all $path" "du -hcd2 $path" "sn all -d1 $path" "du -hcd1 $path" "sn all -f $path" "du -hacd2 $path" "sn all -d0 $path" "du -hs $path" "oskar $path -d2"]
 
 # initialize cache
 echo 'initializing file system cache...'
@@ -27,7 +27,7 @@ sn all ~/programming > /dev/null
 if test $reports = "true"
     echo 'generating reports with benchmarks...'
     mkdir -p reports/
-    bench --output reports/fast.html @benches
+    bench --output reports/all.html @benches
 else
     bench @benches
 end

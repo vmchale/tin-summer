@@ -11,18 +11,23 @@ pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
-    debugln!("{:?}", lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>());
-   
+    debugln!(
+        "{:?}",
+        lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>()
+    );
+
     let maybe_set = RegexSet::new(lines);
     if let Ok(s) = maybe_set {
-        debugln!("{:?}",s);
+        debugln!("{:?}", s);
         s
-    }
-    else {
-        eprintln!("{}: failed to parse darcs boring file at {:?}, ignoring", "Warning".yellow(), file_path);
+    } else {
+        eprintln!(
+            "{}: failed to parse darcs boring file at {:?}, ignoring",
+            "Warning".yellow(),
+            file_path
+        );
         let empty: Vec<&str> = Vec::new();
-        RegexSet::new(empty)
-            .expect("Error creating regex from empty vector")
+        RegexSet::new(empty).expect("Error creating regex from empty vector")
     }
 }
 
@@ -31,32 +36,43 @@ pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
-    debugln!("{:?}", lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>());
-   
+    debugln!(
+        "{:?}",
+        lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>()
+    );
+
     let maybe_set = RegexSet::new(lines);
     if let Ok(s) = maybe_set {
-        debugln!("{:?}",s);
+        debugln!("{:?}", s);
         s
-    }
-    else {
-        eprintln!("{}: failed to parse .gitignore at {:?}, ignoring", "Warning".yellow(), file_path);
+    } else {
+        eprintln!(
+            "{}: failed to parse .gitignore at {:?}, ignoring",
+            "Warning".yellow(),
+            file_path
+        );
         let empty: Vec<&str> = Vec::new();
-        RegexSet::new(empty)
-            .expect("Error creating regex from empty vector")
+        RegexSet::new(empty).expect("Error creating regex from empty vector")
     }
 }
 
 pub fn process_to_vector(input: &str) -> Vec<&str> {
     match process(input) {
         IResult::Done(_, result) => result,
-        _ => { eprintln!("{}: Failed to parse gitignore", "Error".red()) ; exit(0xf001) }
+        _ => {
+            eprintln!("{}: Failed to parse gitignore", "Error".red());
+            exit(0xf001)
+        }
     }
 }
 
 pub fn process_darcs_full(input: &str) -> Vec<&str> {
     match process_darcs(input) {
         IResult::Done(_, result) => result,
-        _ => { eprintln!("{}: Failed to parse gitignore", "Error".red()) ; exit(0xf001) }
+        _ => {
+            eprintln!("{}: Failed to parse gitignore", "Error".red());
+            exit(0xf001)
+        }
     }
 }
 
@@ -132,7 +148,7 @@ named!(parse_period<&str, &str>,
 named!(parse_backslash<&str, &str>,
     do_parse!(
         val: alt!(
-            do_parse!(tag!("\\_") >> ("_")) | 
+            do_parse!(tag!("\\_") >> ("_")) |
             do_parse!(tag!("\\") >> ("\\"))
             ) >>
         (val)

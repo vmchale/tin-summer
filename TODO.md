@@ -24,6 +24,7 @@
   - [x] regex
 - [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
+- [ ] get --exclude to work in parallel?
 - [x] change french/german binary name
   - [ ] upsteam PR to clap-rs?
 - [ ] flag to follow symlinks

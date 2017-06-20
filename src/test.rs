@@ -16,9 +16,13 @@ use regex::RegexSet;
 use colored::*;
 
 #[bench]
-fn bench_cli_options(b:&mut Bencher) {
+fn bench_cli_options(b: &mut Bencher) {
     let yaml = load_yaml!("options-de.yml");
-    b.iter(|| App::from_yaml(yaml).version(crate_version!()).get_matches_from(vec!["sniff","ar","-g","."]))
+    b.iter(|| {
+        App::from_yaml(yaml)
+            .version(crate_version!())
+            .get_matches_from(vec!["sniff", "ar", "-g", "."])
+    })
 }
 
 #[bench]
@@ -28,12 +32,13 @@ fn bench_colorization(b: &mut Bencher) {
 
 #[bench]
 fn bench_gitignore_parse_file(b: &mut Bencher) {
-    b.iter(|| { 
+    b.iter(|| {
         let mut file = File::open("src/testdata/.gitignore").unwrap();
         let mut contents = String::new();
         let _ = file.read_to_string(&mut contents);
         process_to_vector(&contents);
-        () } )
+        ()
+    })
 }
 
 #[bench]
@@ -70,16 +75,17 @@ fn bench_gitignore_clone(b: &mut Bencher) {
 #[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");
-    b.iter(|| file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore")))
+    b.iter(|| {
+        file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore"))
+    })
 }
 
-/*
 #[bench]
 fn bench_parallel_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     let nproc = get_processors();
     b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
-}*/
+}
 
 #[bench]
 fn bench_traversal_large(b: &mut Bencher) {
@@ -87,65 +93,81 @@ fn bench_traversal_large(b: &mut Bencher) {
     b.iter(|| read_size(&p, 4, None, None, None, &None, false, false))
 }
 
-/*
 #[bench]
 fn bench_parallel_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
     let nproc = get_processors();
     b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
-}*/
+}
 
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, false))
+    b.iter(|| {
+        read_all(&p, false, 4, None, None, None, 0, &None, false, false)
+    })
 }
 
 #[bench]
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, true, true))
+    b.iter(|| {
+        read_all(&p, false, 4, None, None, None, 0, &None, true, true)
+    })
 }
 #[bench]
-fn bench_traversal_sort (b: &mut Bencher) {
+fn bench_traversal_sort(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| { let v = read_all(&p, false, 4, None, None, None, 0, &None, false, true); v.sort(None, 2, None, false) })
+    b.iter(|| {
+        let v = read_all(&p, false, 4, None, None, None, 0, &None, false, true);
+        v.sort(None, 2, None, false)
+    })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, true))
+    b.iter(|| {
+        read_all(&p, false, 4, None, None, None, 0, &None, false, true)
+    })
 }
 
 #[bench]
 fn bench_extension_regex(b: &mut Bencher) {
     let metadata = fs::metadata("src/main.rs").unwrap();
-    b.iter(|| is_artifact("libdoggo.rlib",
-                          "target/release/libdoggo.rlib",
-                          None,
-                          &metadata,
-                          &None) )
+    b.iter(|| {
+        is_artifact(
+            "libdoggo.rlib",
+            "target/release/libdoggo.rlib",
+            None,
+            &metadata,
+            &None,
+        )
+    })
 }
 
 #[bench]
 fn bench_extension_regex_long(b: &mut Bencher) {
     let metadata = fs::metadata("src/main.rs").unwrap();
-    b.iter(|| is_artifact("sniff",
-                          "target/arm-unknown-linux-musleabi/release/sniff",
-                          None,
-                          &metadata,
-                          &None) )
+    b.iter(|| {
+        is_artifact(
+            "sniff",
+            "target/arm-unknown-linux-musleabi/release/sniff",
+            None,
+            &metadata,
+            &None,
+        )
+    })
 }
 
 #[test]
 fn test_parser() {
     let cli_input = "30M";
-    assert_eq!(Some(30*1024*1024), threshold(Some(cli_input)));
+    assert_eq!(Some(30 * 1024 * 1024), threshold(Some(cli_input)));
 }
 
 #[bench]
-fn bench_parser(b:&mut Bencher) {
+fn bench_parser(b: &mut Bencher) {
     let cli_input = "1M";
     b.iter(|| threshold(Some(cli_input)))
 }

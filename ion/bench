@@ -21,7 +21,7 @@ let path = $HOME/programming
 let regex = '\'(.*?\\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)\$|total)\' '
 
 # set the benches
-let benches = ["du -hacd2 $path" "sn all $path" "sn all $path -p" "du -hacd2 -t1M $path" "sn fat $path" "sn fat $path -p" "du -hacd2 -t1M $path --exclude target/debug" "sn fat $path --exclude target/debug" "sn fat $path --exclude target/debug -p"] # "du -hac $path | rg $regex" "du -hac $path | grep -P $regex" "sn ar -g $path" "sn ar $path"]
+let benches = ["sn fat $path" "du -hacd2 -t1M $path" "sn fat $path --exclude target/debug" "du -hacd2 -t1M $path --exclude target/debug" "sn sort $path" "du -acd2 --bytes $path | sort -n | head -n8"] # "du -hac $path | rg $regex" "du -hac $path | grep -P $regex" "sn ar -g $path" "sn ar $path"]
 
 # initialize cache
 echo 'initializing file system cache...'
