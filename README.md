@@ -106,7 +106,7 @@ list, feel free to open a PR or start an issue.
   - [x] FORTRAN
   - [ ] C
 
-#### Foreign-language binaries
+<!-- #### Foreign-language binaries
 
 These are still very much works in progress; as of now errors and warnings are still in
 English. Binaries will be available once things stabilize.
@@ -121,4 +121,9 @@ Deutsch:
 
 ```bash
 cargo install tin-summer --no-default-features --feature deutsch
-```
+```-->
+
+## Name
+
+The name is a pun on Günter Grass' novel *Die Blechtrommel* or *The Tin Drum* in
+English. Thus, the binary is `sn`, and it sums up file sizes in directories.
