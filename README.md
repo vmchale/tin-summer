@@ -88,6 +88,16 @@ export CLICOLOR=0
   - [x] colorized output
   - [x] sort results by size
 
+#### Screenshots (alacritty + solarized dark)
+
+##### The Tin Summer
+
+![Displaying a user's timeline in a terminal.](https://raw.githubusercontent.com/vmchale/tin-summer/master/screenshots/oskar1.png)
+
+##### du
+
+![Displaying a user's timeline in a terminal.](https://raw.githubusercontent.com/vmchale/tin-summer/master/screenshots/du-screenshot.png)
+
 #### Languages Supported
 
 The *intent* is to support basically anything, so if your DOC is not on the
