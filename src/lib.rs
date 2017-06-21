@@ -254,6 +254,8 @@ pub mod prelude {
                 gitignore_path.push(".gitignore");
                 let mut darcs_path = in_paths.clone();
                 darcs_path.push("_darcs/prefs/boring");
+                let mut ignore_path = in_paths.clone();
+                ignore_path.push(".ignore");
                 if let Ok(mut file) = File::open(gitignore_path.clone()) {
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
@@ -264,6 +266,11 @@ pub mod prelude {
                     file.read_to_string(&mut contents)
                         .expect("File read failed.");
                     Some(darcs_contents_to_regex(&contents, &darcs_path))
+                } else if let Ok(mut file) = File::open(ignore_path.clone()) {
+                    let mut contents = String::new();
+                    file.read_to_string(&mut contents)
+                        .expect("File read failed.");
+                    Some(file_contents_to_regex(&contents, &gitignore_path))
                 } else {
                     None
                 }
