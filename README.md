@@ -25,15 +25,7 @@ If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
  $ cargo install tin-summer
 ```
 
-If you want the absolute latest version:
-
-```bash
- $ pijul clone https://nest.pijul.com/vamchale/file-sniffer
- $ cd file-sniffer
- $ cargo install
-```
-
-Make sure you are on nightly; if in doubt
+Make sure you are on nightly; otherwise
 
 ```bash
 rustup run nightly cargo install tin-summer
