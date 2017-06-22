@@ -1,0 +1,159 @@
+name: The Tin Summer
+author: Vanessa McHale <vanessa.mchale@reconfigure.io>
+about: Tool to find large files and project build artifacts. Can also find directory sizes. Unlikely to shatter glass.
+subcommands:
+    - sort:
+        about: Find the biggest files/directories
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - count: 
+                short: n
+                long: count
+                takes_value: true
+                value_name: NUMBER
+                help: Number of files to find (default 8)
+            - parallel:
+                short: p
+                long: parallel
+                help: Forcibly enable parallel directory traversals
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+              #- silent:
+              #short: s
+              #long: silent
+              #help: Don't print warnings.
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size (default 1M)
+    - fat:
+        about: Show big files/directories
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size (default 1M)
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+            - parallel:
+                short: p
+                long: parallel
+                help: Forcibly enable parallel directory traversals
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
+    - all:
+        about: Show all files/directories
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size (default 1M)
+            - parallel:
+                short: p
+                long: parallel
+                help: Forcibly enable parallel directory traversals
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+            - threads:
+                short: j
+                long: threads
+                takes_value: true
+                value_name: NUM
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
+    - ar:
+        about: Show directories with build artifacts
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size (default 1M)
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
+            - count: 
+                short: n
+                long: count
+                takes_value: true
+                value_name: NUMBER
+                help: Number of files to find (default 8)
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+                help: Regex for paths to exclude
+            - sort:
+                short: o
+                long: sort
+                help: Sort results by size
+            - gitignore:
+                short: g
+                long: no-gitignore
+                help: Don't bother using .gitignore or darcs boring file information for faster traversal
+            - regex:
+                short: r
+                long: regex
+                takes_value: true
+                value_name: REGEX
+                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files only, you could do 'sniff ar -r .*?rlib$'
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
