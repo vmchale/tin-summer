@@ -45,6 +45,7 @@
 - [ ] warn users when contradictory flags are issued
 - [ ] don't display tons of files from the same directory
 - [ ] let it run on a single file
+- [ ] check for ignore files in the parent dir too.
 
 # Features
 
@@ -71,7 +72,7 @@
 # Performance
 
 - [ ] parity with du without threading
-- [ ] print directories immediately rather than adding them to a vector
+- [ ] print directories immediately rather than adding them to a vector?
   - [ ] all
   - [ ] fat
   - [ ] ar

@@ -14,7 +14,6 @@ use std::fs::File;
 use std::io::prelude::*;
 use regex::RegexSet;
 use colored::*;
-use std::os::linux::fs::MetadataExt;
 
 #[bench]
 fn bench_cli_options(b: &mut Bencher) {
@@ -29,7 +28,7 @@ fn bench_cli_options(b: &mut Bencher) {
 #[bench]
 fn bench_to_string(b: &mut Bencher) {
     let path = PathBuf::from("src/testdata/junk.rlib");
-    b.iter(|| path.as_path().to_str())
+    b.iter(|| path.as_path().to_str().unwrap())
 }
 
 #[bench]

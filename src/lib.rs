@@ -188,12 +188,21 @@ pub mod prelude {
         let gitignore = if with_gitignore { mk_ignores(in_paths, maybe_gitignore) }
             else { None };
 
+        // for project directories
+        lazy_static! {
+            static ref REGEX_PROJECT_DIR: Regex = 
+                Regex::new(r"(.stack-work|dist|dist-newstyle|target|.*\.egg-info|elm-stuff)$")
+                .unwrap();
+        }
+
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
 
             // iterate over all the entries in the directory
             for p in paths {
-                let path = p.unwrap().path(); // TODO no unwraps
+                let val = if let Ok(x) = p { x } else { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) };
+                let path = val.path();
+                //let path = p.unwrap().path(); // TODO no unwraps
                 let (path_string, bool_loop): (&str, bool) =
                     if let Some(x) = path.as_path().to_str() {
                         let bool_loop = match excludes {
@@ -215,14 +224,14 @@ pub mod prelude {
                 if bool_loop {
 
                     // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = fs::symlink_metadata(&path) {
+                    if let Ok(metadata) = val.metadata() { // faster on Windows 
 
-                        // append file size for a file
+                        // append file size/name for a file
                         if metadata.is_file() {
                             if !artifacts_only ||
-                                { let file = path.file_name().unwrap().to_str().unwrap() ; 
+                                {
                                 is_artifact(
-                                    &file,
+                                    &val.file_name().to_str().unwrap(),
                                     &path_string,
                                     artifact_regex,
                                     &metadata,
@@ -236,15 +245,24 @@ pub mod prelude {
                         }
                         // otherwise, go deeper
                         else if metadata.is_dir() {
-                            let dir_size = read_size(
-                                &path,
-                                depth + 1,
-                                artifact_regex,
-                                excludes,
-                                &gitignore,
-                                with_gitignore,
-                                artifacts_only,
-                            );
+                            let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string) {
+                                read_size(&path,
+                                    depth + 1,
+                                    artifact_regex,
+                                    excludes,
+                                    &gitignore,
+                                    false,
+                                    false,
+                                )}
+                            else {
+                                read_size(&path,
+                                    depth + 1,
+                                    artifact_regex,
+                                    excludes,
+                                    &gitignore,
+                                    with_gitignore,
+                                    artifacts_only,
+                                )};
                             size.add(dir_size);
                         }
                     } else {
@@ -306,7 +324,7 @@ pub mod prelude {
     ) -> FileTree {
 
         if let Some(0) = max_depth {
-            let size = if force_parallel && !artifacts_only { read_parallel(&Path::new(&in_paths), nproc) }
+            let size = if force_parallel { read_parallel(&Path::new(&in_paths), nproc) }
                 else { read_size(in_paths, depth + 1, artifact_regex, excludes, &None, with_gitignore, artifacts_only) };
             let to_formatted = format!("{}", size);
             println!("{}\t {}", &to_formatted.green(), ".");
@@ -318,12 +336,20 @@ pub mod prelude {
         let gitignore = if with_gitignore { mk_ignores(in_paths, maybe_gitignore) }
             else { None };
 
+        // for project directories
+        lazy_static! {
+            static ref REGEX_PROJECT_DIR: Regex = 
+                Regex::new(r"(.stack-work|dist|dist-newstyle|target|.*\.egg-info|elm-stuff)$")
+                .unwrap();
+        }
+
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
 
             // iterate over all the entries in the directory
             for p in paths {
-                let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
+                let val = if let Ok(x) = p { x } else { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) };
+                let path = val.path();
                 let (path_string, bool_loop): (&str, bool) =
                     if let Some(x) = path.as_path().to_str() {
                         let bool_loop = match excludes {
@@ -346,14 +372,14 @@ pub mod prelude {
                 if bool_loop {
 
                     // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = fs::symlink_metadata(&path) {
+                    if let Ok(metadata) = val.metadata() { // faster on Windows 
 
                         // append file size/name for a file
                         if metadata.is_file() {
                             if !artifacts_only ||
-                                { let file = path.file_name().unwrap().to_str().unwrap() ; // ok because we already checked stuff
+                                {
                                 is_artifact(
-                                    &file,
+                                    &val.file_name().to_str().unwrap(),
                                     path_string,
                                     artifact_regex,
                                     &metadata,
@@ -367,9 +393,9 @@ pub mod prelude {
                         // otherwise, go deeper
                         else if metadata.is_dir() {
                             if let Some(d) = max_depth {
-                                if depth + 1 >= d {
+                                if depth + 1 >= d || (artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string)) {
                                     let dir_size =
-                                        if (!artifacts_only || !with_gitignore) && force_parallel {
+                                        if force_parallel {
                                             read_parallel(
                                                 &path,
                                                 nproc,
@@ -381,10 +407,12 @@ pub mod prelude {
                                                 artifact_regex,
                                                 excludes,
                                                 &gitignore,
-                                                with_gitignore,
-                                                artifacts_only,
+                                                false,
+                                                false,
                                             )
                                         };
+                                    //let clean = false;
+                                    //if clean { fs::remove_dir_all(&path).unwrap() } 
                                     tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                                 } else {
                                     let mut subtree = read_all(
