@@ -22,6 +22,7 @@ let benches = ["sn all $path" "du -hcd2 $path" "sn all -d1 $path" "du -hcd1 $pat
 # initialize cache
 echo 'initializing file system cache...'
 sn all $path > /dev/null
+du -hacd2 $path > /dev/null
 
 #do the actual benchmarks
 if test $reports = "true"

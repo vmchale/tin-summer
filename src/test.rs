@@ -147,6 +147,48 @@ fn bench_extension_regex(b: &mut Bencher) {
 }
 
 #[bench]
+fn get_entries(b: &mut Bencher) {
+    b.iter(|| fs::read_dir(".").unwrap())
+}
+
+#[bench]
+fn get_entries_str(b: &mut Bencher) {
+    b.iter(|| { 
+        let paths = fs::read_dir(".").unwrap() ;
+        for p in paths {
+            let _ = p.unwrap().path().to_str().unwrap();
+        };
+    })
+}
+
+#[bench]
+fn get_entries_metadata(b: &mut Bencher) {
+    b.iter(|| {
+        let paths = fs::read_dir(".").unwrap() ;
+        for p in paths {
+            let _ = p.unwrap().metadata().unwrap();
+        };
+    })
+}
+
+#[bench]
+fn get_entries_is_file(b: &mut Bencher) {
+    b.iter(|| {
+        let paths = fs::read_dir(".").unwrap() ;
+        for p in paths {
+            let val = p.unwrap();
+            let t = val.file_type().unwrap();
+            let _ = if t.is_file() { true } else { t.is_dir() };
+        };
+    })
+}
+
+#[bench]
+fn bench_get_metadata(b: &mut Bencher) {
+    b.iter(|| fs::metadata("src/main.rs").unwrap())
+}
+
+#[bench]
 fn bench_extension_regex_long(b: &mut Bencher) {
     let metadata = fs::metadata("src/main.rs").unwrap();
     b.iter(|| {

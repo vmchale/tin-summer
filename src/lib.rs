@@ -137,12 +137,11 @@ pub mod prelude {
                 .unwrap();
         }
 
-
         if let Some(r) = re {
             if r.is_match(path_str) { 
                 true
             } else if let &Some(ref x) = gitignore {
-                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
+                if REGEX_GITIGNORE.is_match(path_str) {
                     x.is_match(full_path)
                 } else {
                     false
@@ -223,11 +222,12 @@ pub mod prelude {
                 // if they don't match the exclusion regex
                 if bool_loop {
 
-                    // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = val.metadata() { // faster on Windows 
+                    let path_type = val.file_type().unwrap();
 
-                        // append file size/name for a file
-                        if metadata.is_file() {
+                    // append file size/name for a file
+                    if path_type.is_file() {
+                        // if this fails, it's probably because `path` is a broken symlink
+                        if let Ok(metadata) = val.metadata() { // faster on Windows
                             if !artifacts_only ||
                                 {
                                 is_artifact(
@@ -243,35 +243,36 @@ pub mod prelude {
                                 size.add(file_size);
                             }
                         }
-                        // otherwise, go deeper
-                        else if metadata.is_dir() {
-                            let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string) {
-                                read_size(&path,
-                                    depth + 1,
-                                    artifact_regex,
-                                    excludes,
-                                    &gitignore,
-                                    false,
-                                    false,
-                                )}
-                            else {
-                                read_size(&path,
-                                    depth + 1,
-                                    artifact_regex,
-                                    excludes,
-                                    &gitignore,
-                                    with_gitignore,
-                                    artifacts_only,
-                                )};
-                            size.add(dir_size);
-                        }
-                    } else {
-                        eprintln!(
-                            "{}: ignoring symlink at {}",
-                            "Warning".yellow(),
-                            path.display()
-                        );
                     }
+                    // otherwise, go deeper
+                    else if path_type.is_dir() {
+                        let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string) {
+                            read_size(&path,
+                                depth + 1,
+                                artifact_regex,
+                                excludes,
+                                &gitignore,
+                                false,
+                                false,
+                            )}
+                        else {
+                            read_size(&path,
+                                depth + 1,
+                                artifact_regex,
+                                excludes,
+                                &gitignore,
+                                with_gitignore,
+                                artifacts_only,
+                            )};
+                        size.add(dir_size);
+                    }
+                } 
+                else {
+                    eprintln!(
+                        "{}: ignoring symlink at {}",
+                        "Warning".yellow(),
+                        path.display()
+                    );
                 }
             }
         }
@@ -371,11 +372,12 @@ pub mod prelude {
                 // exclusion regex
                 if bool_loop {
 
-                    // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = val.metadata() { // faster on Windows 
+                    let path_type = val.file_type().unwrap();
 
-                        // append file size/name for a file
-                        if metadata.is_file() {
+                    // append file size/name for a file
+                    if path_type.is_file() {
+                        // if this fails, it's probably because `path` is a broken symlink
+                        if let Ok(metadata) = val.metadata() { // faster on Windows 
                             if !artifacts_only ||
                                 {
                                 is_artifact(
@@ -389,53 +391,31 @@ pub mod prelude {
                                 tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                             }
                         }
+                    }
 
-                        // otherwise, go deeper
-                        else if metadata.is_dir() {
-                            if let Some(d) = max_depth {
-                                if depth + 1 >= d || (artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string)) {
-                                    let dir_size =
-                                        if force_parallel {
-                                            read_parallel(
-                                                &path,
-                                                nproc,
-                                            )
-                                        } else {
-                                            read_size(
-                                                &path,
-                                                depth + 1,
-                                                artifact_regex,
-                                                excludes,
-                                                &gitignore,
-                                                false,
-                                                false,
-                                            )
-                                        };
-                                    //let clean = false;
-                                    //if clean { fs::remove_dir_all(&path).unwrap() } 
-                                    tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
-                                } else {
-                                    let mut subtree = read_all(
-                                        &path,
-                                        force_parallel,
-                                        depth + 1,
-                                        max_depth,
-                                        artifact_regex,
-                                        excludes,
-                                        nproc,
-                                        &gitignore,
-                                        with_gitignore,
-                                        artifacts_only,
-                                    );
-                                    let dir_size = subtree.file_size;
-                                    tree.push(
-                                        path_string.to_string(),
-                                        dir_size,
-                                        Some(&mut subtree),
-                                        depth + 1,
-                                        true,
-                                    );
-                                }
+                    // otherwise, go deeper
+                    else if path_type.is_dir() {
+                        if let Some(d) = max_depth {
+                            if depth + 1 >= d || (artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string)) {
+                                let dir_size =
+                                    if force_parallel {
+                                        read_parallel(
+                                            &path,
+                                            nproc,
+                                        )
+                                    } else {
+                                        read_size(
+                                            &path,
+                                            depth + 1,
+                                            artifact_regex,
+                                            excludes,
+                                            &gitignore,
+                                            false,
+                                            false,
+                                        )
+                                    };
+                                //if clean { fs::remove_dir_all(&path).unwrap() } 
+                                tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                             } else {
                                 let mut subtree = read_all(
                                     &path,
@@ -458,14 +438,36 @@ pub mod prelude {
                                     true,
                                 );
                             }
+                        } else {
+                            let mut subtree = read_all(
+                                &path,
+                                force_parallel,
+                                depth + 1,
+                                max_depth,
+                                artifact_regex,
+                                excludes,
+                                nproc,
+                                &gitignore,
+                                with_gitignore,
+                                artifacts_only,
+                            );
+                            let dir_size = subtree.file_size;
+                            tree.push(
+                                path_string.to_string(),
+                                dir_size,
+                                Some(&mut subtree),
+                                depth + 1,
+                                true,
+                            );
                         }
-                    } else {
-                        eprintln!(
-                            "{}: ignoring symlink at {}",
-                            "Warning".yellow(),
-                            path.display()
-                        );
                     }
+                    } 
+                else {
+                    eprintln!(
+                        "{}: ignoring symlink at {}",
+                        "Warning".yellow(),
+                        path.display()
+                    );
                 }
             }
         }
