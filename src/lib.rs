@@ -17,31 +17,23 @@ extern crate ignore;
 extern crate regex;
 extern crate colored;
 
-#[macro_use]
-mod macros;
 pub mod test;
 pub mod types;
 pub mod error;
 pub mod cli_helpers;
 pub mod gitignore;
 pub mod utils;
+pub mod walk_parallel;
 
 pub mod prelude {
 
-
-    //use std::os::unix::fs::{MetadataExt};
-    use std::sync::Arc;
     use std::fs;
     use std::path::{PathBuf, Path};
     use regex::{Regex, RegexSet};
     use types::*;
-    use gitignore::*;
     use colored::*;
-    use std::io::prelude::*;
     use std::process::exit;
-    use ignore::{WalkBuilder, WalkState};
-    use std::fs::{Metadata, File};
-    use std::sync::atomic::{AtomicU64, Ordering};
+    use std::fs::Metadata;
 
     #[cfg(not(target_os = "windows"))]
     use std::os::unix::fs::PermissionsExt;
@@ -49,6 +41,7 @@ pub mod prelude {
     pub use cli_helpers::*;
     pub use error::*;
     pub use utils::*;
+    pub use walk_parallel::*;
 
     /// Helper function to determine whether a path points
     ///
@@ -85,22 +78,33 @@ pub mod prelude {
         gitignore: &Option<RegexSet>,
     ) -> bool {
 
+        lazy_static! {
+            static ref REGEX_GITIGNORE: Regex = 
+                Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+                .unwrap();
+        }
+
         // match on the user's expression if it exists
         if let Some(r) = re {
-            r.is_match(path_str) // FIXME include .gitignore as well?
+            if r.is_match(path_str) { 
+                true
+            } else if let &Some(ref x) = gitignore {
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
+                    x.is_match(full_path)
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
         }
+
         // otherwise, use builtin expressions
         else {
 
             lazy_static! {
                 static ref REGEX: Regex = 
-                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$") // TODO reorder regex
-                    .unwrap();
-            }
-
-            lazy_static! {
-                static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+                    Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
                     .unwrap();
             }
 
@@ -126,19 +130,31 @@ pub mod prelude {
         _: &Metadata,
         gitignore: &Option<RegexSet>,
     ) -> bool {
+        
+        lazy_static! {
+            static ref REGEX_GITIGNORE: Regex = 
+                Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+                .unwrap();
+        }
+
+
         if let Some(r) = re {
-            r.is_match(path_str)
+            if r.is_match(path_str) { 
+                true
+            } else if let &Some(ref x) = gitignore {
+                if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
+                    x.is_match(full_path)
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
         } else {
 
             lazy_static! {
                 static ref REGEX: Regex = 
                     Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
-                    .unwrap();
-            }
-
-            lazy_static! {
-                static ref REGEX_GITIGNORE: Regex = 
-                    Regex::new(r".*?\.(stats|conf|h|out|cache.*|\.js)$")
                     .unwrap();
             }
 
@@ -156,85 +172,10 @@ pub mod prelude {
         }
     }
 
-    pub fn read_parallel(
-        in_paths: &Path,
-        _: Option<usize>, // optionally include a max depth to which to recurse
-        _: Option<&Regex>,
-        show_hidden: bool,
-        nproc: usize,
-        artifacts_only: bool,
-        follow_symlinks: bool,
-    ) -> FileSize {
-
-        // create new walk + set file size to zero
-        let mut builder = WalkBuilder::new(in_paths);
-        let dir_size = Arc::new(AtomicU64::new(0));
-
-        // set options for our walk
-        // TODO make this a lazy_static?
-        builder.hidden(!show_hidden)
-            .follow_links(follow_symlinks)
-            .ignore(false)
-            .threads(nproc) // set this dynamically before release (via nproc or something)
-            .git_ignore(false)
-            .git_exclude(false)
-            .git_global(false)
-            .parents(false);
-
-        // runs loop
-        builder.build_parallel().run(|| {
-
-            let filesize_dir = dir_size.clone();
-            Box::new(move |path| {
-
-                if let Ok(p) = path {
-                    if p.path().is_file() {
-                        if let Ok(f) = p.file_name().to_owned().into_string() {
-                            if let Ok(metadata) = p.metadata() {
-                                if !artifacts_only || is_artifact(&f, "", None, &metadata, &None) {
-                                    filesize_dir.fetch_add(metadata.len(), Ordering::Relaxed);
-                                }
-                            } else if follow_symlinks {
-                                let s = p.path()
-                                    .as_os_str()
-                                    .to_owned()
-                                    .into_string()
-                                    .expect("OS String failed to resolve");
-                                eprintln!(
-                                    "{}: ignoring broken symlink at {}",
-                                    "Warning".yellow(),
-                                    s
-                                );
-                            }
-                        } else {
-                            eprintln!(
-                                "{}: ignoring invalid unicode {:?}",
-                                "Warning".yellow(),
-                                p.path()
-                            )
-                        }
-                    }
-                } else if let Err(e) = path {
-                    eprintln!(
-                        "{}: failed to get path data from:\n{:?}",
-                        "Warning".yellow(),
-                        e
-                    );
-                };
-                WalkState::Continue
-            })
-
-        });
-
-        FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
-
-    }
-
     /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_size(
         in_paths: &PathBuf,
         depth: u8,
-        max_depth: Option<u8>,
         artifact_regex: Option<&Regex>,
         excludes: Option<&Regex>,
         maybe_gitignore: &Option<RegexSet>,
@@ -244,40 +185,8 @@ pub mod prelude {
 
         // attempt to read the .gitignore
         let mut size = FileSize::new(0);
-        let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore {
-                Some(gitignore.to_owned())
-            }
-            // TODO get rid of this
-            else {
-                let mut gitignore_path = in_paths.clone();
-                gitignore_path.push(".gitignore");
-                let mut darcs_path = in_paths.clone();
-                darcs_path.push("_darcs/prefs/boring");
-                let mut ignore_path = in_paths.clone();
-                ignore_path.push(".ignore");
-                if let Ok(mut file) = File::open(gitignore_path.clone()) {
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)
-                        .expect("File read failed.");
-                    Some(file_contents_to_regex(&contents, &gitignore_path))
-                } else if let Ok(mut file) = File::open(darcs_path.clone()) {
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)
-                        .expect("File read failed.");
-                    Some(darcs_contents_to_regex(&contents, &darcs_path))
-                } else if let Ok(mut file) = File::open(ignore_path.clone()) {
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)
-                        .expect("File read failed.");
-                    Some(file_contents_to_regex(&contents, &gitignore_path))
-                } else {
-                    None
-                }
-            }
-        } else {
-            None
-        };
+        let gitignore = if with_gitignore { mk_ignores(in_paths, maybe_gitignore) }
+            else { None };
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -285,21 +194,20 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps
-                let (path_string, bool_loop): (String, bool) =
-                    if let Ok(x) = path.clone().into_os_string().into_string() {
+                let (path_string, bool_loop): (&str, bool) =
+                    if let Some(x) = path.as_path().to_str() {
                         let bool_loop = match excludes {
-                            Some(ex) => !ex.is_match(&x),
+                            Some(ex) => !ex.is_match(x),
                             _ => true,
                         };
-
                         (x, bool_loop)
                     } else {
                         eprintln!(
                             "{}: skipping invalid unicode filepath at {:?}",
                             "Warning".yellow(),
                             path
-                        ); // TODO consider byte matching here?
-                        ("".to_string(), false)
+                        );
+                        ("", false)
                     };
 
                 // only consider path if we're not using regex excludes or
@@ -311,15 +219,15 @@ pub mod prelude {
 
                         // append file size for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // okay because we already checked
                             if !artifacts_only ||
+                                { let file = path.file_name().unwrap().to_str().unwrap() ; 
                                 is_artifact(
                                     &file,
                                     &path_string,
                                     artifact_regex,
                                     &metadata,
                                     &gitignore,
-                                )
+                                ) }
                             {
                                 // should check size before whether it's an artifact?
                                 let file_size = FileSize::new(metadata.len());
@@ -331,7 +239,6 @@ pub mod prelude {
                             let dir_size = read_size(
                                 &path,
                                 depth + 1,
-                                max_depth,
                                 artifact_regex,
                                 excludes,
                                 &gitignore,
@@ -350,6 +257,7 @@ pub mod prelude {
                 }
             }
         }
+
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
         else if !in_paths.exists() {
@@ -360,6 +268,7 @@ pub mod prelude {
             );
             exit(0x0001);
         }
+
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
             eprintln!(
@@ -369,6 +278,7 @@ pub mod prelude {
             );
             exit(0x0001);
         }
+
         // 3: otherwise, give a warning about permissions
         else {
             eprintln!(
@@ -395,8 +305,9 @@ pub mod prelude {
         artifacts_only: bool,
     ) -> FileTree {
 
-        if let Some(0) = max_depth { // FIXME shouldn't descend if user wants to print files too
-            let size = read_parallel(&Path::new(&in_paths), None, None, true, nproc, artifacts_only, false);
+        if let Some(0) = max_depth {
+            let size = if force_parallel && !artifacts_only { read_parallel(&Path::new(&in_paths), nproc) }
+                else { read_size(in_paths, depth + 1, artifact_regex, excludes, &None, with_gitignore, artifacts_only) };
             let to_formatted = format!("{}", size);
             println!("{}\t {}", &to_formatted.green(), ".");
             exit(0x0000);
@@ -404,33 +315,8 @@ pub mod prelude {
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
-        let gitignore = if with_gitignore {
-            if let Some(ref gitignore) = *maybe_gitignore {
-                Some(gitignore.to_owned())
-            }
-            // TODO get rid of this
-            else {
-                let mut gitignore_path = in_paths.clone();
-                gitignore_path.push(".gitignore");
-                let mut darcs_path = in_paths.clone();
-                darcs_path.push("_darcs/prefs/boring");
-                if let Ok(mut file) = File::open(gitignore_path.clone()) {
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)
-                        .expect("File read failed.");
-                    Some(file_contents_to_regex(&contents, &gitignore_path))
-                } else if let Ok(mut file) = File::open(darcs_path.clone()) {
-                    let mut contents = String::new();
-                    file.read_to_string(&mut contents)
-                        .expect("File read failed.");
-                    Some(darcs_contents_to_regex(&contents, &darcs_path))
-                } else {
-                    None
-                }
-            }
-        } else {
-            None
-        };
+        let gitignore = if with_gitignore { mk_ignores(in_paths, maybe_gitignore) }
+            else { None };
 
         // try to read directory contents
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -438,10 +324,10 @@ pub mod prelude {
             // iterate over all the entries in the directory
             for p in paths {
                 let path = p.unwrap().path(); // TODO no unwraps; idk what this error would be though.
-                let (path_string, bool_loop): (String, bool) =
-                    if let Ok(x) = path.clone().into_os_string().into_string() {
+                let (path_string, bool_loop): (&str, bool) =
+                    if let Some(x) = path.as_path().to_str() {
                         let bool_loop = match excludes {
-                            Some(ex) => !ex.is_match(&x),
+                            Some(ex) => !ex.is_match(x),
                             _ => true,
                         };
 
@@ -451,8 +337,8 @@ pub mod prelude {
                             "{}: skipping invalid unicode filepath at {:?}",
                             "Warning".yellow(),
                             path
-                        ); // TODO consider byte matching here?
-                        ("".to_string(), false)
+                        );
+                        ("", false)
                     };
 
                 // only consider path if we're not using regex excludes or if they don't match the
@@ -464,42 +350,34 @@ pub mod prelude {
 
                         // append file size/name for a file
                         if metadata.is_file() {
-                            let file = path.file_name().unwrap().to_owned().into_string().unwrap(); // ok because we already checked // TODO
                             if !artifacts_only ||
+                                { let file = path.file_name().unwrap().to_str().unwrap() ; // ok because we already checked stuff
                                 is_artifact(
                                     &file,
-                                    &path_string,
+                                    path_string,
                                     artifact_regex,
                                     &metadata,
-                                    &gitignore,
-                                )
+                                    &gitignore) }
                             {
-                                // should check size before whether it's an artifact?
-                                let file_size = FileSize::new(metadata.len()); //blocks() * 512);
-                                tree.push(path_string, file_size, None, depth + 1, false);
+                                let file_size = FileSize::new(metadata.len());
+                                tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                             }
                         }
+
                         // otherwise, go deeper
                         else if metadata.is_dir() {
-                            // TODO iterate in parallel if we've hit max depth.
                             if let Some(d) = max_depth {
                                 if depth + 1 >= d {
                                     let dir_size =
                                         if (!artifacts_only || !with_gitignore) && force_parallel {
                                             read_parallel(
                                                 &path,
-                                                None,
-                                                None,
-                                                true,
                                                 nproc,
-                                                artifacts_only,
-                                                false,
                                             )
                                         } else {
                                             read_size(
                                                 &path,
                                                 depth + 1,
-                                                max_depth,
                                                 artifact_regex,
                                                 excludes,
                                                 &gitignore,
@@ -507,7 +385,7 @@ pub mod prelude {
                                                 artifacts_only,
                                             )
                                         };
-                                    tree.push(path_string, dir_size, None, depth + 1, true);
+                                    tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                                 } else {
                                     let mut subtree = read_all(
                                         &path,
@@ -523,7 +401,7 @@ pub mod prelude {
                                     );
                                     let dir_size = subtree.file_size;
                                     tree.push(
-                                        path_string,
+                                        path_string.to_string(),
                                         dir_size,
                                         Some(&mut subtree),
                                         depth + 1,
@@ -545,7 +423,7 @@ pub mod prelude {
                                 );
                                 let dir_size = subtree.file_size;
                                 tree.push(
-                                    path_string,
+                                    path_string.to_string(),
                                     dir_size,
                                     Some(&mut subtree),
                                     depth + 1,
@@ -563,6 +441,7 @@ pub mod prelude {
                 }
             }
         }
+
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
         else if !in_paths.exists() {
@@ -573,6 +452,7 @@ pub mod prelude {
             );
             exit(0x0001);
         }
+
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
             eprintln!(
@@ -582,6 +462,7 @@ pub mod prelude {
             );
             exit(0x0001);
         }
+
         // 3: otherwise, give a warning about permissions
         else {
             eprintln!(

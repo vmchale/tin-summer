@@ -14,20 +14,22 @@ use std::fs::File;
 use std::io::prelude::*;
 use regex::RegexSet;
 use colored::*;
+use std::os::linux::fs::MetadataExt;
 
 #[bench]
 fn bench_cli_options(b: &mut Bencher) {
-    let yaml = load_yaml!("options-de.yml");
+    let yaml = load_yaml!("cli/options-en.yml");
     b.iter(|| {
         App::from_yaml(yaml)
             .version(crate_version!())
-            .get_matches_from(vec!["sniff", "ar", "-g", "."])
+            .get_matches_from(vec!["sn", "ar", "-g", "."])
     })
 }
 
 #[bench]
-fn bench_colorization(b: &mut Bencher) {
-    b.iter(|| "428 MB".green())
+fn bench_to_string(b: &mut Bencher) {
+    let path = PathBuf::from("src/testdata/junk.rlib");
+    b.iter(|| path.as_path().to_str())
 }
 
 #[bench]
@@ -67,12 +69,6 @@ fn profunctor_gitignore() {
 }
 
 #[bench]
-fn bench_gitignore_clone(b: &mut Bencher) {
-    let file_contents = include_str!("testdata/.gitignore");
-    let gitignore_structure = &process_to_vector(file_contents);
-    b.iter(|| gitignore_structure.to_owned())
-}
-#[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");
     b.iter(|| {
@@ -81,23 +77,28 @@ fn bench_gitignore(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_processors(b: &mut Bencher) {
+    b.iter(|| get_processors())
+}
+
+#[bench]
 fn bench_parallel_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     let nproc = get_processors();
-    b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
+    b.iter(|| read_parallel(&p, nproc))
 }
 
 #[bench]
 fn bench_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_size(&p, 4, None, None, None, &None, false, false))
+    b.iter(|| read_size(&p, 4, None, None, &None, false, false))
 }
 
 #[bench]
 fn bench_parallel_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
     let nproc = get_processors();
-    b.iter(|| read_parallel(&p, None, None, true, nproc, false, false))
+    b.iter(|| read_parallel(&p, nproc))
 }
 
 #[bench]
@@ -120,7 +121,7 @@ fn bench_traversal_sort(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
         let v = read_all(&p, false, 4, None, None, None, 0, &None, false, true);
-        v.sort(None, 2, None, false)
+        v.sort(None, None, false)
     })
 }
 

@@ -39,19 +39,17 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
 }
 
 pub fn get_threads(num_from_cli: Option<&str>) -> usize {
-    if let Some(num) = num_from_cli {
-        num.parse::<usize>()
-            .expect("Please enter a positive whole number")
-    } else {
-        get_processors()
+    match num_from_cli {
+        Some(num) =>num.parse::<usize>()
+            .expect("Please enter a positive whole number"),
+        _ => get_processors()
     }
 }
 
 pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
-    if let Some(read) = path_from_cli {
-        PathBuf::from(read)
-    } else {
-        PathBuf::from(".")
+    match path_from_cli {
+        Some(read) => PathBuf::from(read),
+        _ => PathBuf::from("."),
     }
 }
 
@@ -73,9 +71,11 @@ fn pre_threshold(t_from_cli: &str) -> u64 {
 }
 
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
+
     let pre: String = nums.into_iter().collect();
     let n = pre.parse::<u64>()
         .expect("Error parsing integer at cli_helpers.rs:58");
+
     match size_tag {
         b"G" | b"g" => n * 1073741824,
         b"M" | b"m" => n * 1048576,
@@ -83,6 +83,7 @@ fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
         b"b" | b"B" => n,
         _ => exit(0x0f01),
     }
+
 }
 
 named!(digit_char<&[u8], char>,

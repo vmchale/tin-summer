@@ -7,18 +7,13 @@ use nom::IResult;
 use std::path::PathBuf;
 
 pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
-    let processed_vec: Vec<&str> = process_darcs_full(file);
+
+    let processed_vec: Vec<&str> = process_darcs_full(file); // also can append to file: ~/.darcs/boring
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
-    debugln!(
-        "{:?}",
-        lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>()
-    );
-
     let maybe_set = RegexSet::new(lines);
     if let Ok(s) = maybe_set {
-        debugln!("{:?}", s);
         s
     } else {
         eprintln!(
@@ -29,25 +24,20 @@ pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
         let empty: Vec<&str> = Vec::new();
         RegexSet::new(empty).expect("Error creating regex from empty vector")
     }
+
 }
 
 pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
-    let processed_vec: Vec<&str> = process_to_vector(file);
+    let processed_vec: Vec<&str> = process_to_vector(file); // also append ~/.gitignore_global if we can/want
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
-    debugln!(
-        "{:?}",
-        lines.clone().filter(|x| *x != "#").collect::<Vec<&str>>()
-    );
-
     let maybe_set = RegexSet::new(lines);
     if let Ok(s) = maybe_set {
-        debugln!("{:?}", s);
         s
     } else {
         eprintln!(
-            "{}: failed to parse .gitignore at {:?}, ignoring",
+            "{}: failed to parse .gitignore/.ignore at {:?}, ignoring",
             "Warning".yellow(),
             file_path
         );

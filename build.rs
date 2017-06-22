@@ -11,7 +11,7 @@ use clap::App;
 fn main() {
 
     // load configuration
-    let yaml = load_yaml!("src/options-en.yml");
+    let yaml = load_yaml!("src/cli/options-en.yml");
     let mut app = App::from_yaml(yaml).version(crate_version!());
 
     // generate bash completions if desired

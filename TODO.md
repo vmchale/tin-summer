@@ -1,3 +1,5 @@
+# Done 
+
 - [x] colorized output
 - [x] option to print out top *n* values
 - [x] default: order by "biggest"
@@ -24,39 +26,74 @@
   - [x] regex
 - [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
-- [ ] get --exclude to work in parallel?
-- [x] change french/german binary name
-  - [ ] upsteam PR to clap-rs?
-- [ ] flag to follow symlinks
-  - [x] ignore symlinks by default
 - [x] fix .gitignore parser
-- [ ] shake for cross builds?? parallel would b nice, plus finer control of
-  fish/bash stuff
+- [x] fix darcs parser
+- [x] make a pun about the tin drum?
+- [x] still use gitignore even w/ user-supplied regex
+- [x] print by significant figures
+
+# Bugs
+
+- [ ] flag -fd0 should work
+
+# UI/Ergonomics
+
 - [x] excludes w/ regex
   - [x] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
-- [ ] improve ergonomics (and possibly speed) by guessing language of build?
-- [ ] don't mark shell scripts as build artifacts?
-- [ ] 597 kB displayed later as 1MB?
-- [ ] cool feature: highlight extensions
-  - [ ] optionally color-coded by language
-- [ ] errors should be translated to french/german as well.
-  - [ ] make an error type & use that to organize things
-- [ ] global gitignore
-  - [ ] darcs boring file?
 - [ ] flag to print all (e.g. no max depth/etc.)
-- [ ] regex should only match against file name, not full path
-- [ ] replace du
-  - [ ] traverse a directory in parallel?
-  - [ ] figure out block sizes vs. file sizes
-- [ ] consider: hardcoded gitignore, from global & supporting various languages?
-- [ ] intelligent selection of parallel flag
-- [ ] fix darcs parser
-- [ ] add windows support
-- [ ] add option to *only* search gitignore
+- [ ] warn users when contradictory flags are issued
+- [ ] don't display tons of files from the same directory
+- [ ] let it run on a single file
+
+# Features
+
+- [ ] flag to follow symlinks
+  - [x] ignore symlinks by default
+- [ ] improve ergonomics (and possibly speed) by guessing language of project
+  directory
+- [ ] cool feature: highlight extensions
+  - [ ] color-coded by language?
+- [ ] global gitignore
+  - [x] darcs boring file?
+  - [x] pijul ignore
+  - [ ] .hginore
+- [x] regex should only match against file name, not full path
+- [x] replace du
+- [ ] add option to *only* search ignored files
 - [ ] autoclean option
   - [ ] haskell
   - [ ] rust
   - [ ] idris
   - [ ] elm
-- [ ] make a pun about the tin drum?
+  - [ ] python
+
+# Performance
+
+- [ ] parity with du without threading
+- [ ] print directories immediately rather than adding them to a vector
+  - [ ] all
+  - [ ] fat
+  - [ ] ar
+
+# Parallel traversals
+
+- [ ] determine whether to use multiple threads automatically
+- [ ] feed results into a queue and pop them off in another thread
+- [ ] make generic structure for a traversal in parallel that respects necessary
+  features
+  - [ ] global ignores
+  - [ ] ignore files
+    - [ ] .ignore
+    - [ ] pijul .ignore
+    - [ ] darcs boring file
+    - [ ] .hginore
+  - [ ] excludes
+
+# French/German
+
+- [ ] errors should be translated to french/german as well.
+  - [ ] make an error type & use that to organize things
+- [x] change french/german binary name
+  - [ ] upsteam PR to clap-rs?
+- [ ] fix build.rs

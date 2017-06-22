@@ -27,12 +27,14 @@ fish = []
 verbose = []
 
 [dependencies]
+num_cpus = "1.6"
 nom = "3.0"
 colored = "1.5"
 clap = {version = "2.24", features = ["yaml"]}
 regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"
+crossbeam = "0.2"
 #ignore = "0.2"
 
 [dependencies.ignore]

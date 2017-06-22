@@ -15,11 +15,11 @@ fn main() {
 
     // command-line parser
     #[cfg(feature = "english")]
-    let yaml = load_yaml!("options-en.yml");
+    let yaml = load_yaml!("cli/options-en.yml");
     #[cfg(feature = "francais")]
-    let yaml = load_yaml!("options-fr.yml");
+    let yaml = load_yaml!("cli/options-fr.yml");
     #[cfg(feature = "deutsch")]
-    let yaml = load_yaml!("options-de.yml");
+    let yaml = load_yaml!("cli/options-de.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
     // find large files
@@ -85,7 +85,7 @@ fn main() {
         };
 
         // filter by depth
-        let mut v_filtered = v.filtered(depth, Some(min_bytes), !print_files);
+        let mut v_filtered = v.filtered(Some(min_bytes), !print_files);
 
         // display results
         v_filtered.display_tree(init_dir);
@@ -100,7 +100,7 @@ fn main() {
         let depth = get_depth(command.value_of("depth"));
 
         // whether to use parallel directory traversals
-        let force_parallel = !command.is_present("parallel") && !min_bytes.is_some();
+        let force_parallel = command.is_present("parallel") && !min_bytes.is_some();
 
         // get the number of processors to be used
         let nproc = if force_parallel { get_processors() } else { 0 };
@@ -148,7 +148,7 @@ fn main() {
 
 
         // filter by depth
-        let mut v_filtered = v.filtered(depth, min_bytes, !print_files);
+        let mut v_filtered = v.filtered(min_bytes, !print_files);
 
         // display results
         v_filtered.display_tree(init_dir);
@@ -218,9 +218,9 @@ fn main() {
         };
 
         let mut v_processed = if should_sort {
-            v.sort(Some(num_int), depth, min_bytes, !print_files)
+            v.sort(Some(num_int), min_bytes, !print_files)
         } else {
-            v.filtered(depth, min_bytes, !print_files)
+            v.filtered(min_bytes, !print_files)
         };
 
         v_processed.display_tree(init_dir);
@@ -238,7 +238,7 @@ fn main() {
         let depth = get_depth(command.value_of("depth"));
 
         // whether to use parallel directory traversals
-        let force_parallel = !command.is_present("parallel") && !min_bytes.is_some();
+        let force_parallel = command.is_present("parallel") && !min_bytes.is_some();
 
         // don't print warnings
         let print_files = command.is_present("files");
@@ -294,7 +294,7 @@ fn main() {
         };
 
         // sort them
-        let mut v_sorted = v.sort(Some(num_int), depth, min_bytes, !print_files);
+        let mut v_sorted = v.sort(Some(num_int), min_bytes, !print_files);
 
         // display sorted filenames
         v_sorted.display_tree(init_dir);

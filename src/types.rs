@@ -22,10 +22,11 @@ impl FileSize {
     }
 }
 
+#[derive(Debug)]
 pub struct NamePair {
-    bytes: FileSize,
+    pub bytes: FileSize,
     depth: u8,
-    name: String,
+    pub name: String,
     is_dir: bool,
 }
 
@@ -49,6 +50,13 @@ pub struct FileTree {
     files: Vec<NamePair>,
 }
 
+pub fn display_item(name: &str, bytes: FileSize) { 
+    if bytes != FileSize::new(0) {
+        let to_formatted = format!("{}", bytes);
+        println!("{}\t {}", &to_formatted.green(), name);
+    }
+}
+
 impl Default for FileTree {
     fn default() -> Self {
         Self::new()
@@ -56,20 +64,12 @@ impl Default for FileTree {
 }
 
 impl FileTree {
-    // for whatever reason, it's faster to display smallest files first
     pub fn sort(
         mut self,
         maybe_num: Option<usize>,
-        d: u8,
         min_bytes: Option<u64>,
         dirs_only: bool,
     ) -> FileTree {
-
-        let min_size = if let Some(x) = min_bytes.map(FileSize::new) {
-            x
-        } else {
-            FileSize::new(1)
-        }; // FIXME no compare
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
@@ -77,7 +77,7 @@ impl FileTree {
             let new = self.files
                 .into_iter()
                 .filter(|a| {
-                    a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size
+                    (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
                 })
                 .take(n)
                 .collect::<Vec<NamePair>>();
@@ -92,7 +92,7 @@ impl FileTree {
             let new = self.files
                 .into_iter()
                 .filter(|a| {
-                    a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size
+                    (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
                 })
                 .collect::<Vec<NamePair>>();
             FileTree {
@@ -102,20 +102,13 @@ impl FileTree {
         }
     }
 
-    pub fn filtered(mut self, d: u8, min_bytes: Option<u64>, dirs_only: bool) -> FileTree {
-
-        let min_size = if let Some(x) = min_bytes.map(FileSize::new) {
-            x
-        } else {
-            FileSize::new(1)
-        };
+    pub fn filtered(mut self, min_bytes: Option<u64>, dirs_only: bool) -> FileTree {
 
         self.files = self.files
             .into_iter()
             .filter(|a| {
-                a.depth <= d && (if dirs_only { a.is_dir } else { true }) && a.bytes > min_size
+                (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
             })
-            .filter(|a| a.depth <= d)
             .collect::<Vec<NamePair>>();
 
         FileTree {
@@ -132,7 +125,6 @@ impl FileTree {
     }
 
     pub fn add(&mut self, size: FileSize) -> () {
-
         self.file_size.add(size);
     }
 
@@ -158,11 +150,6 @@ impl FileTree {
 
     }
 
-    // TODO: make this more intelligent about what it displays
-    // 2: if we display the child directory, don't show the parent? unless we display more than one
-    //    child, in which case it's probably best to display all 3. AND if a directory is on the
-    //    gitignore, it's best to not display its children.
-    // 3: if we *are* displaying files, only display the first few in a directory
     pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
 
         // display stuff
@@ -174,8 +161,6 @@ impl FileTree {
             }
         }
 
-        // display total if it's nonzero
-        // FIXME include threshold here
         if self.file_size != FileSize::new(0) {
             let to_formatted = format!("{}", self.file_size);
             let path = init_dir.display();
@@ -185,7 +170,6 @@ impl FileTree {
     }
 }
 
-// TODO print by significant figures?
 impl fmt::Display for FileSize {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 
@@ -193,20 +177,27 @@ impl fmt::Display for FileSize {
             let pre_size = format!("{}", self.size);
             write!(f, "{} b", &pre_size.pad_to_width(4))
         } else if self.size < 1048576 {
-            // 2^20 = 1024 * 1024
-            let pre_size = format!("{}", self.size / 1024);
+            let pre_size = if self.size / 1024 > 9 {
+                format!("{}", self.size / 1024) }
+            else { format!("{:.1}", self.size as f32 / 1024.0) };
             write!(f, "{} kB", &pre_size.pad_to_width(4))
         } else if self.size < 1073741824 {
             // 2^30
-            let pre_size = format!("{}", self.size / 1048576);
+            let pre_size = if self.size / 1048576 > 9 {
+                format!("{}", self.size / 1048576) }
+            else { format!("{:.1}", self.size as f32 / 1048576.0) };
             write!(f, "{} MB", &pre_size.pad_to_width(4))
         } else if self.size < 1099511627776 {
             // 2^40
-            let pre_size = format!("{}", self.size / 1073741824);
+            let pre_size = if self.size / 1073741824 > 9 {
+                format!("{}", self.size / 1073741824) }
+            else { format!("{:.1}", self.size as f32 / 1073741824.0) };
             write!(f, "{} GB", &pre_size.pad_to_width(4))
         } else {
             // for 1 TB and above
-            let pre_size = format!("{}", self.size / 1099511627776);
+            let pre_size = if self.size / 1099511627776 > 9 {
+                format!("{}", self.size / 1099511627776) }
+            else { format!("{:.1}", self.size as f32 / 1099511627776.0) };
             write!(f, "{} TB", &pre_size.pad_to_width(4))
         }
     }
