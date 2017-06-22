@@ -1,6 +1,6 @@
 [package]
 name = "tin-summer"
-version = "1.2.1"
+version = "1.2.2-pre"
 authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer. Shatters records not glass."
