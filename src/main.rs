@@ -8,6 +8,7 @@ extern crate regex;
 use liboskar::prelude::*;
 use clap::App;
 use colored::*;
+use std::path::PathBuf;
 
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
@@ -22,8 +23,15 @@ fn main() {
     let yaml = load_yaml!("cli/options-de.yml");
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
+    // test stuff
+    if let Some(_) = matches.subcommand_matches("parallel-test") {
+
+        let w = Walk::new(PathBuf::from("."));
+        print_parallel(w);
+    }
+
     // find large files
-    if let Some(command) = matches.subcommand_matches("fat") {
+    else if let Some(command) = matches.subcommand_matches("fat") {
 
         // set threshold
         let min_bytes = match threshold(command.value_of("threshold")) {
@@ -44,7 +52,7 @@ fn main() {
         let force_parallel = false;
 
         // get the number of processors to be used
-        let nproc = if force_parallel { get_processors() } else { 0 };
+        let _ = if force_parallel { get_processors() } else { 0 };
 
         // set regex for exclusions
         let regex = command.value_of("excludes");
@@ -57,12 +65,10 @@ fn main() {
             Some(r) => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     Some(&check_regex(r)),
-                    nproc,
                     &None,
                     false,
                     false,
@@ -71,12 +77,10 @@ fn main() {
             _ => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     None,
-                    nproc,
                     &None,
                     false,
                     false,
@@ -103,7 +107,7 @@ fn main() {
         let force_parallel = command.is_present("parallel") && !min_bytes.is_some();
 
         // get the number of processors to be used
-        let nproc = if force_parallel { get_processors() } else { 0 };
+        let _ = if force_parallel { get_processors() } else { 0 };
 
         // set regex for exclusions
         let regex = command.value_of("excludes");
@@ -119,12 +123,10 @@ fn main() {
             Some(r) => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     Some(&check_regex(r)),
-                    nproc,
                     &None,
                     false,
                     false,
@@ -133,12 +135,10 @@ fn main() {
             _ => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     None,
-                    nproc,
                     &None,
                     false,
                     false,
@@ -161,9 +161,6 @@ fn main() {
         // set depth
         let depth = get_depth(command.value_of("depth"));
 
-        // whether to use parallel directory traversals
-        let force_parallel = false;
-
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count"));
 
@@ -182,21 +179,16 @@ fn main() {
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
-        // get the number of processors to be used
-        let nproc = 0;
-
         // get relevant filenames &c.
         let v = if let Some(r) = artifacts {
             let re = check_regex(r);
             let excludes = get_excludes(command.value_of("excludes"));
             read_all(
                 &init_dir,
-                force_parallel,
                 0,
                 Some(depth),
                 Some(&re),
                 Some(&excludes),
-                nproc,
                 &None,
                 !no_gitignore,
                 true,
@@ -205,12 +197,10 @@ fn main() {
             let excludes = get_excludes(command.value_of("excludes"));
             read_all(
                 &init_dir,
-                force_parallel,
                 0,
                 Some(depth),
                 None,
                 Some(&excludes),
-                nproc,
                 &None,
                 !no_gitignore,
                 true,
@@ -244,7 +234,7 @@ fn main() {
         let print_files = command.is_present("files");
 
         // get the number of processors to be used
-        let nproc = if force_parallel {
+        let _ = if force_parallel {
             get_threads(command.value_of("threads"))
         } else {
             0
@@ -266,12 +256,10 @@ fn main() {
             Some(r) => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     Some(&check_regex(r)),
-                    nproc,
                     &None,
                     false,
                     false,
@@ -280,12 +268,10 @@ fn main() {
             _ => {
                 read_all(
                     &init_dir,
-                    force_parallel,
                     0,
                     Some(depth),
                     None,
                     None,
-                    nproc,
                     &None,
                     false,
                     false,

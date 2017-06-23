@@ -1,5 +1,4 @@
 #![feature(test)]
-#![feature(integer_atomics)]
 #![allow(match_ref_pats)]
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
@@ -13,7 +12,6 @@ extern crate nom;
 #[macro_use]
 extern crate lazy_static;
 
-extern crate ignore;
 extern crate regex;
 extern crate colored;
 
@@ -28,7 +26,7 @@ pub mod walk_parallel;
 pub mod prelude {
 
     use std::fs;
-    use std::path::{PathBuf, Path};
+    use std::path::{PathBuf};
     use regex::{Regex, RegexSet};
     use types::*;
     use colored::*;
@@ -199,9 +197,11 @@ pub mod prelude {
 
             // iterate over all the entries in the directory
             for p in paths {
-                let val = if let Ok(x) = p { x } else { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) };
+                let val = match p {
+                    Ok(x) => x,
+                    _ => { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) },
+                };
                 let path = val.path();
-                //let path = p.unwrap().path(); // TODO no unwraps
                 let (path_string, bool_loop): (&str, bool) =
                     if let Some(x) = path.as_path().to_str() {
                         let bool_loop = match excludes {
@@ -267,13 +267,13 @@ pub mod prelude {
                         size.add(dir_size);
                     }
                 } 
-                else {
+                /*else {
                     eprintln!(
                         "{}: ignoring symlink at {}",
                         "Warning".yellow(),
                         path.display()
                     );
-                }
+                }*/
             }
         }
 
@@ -313,24 +313,14 @@ pub mod prelude {
     /// Function to process directory contents and return a `FileTree` struct.
     pub fn read_all(
         in_paths: &PathBuf,
-        force_parallel: bool,
         depth: u8,
         max_depth: Option<u8>,
         artifact_regex: Option<&Regex>,
         excludes: Option<&Regex>,
-        nproc: usize,
         maybe_gitignore: &Option<RegexSet>,
         with_gitignore: bool,
         artifacts_only: bool,
     ) -> FileTree {
-
-        if let Some(0) = max_depth {
-            let size = if force_parallel { read_parallel(&Path::new(&in_paths), nproc) }
-                else { read_size(in_paths, depth + 1, artifact_regex, excludes, &None, with_gitignore, artifacts_only) };
-            let to_formatted = format!("{}", size);
-            println!("{}\t {}", &to_formatted.green(), ".");
-            exit(0x0000);
-        }
 
         // attempt to read the .gitignore
         let mut tree = FileTree::new();
@@ -348,8 +338,11 @@ pub mod prelude {
         if let Ok(paths) = fs::read_dir(in_paths) {
 
             // iterate over all the entries in the directory
-            for p in paths {
-                let val = if let Ok(x) = p { x } else { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) };
+            for p in paths { // TODO consider a filter on the iterator!
+                let val = match p {
+                    Ok(x) => x,
+                    _ => { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) },
+                };
                 let path = val.path();
                 let (path_string, bool_loop): (&str, bool) =
                     if let Some(x) = path.as_path().to_str() {
@@ -397,34 +390,25 @@ pub mod prelude {
                     else if path_type.is_dir() {
                         if let Some(d) = max_depth {
                             if depth + 1 >= d || (artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string)) {
-                                let dir_size =
-                                    if force_parallel {
-                                        read_parallel(
-                                            &path,
-                                            nproc,
-                                        )
-                                    } else {
-                                        read_size(
-                                            &path,
-                                            depth + 1,
-                                            artifact_regex,
-                                            excludes,
-                                            &gitignore,
-                                            false,
-                                            false,
-                                        )
-                                    };
-                                //if clean { fs::remove_dir_all(&path).unwrap() } 
+                                let dir_size = {
+                                    read_size(
+                                        &path,
+                                        depth + 1,
+                                        artifact_regex,
+                                        excludes,
+                                        &gitignore,
+                                        with_gitignore && !REGEX_PROJECT_DIR.is_match(&path_string),
+                                        artifacts_only && !REGEX_PROJECT_DIR.is_match(&path_string), // FIXME only compute this once
+                                    )
+                                };
                                 tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                             } else {
                                 let mut subtree = read_all(
                                     &path,
-                                    force_parallel,
                                     depth + 1,
                                     max_depth,
                                     artifact_regex,
                                     excludes,
-                                    nproc,
                                     &gitignore,
                                     with_gitignore,
                                     artifacts_only,
@@ -438,38 +422,17 @@ pub mod prelude {
                                     true,
                                 );
                             }
-                        } else {
-                            let mut subtree = read_all(
-                                &path,
-                                force_parallel,
-                                depth + 1,
-                                max_depth,
-                                artifact_regex,
-                                excludes,
-                                nproc,
-                                &gitignore,
-                                with_gitignore,
-                                artifacts_only,
-                            );
-                            let dir_size = subtree.file_size;
-                            tree.push(
-                                path_string.to_string(),
-                                dir_size,
-                                Some(&mut subtree),
-                                depth + 1,
-                                true,
-                            );
                         }
                     }
-                    } 
-                else {
+                }
+            } 
+                /*else {
                     eprintln!(
                         "{}: ignoring symlink at {}",
                         "Warning".yellow(),
                         path.display()
                     );
-                }
-            }
+                }*/
         }
 
         // if we can't read the directory contents, figure out why

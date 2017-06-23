@@ -35,11 +35,6 @@ regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"
 crossbeam = "0.2"
-#ignore = "0.2"
-
-[dependencies.ignore]
-path = "./ignore"
-version = "0.2"
 
 [lib]
 path = "src/lib.rs"

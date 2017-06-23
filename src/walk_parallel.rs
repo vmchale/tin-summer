@@ -1,19 +1,16 @@
-#![allow(unused_imports)]
+#![allow(dead_code)]
 
 extern crate crossbeam;
 
-use self::crossbeam::sync::MsQueue;
+use std::fs;
+use self::crossbeam::sync::chase_lev;
 use regex::{RegexSet, Regex};
-use types::{FileSize, NamePair};
-use std::sync::Arc;
-use std::io;
-use std::thread;
-use std::path::{PathBuf, Path};
+use std::path::{PathBuf};
 use colored::*;
-use ignore::{WalkBuilder, WalkState};
-use std::sync::atomic::{AtomicU64, Ordering};
-/*
-struct Walk {
+use std::process::exit;
+use std::fs::DirEntry;
+
+pub struct Walk {
     path: PathBuf,
     gitignore: Option<RegexSet>,
     hgignore: Option<RegexSet>,
@@ -21,95 +18,102 @@ struct Walk {
     excludes: Option<Regex>,
     max_depth: Option<u8>,
     threshold: Option<u64>,
-    // todo: add num_waiting and the like.
-}
-
-fn print_from_queue(queue_in: Arc<MsQueue<NamePair>>) -> () {
-
-    let queue = queue_in.clone();
-    let stdout_thread = thread::spawn(move || {
-        let mut stdout = io::BufWriter::new(io::stdout());
-
-        // ideally we should send a quit signal though??
-        loop {
-            let name_pair = queue.pop();
-            if name_pair.bytes != FileSize::new(0) {
-                let to_formatted = format!("{}", name_pair.bytes);
-                println!("{}\t {}", &to_formatted.green(), name_pair.name);
-            }
-        }
-    });
-
-    stdout_thread.join().unwrap();
 }
 
 impl Walk {
-    pub fn collect_all(self, threads: usize) -> Arc<MsQueue<NamePair>> {
 
-        let files = Arc::new(MsQueue::new());
-        let mut any_work = false;
+    pub fn new(p: PathBuf) -> Walk {
+        Walk { path: p, gitignore: None, hgignore: None, darcs_boring: None, excludes: None, max_depth: None, threshold: None }
+    }
 
-        /*for w in workers {
-            w.join().unwrap(); // if it fails to join to the main thread, that's bad.
-        }*/
+    pub fn push_subdir(path: PathBuf, ref mut worker: &mut chase_lev::Worker<DirEntry>) {
+        
+        let in_paths = &path;
+        
+        // fill up queue + print out files
+        if let Ok(paths) = fs::read_dir(in_paths) {
 
-        files
+            // iterate over all the entries in the directory
+            for p in paths {
+                let val = match p {
+                    Ok(x) => x,
+                    _ => { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) },
+                };
+                match val.file_type() { // ideally, we'd push *directories* instead, and also stream this stuff!
+                    Ok(t) => { if t.is_file() { worker.push(val); } else if t.is_dir() { let mut new_path = path.to_owned() ; new_path.push(val.file_name()) ; Walk::push_subdir(new_path, worker) } },
+                    _ => { eprintln!("{}: could not determine file type for: {}", "Warning".yellow(), val.file_name().to_str().unwrap()) }
+                }
+            }
+        }
+
+        // if we can't read the directory contents, figure out why
+        // 1: check the path exists
+        else if !in_paths.exists() {
+            eprintln!(
+                "{}: path '{}' does not exist.",
+                "Error".red(),
+                &in_paths.display()
+            );
+            exit(0x0001);
+        }
+
+        // 2: check the path is actually a directory
+        else if !in_paths.is_dir() {
+            eprintln!(
+                "{}: {} is not a directory.",
+                "Error".red(),
+                &in_paths.display()
+            );
+            exit(0x0001);
+        }
+
+        // 3: otherwise, give a warning about permissions
+        else {
+            eprintln!(
+                "{}: permission denied for directory: {}",
+                "Warning".yellow(),
+                &in_paths.display()
+            );
+        }
 
     }
 
 }
-*/
-pub fn read_parallel(
-    in_paths: &Path,
-    nproc: usize,
-) -> FileSize {
 
-    // create new walk + set file size to zero
-    let mut builder = WalkBuilder::new(in_paths);
-    let dir_size = Arc::new(AtomicU64::new(0));
+pub fn print_parallel(w: Walk) -> () {
 
-    // set options for our walk
-    builder.hidden(false)
-        .follow_links(false)
-        .ignore(false)
-        .threads(nproc)
-        .git_ignore(false)
-        .git_exclude(false)
-        .git_global(false)
-        .parents(false);
+    // set up worker & stealer
+    let (mut worker, stealer): (chase_lev::Worker<DirEntry>, chase_lev::Stealer<DirEntry>) = chase_lev::deque();
 
-    // runs loop
-    builder.build_parallel().run(|| {
+    // set up parallel stealers
+    let stealer2 = stealer.clone();
+    let stealer3 = stealer.clone();
+    let stealer4 = stealer.clone();
+    let stealer5 = stealer.clone();
 
-        let filesize_dir = dir_size.clone();
-        Box::new(move |path| {
+    let in_paths = w.path;
 
-            if let Ok(p) = path {
-                if p.path().is_file() {
-                    if let Ok(metadata) = p.metadata() {
-                        filesize_dir.fetch_add(metadata.len(), Ordering::Relaxed);
-                    }
-                    else {
-                        eprintln!(
-                            "{}: couldn't get metadata for {:?}",
-                            "Warning".yellow(),
-                            p.path()
-                        )
-                    }
-                }
-            } else if let Err(e) = path {
-                eprintln!(
-                    "{}: failed to get path data from:\n{:?}",
-                    "Warning".yellow(),
-                    e
-                );
-            };
-            WalkState::Continue
-        })
+    Walk::push_subdir(in_paths, &mut worker);
 
-    });
+    // start popping off values
+    while let chase_lev::Steal::Data(p) = stealer.steal() {
+        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
+    }
 
-    FileSize::new(Arc::try_unwrap(dir_size).unwrap().into_inner())
+    while let chase_lev::Steal::Data(p) = stealer2.steal() {
+        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
+    }
+
+    while let chase_lev::Steal::Data(p) = stealer3.steal() {
+        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
+    }
+
+    while let chase_lev::Steal::Data(p) = stealer4.steal() {
+        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
+    }
+
+    while let chase_lev::Steal::Data(p) = stealer5.steal() {
+        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
+    }
 
 }
-

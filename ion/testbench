@@ -16,7 +16,7 @@ end
 if test $path_arg = "true"
     let path = @args[2]
 else
-    let path = . #/home/vanessa/programming
+    let path = /home/vanessa/programming
 end
 
 # initialize cache

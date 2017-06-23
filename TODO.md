@@ -35,6 +35,7 @@
 # Bugs
 
 - [ ] flag -fd0 should work
+- [ ] custom regex should override the "project dirs" regex?
 
 # UI/Ergonomics
 
@@ -72,6 +73,8 @@
 # Performance
 
 - [ ] parity with du without threading
+  - [ ] test walkdir crate
+  - [ ] dual-threading to pop off values?
 - [ ] print directories immediately rather than adding them to a vector?
   - [ ] all
   - [ ] fat

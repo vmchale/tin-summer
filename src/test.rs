@@ -1,6 +1,5 @@
 #![allow(unused_imports)]
 extern crate test;
-extern crate regex;
 
 use clap::App;
 use std::fs;
@@ -94,6 +93,12 @@ fn bench_traversal_large(b: &mut Bencher) {
 }
 
 #[bench]
+fn bench_traversal_all(b: &mut Bencher) {
+    let p = PathBuf::from(".");
+    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, true))
+}
+
+#[bench]
 fn bench_parallel_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
     let nproc = get_processors();
@@ -149,6 +154,13 @@ fn bench_extension_regex(b: &mut Bencher) {
 #[bench]
 fn get_entries(b: &mut Bencher) {
     b.iter(|| fs::read_dir(".").unwrap())
+}
+
+#[bench]
+fn count_entries(b: &mut Bencher) {
+    b.iter(|| {
+        let paths = fs::read_dir(".").unwrap();
+        paths.count() } )
 }
 
 #[bench]
