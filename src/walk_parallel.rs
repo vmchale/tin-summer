@@ -11,6 +11,12 @@ use std::process::exit;
 use std::thread;
 use std::fs::DirEntry;
 
+pub enum Status<T> {
+    Done,
+    Wait,
+    Data(T),
+}
+
 pub struct Walk {
     path: PathBuf,
     gitignore: Option<RegexSet>,
