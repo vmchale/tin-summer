@@ -80,13 +80,6 @@ fn bench_processors(b: &mut Bencher) {
 }
 
 #[bench]
-fn bench_parallel_traversal(b: &mut Bencher) {
-    let p = PathBuf::from("src/testdata");
-    let nproc = get_processors();
-    b.iter(|| read_parallel(&p, nproc))
-}
-
-#[bench]
 fn bench_traversal_large(b: &mut Bencher) {
     let p = PathBuf::from(".");
     b.iter(|| read_size(&p, 4, None, None, &None, false, false))
@@ -95,21 +88,14 @@ fn bench_traversal_large(b: &mut Bencher) {
 #[bench]
 fn bench_traversal_all(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_all(&p, false, 4, None, None, None, 0, &None, false, true))
-}
-
-#[bench]
-fn bench_parallel_traversal_large(b: &mut Bencher) {
-    let p = PathBuf::from(".");
-    let nproc = get_processors();
-    b.iter(|| read_parallel(&p, nproc))
+    b.iter(|| read_all(&p, 4, None, None, None, &None, false, true))
 }
 
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        read_all(&p, false, 4, None, None, None, 0, &None, false, false)
+        read_all(&p, 4, None, None, None, &None, false, false)
     })
 }
 
@@ -117,14 +103,14 @@ fn bench_traversal(b: &mut Bencher) {
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        read_all(&p, false, 4, None, None, None, 0, &None, true, true)
+        read_all(&p, 4, None, None, None, &None, true, true)
     })
 }
 #[bench]
 fn bench_traversal_sort(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        let v = read_all(&p, false, 4, None, None, None, 0, &None, false, true);
+        let v = read_all(&p, 4, None, None, None, &None, false, true);
         v.sort(None, None, false)
     })
 }
@@ -133,7 +119,7 @@ fn bench_traversal_sort(b: &mut Bencher) {
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        read_all(&p, false, 4, None, None, None, 0, &None, false, true)
+        read_all(&p, 4, None, None, None, &None, false, true)
     })
 }
 

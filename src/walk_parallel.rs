@@ -8,6 +8,7 @@ use regex::{RegexSet, Regex};
 use std::path::{PathBuf};
 use colored::*;
 use std::process::exit;
+use std::thread;
 use std::fs::DirEntry;
 
 pub struct Walk {
@@ -40,6 +41,7 @@ impl Walk {
                     _ => { eprintln!("{}: path error at {:?}.", "Error".red(), p) ; exit(0x0001) },
                 };
                 match val.file_type() { // ideally, we'd push *directories* instead, and also stream this stuff!
+                    // basically, we'd like to push shallow directories only?
                     Ok(t) => { if t.is_file() { worker.push(val); } else if t.is_dir() { let mut new_path = path.to_owned() ; new_path.push(val.file_name()) ; Walk::push_subdir(new_path, worker) } },
                     _ => { eprintln!("{}: could not determine file type for: {}", "Warning".yellow(), val.file_name().to_str().unwrap()) }
                 }
@@ -93,27 +95,43 @@ pub fn print_parallel(w: Walk) -> () {
 
     let in_paths = w.path;
 
-    Walk::push_subdir(in_paths, &mut worker);
+    let child_producer = thread::spawn(move || {
+        Walk::push_subdir(in_paths, &mut worker);
+    });
 
     // start popping off values
-    while let chase_lev::Steal::Data(p) = stealer.steal() {
-        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
-    }
+    // make an enum to signal when we're done instead :)
+    // IDEA: have data return whatever was uneaten afterwards? Could handle nesting really well :)
 
-    while let chase_lev::Steal::Data(p) = stealer2.steal() {
-        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
-    }
+    let child_consumer = thread::spawn(move || {
+        while let chase_lev::Steal::Data(p) = stealer.steal() {
+            println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());}
+    });
 
-    while let chase_lev::Steal::Data(p) = stealer3.steal() {
-        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
-    }
+    let child2 = thread::spawn(move || {
+        while let chase_lev::Steal::Data(p) = stealer2.steal() {
+            println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());}
+    });
 
-    while let chase_lev::Steal::Data(p) = stealer4.steal() {
-        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
-    }
+    let child3 = thread::spawn(move || {
+        while let chase_lev::Steal::Data(p) = stealer3.steal() {
+            println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());}
+    });
 
-    while let chase_lev::Steal::Data(p) = stealer5.steal() {
-        println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());
-    }
+    let child4 = thread::spawn(move || {
+        while let chase_lev::Steal::Data(p) = stealer4.steal() {
+            println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());}
+    });
 
+    let child5 = thread::spawn(move || {
+        while let chase_lev::Steal::Data(p) = stealer5.steal() {
+            println!("path: {}, size: {}", p.path().to_str().unwrap(), p.metadata().unwrap().len());}
+    });
+
+    let _ = child_producer.join();
+    let _ = child_consumer.join();
+    let _ = child2.join();
+    let _ = child3.join();
+    let _ = child4.join();
+    let _ = child5.join();
 }
