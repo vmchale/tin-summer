@@ -1,0 +1,26 @@
+#!/usr/bin/env ion
+
+# set path to include sn
+let PATH=$HOME/.cargo/bin:$PATH
+
+#export CLICOLOR=0
+let CLICOLOR=0
+
+# set to a suitable path & decide whether to produce reports
+let path = $HOME/programming
+for x in @args[1..]
+    if test -n $x
+        let path = $x
+    end
+end
+
+
+# set the benches
+let benches = ["sn parallel-test $path" "sn all $path" "du -hacd2 $path"]
+
+# initialize cache
+echo 'initializing file system cache...'
+sn all $path > /dev/null
+
+#do the actual benchmarks
+bench @benches
