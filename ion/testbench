@@ -7,16 +7,11 @@ cargo build --release
 let binpath = target/release/sn
 
 # set to a suitable path
-let path_arg = "false"
-for x in @args
-    if test $x = "--path"
-        let path_arg = "true"
+let path = /home/vanessa/programming
+for x in @args[1..]
+    if test -n $x
+        let path = $x
     end
-end
-if test $path_arg = "true"
-    let path = @args[2]
-else
-    let path = /home/vanessa/programming
 end
 
 # initialize cache
@@ -24,5 +19,5 @@ echo 'initializing file system cache...'
 sn all $path > /dev/null
 
 #do the actual benchmarks
-let benches = ["sn all $path" "$binpath all $path" "sn sort $path" "$binpath sort $path" "sn ar $path" "$binpath ar $path"]
+let benches = ["sn par $path" "$binpath par $path" "sn all $path" "$binpath all $path" "sn sort $path" "$binpath sort $path" "sn ar $path" "$binpath ar $path"]
 bench @benches

@@ -2,7 +2,7 @@ name: The Tin Summer
 author: Vanessa McHale <vanessa.mchale@reconfigure.io>
 about: Tool to find large files and project build artifacts. Can also find directory sizes. Unlikely to shatter glass.
 subcommands:
-    - parallel-test:
+    - par:
         about: Test parallel directory traversals
         args:
             - dir:

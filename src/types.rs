@@ -20,6 +20,10 @@ impl FileSize {
     pub fn add(&mut self, other: FileSize) -> () {
         self.size += other.size;
     }
+
+    pub fn get(&self) -> u64 {
+        self.size
+    }
 }
 
 #[derive(Debug)]

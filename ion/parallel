@@ -16,7 +16,7 @@ end
 
 
 # set the benches
-let benches = ["sn parallel-test $path" "sn all $path" "du -hacd2 $path"]
+let benches = ["sn par $path" "sn all $path" "du -hacd2 $path"]
 
 # initialize cache
 echo 'initializing file system cache...'

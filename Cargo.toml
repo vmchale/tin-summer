@@ -28,9 +28,9 @@ verbose = []
 
 [dependencies]
 num_cpus = "1.6"
-nom = "3.0"
+nom = "3.1"
 colored = "1.5"
-clap = {version = "2.24", features = ["yaml"]}
+clap = {version = "2.25", features = ["yaml"]}
 regex = "0.2"
 pad = "0.1"
 lazy_static = "0.2"

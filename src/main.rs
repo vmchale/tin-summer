@@ -23,7 +23,7 @@ fn main() {
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
     // test stuff
-    if let Some(command) = matches.subcommand_matches("parallel-test") {
+    if let Some(command) = matches.subcommand_matches("par") {
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
