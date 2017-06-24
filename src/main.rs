@@ -8,7 +8,6 @@ extern crate regex;
 use liboskar::prelude::*;
 use clap::App;
 use colored::*;
-use std::path::PathBuf;
 
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
@@ -24,12 +23,18 @@ fn main() {
     let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
 
     // test stuff
-    if let Some(_) = matches.subcommand_matches("parallel-test") {
+    if let Some(command) = matches.subcommand_matches("parallel-test") {
 
-        let w = Walk::new(PathBuf::from("."));
+        // set path to dir
+        let init_dir = get_dir(command.value_of("dir"));
+
+        // get the number of processors to be used
+        let nproc = get_threads(command.value_of("threads"));
+
+        let w = Walk::new(init_dir, nproc);
         print_parallel(w);
-    }
 
+    }
     // find large files
     else if let Some(command) = matches.subcommand_matches("fat") {
 
@@ -48,12 +53,6 @@ fn main() {
         // don't print warnings
         let print_files = command.is_present("files");
 
-        // whether to use parallel directory traversals
-        let force_parallel = false;
-
-        // get the number of processors to be used
-        let _ = if force_parallel { get_processors() } else { 0 };
-
         // set regex for exclusions
         let regex = command.value_of("excludes");
 
@@ -74,18 +73,7 @@ fn main() {
                     false,
                 )
             }
-            _ => {
-                read_all(
-                    &init_dir,
-                    0,
-                    Some(depth),
-                    None,
-                    None,
-                    &None,
-                    false,
-                    false,
-                )
-            }
+            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
         };
 
         // filter by depth
@@ -102,12 +90,6 @@ fn main() {
 
         // set depth
         let depth = get_depth(command.value_of("depth"));
-
-        // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel") && !min_bytes.is_some();
-
-        // get the number of processors to be used
-        let _ = if force_parallel { get_processors() } else { 0 };
 
         // set regex for exclusions
         let regex = command.value_of("excludes");
@@ -132,18 +114,7 @@ fn main() {
                     false,
                 )
             }
-            _ => {
-                read_all(
-                    &init_dir,
-                    0,
-                    Some(depth),
-                    None,
-                    None,
-                    &None,
-                    false,
-                    false,
-                )
-            }
+            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
         };
 
 
@@ -227,18 +198,8 @@ fn main() {
         // set depth
         let depth = get_depth(command.value_of("depth"));
 
-        // whether to use parallel directory traversals
-        let force_parallel = command.is_present("parallel") && !min_bytes.is_some();
-
         // don't print warnings
         let print_files = command.is_present("files");
-
-        // get the number of processors to be used
-        let _ = if force_parallel {
-            get_threads(command.value_of("threads"))
-        } else {
-            0
-        };
 
         // set number of things to fetch for sort
         // set path to dir
@@ -265,18 +226,7 @@ fn main() {
                     false,
                 )
             }
-            _ => {
-                read_all(
-                    &init_dir,
-                    0,
-                    Some(depth),
-                    None,
-                    None,
-                    &None,
-                    false,
-                    false,
-                )
-            }
+            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
         };
 
         // sort them

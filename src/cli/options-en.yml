@@ -4,6 +4,15 @@ about: Tool to find large files and project build artifacts. Can also find direc
 subcommands:
     - parallel-test:
         about: Test parallel directory traversals
+        args:
+            - dir:
+                value_name: DIRECTORY
+                help: Directory to search
+            - threads:
+                short: j
+                long: threads
+                takes_value: true
+                value_name: NUM
     - sort:
         about: Find the biggest files/directories
         args:
@@ -84,11 +93,6 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
-            - threads:
-                short: j
-                long: threads
-                takes_value: true
-                value_name: NUM
             - files:
                 short: f
                 long: files

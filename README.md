@@ -1,6 +1,6 @@
 # The Tin Summer
 
-[![Build Status](https://travis-ci.org/vmchale/tin-drummer.svg?branch=master)](https://travis-ci.org/vmchale/tin-drummer)
+[![Build Status](https://travis-ci.org/vmchale/tin-summer.svg?branch=master)](https://travis-ci.org/vmchale/tin-srummer)
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those

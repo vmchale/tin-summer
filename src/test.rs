@@ -94,17 +94,13 @@ fn bench_traversal_all(b: &mut Bencher) {
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| {
-        read_all(&p, 4, None, None, None, &None, false, false)
-    })
+    b.iter(|| read_all(&p, 4, None, None, None, &None, false, false))
 }
 
 #[bench]
 fn bench_traversal_gitignore(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| {
-        read_all(&p, 4, None, None, None, &None, true, true)
-    })
+    b.iter(|| read_all(&p, 4, None, None, None, &None, true, true))
 }
 #[bench]
 fn bench_traversal_sort(b: &mut Bencher) {
@@ -118,9 +114,7 @@ fn bench_traversal_sort(b: &mut Bencher) {
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| {
-        read_all(&p, 4, None, None, None, &None, false, true)
-    })
+    b.iter(|| read_all(&p, 4, None, None, None, &None, false, true))
 }
 
 #[bench]
@@ -146,38 +140,39 @@ fn get_entries(b: &mut Bencher) {
 fn count_entries(b: &mut Bencher) {
     b.iter(|| {
         let paths = fs::read_dir(".").unwrap();
-        paths.count() } )
+        paths.count()
+    })
 }
 
 #[bench]
 fn get_entries_str(b: &mut Bencher) {
-    b.iter(|| { 
-        let paths = fs::read_dir(".").unwrap() ;
+    b.iter(|| {
+        let paths = fs::read_dir(".").unwrap();
         for p in paths {
             let _ = p.unwrap().path().to_str().unwrap();
-        };
+        }
     })
 }
 
 #[bench]
 fn get_entries_metadata(b: &mut Bencher) {
     b.iter(|| {
-        let paths = fs::read_dir(".").unwrap() ;
+        let paths = fs::read_dir(".").unwrap();
         for p in paths {
             let _ = p.unwrap().metadata().unwrap();
-        };
+        }
     })
 }
 
 #[bench]
 fn get_entries_is_file(b: &mut Bencher) {
     b.iter(|| {
-        let paths = fs::read_dir(".").unwrap() ;
+        let paths = fs::read_dir(".").unwrap();
         for p in paths {
             let val = p.unwrap();
             let t = val.file_type().unwrap();
             let _ = if t.is_file() { true } else { t.is_dir() };
-        };
+        }
     })
 }
 

@@ -40,9 +40,11 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
 
 pub fn get_threads(num_from_cli: Option<&str>) -> usize {
     match num_from_cli {
-        Some(num) =>num.parse::<usize>()
-            .expect("Please enter a positive whole number"),
-        _ => get_processors()
+        Some(num) => {
+            num.parse::<usize>()
+                .expect("Please enter a positive whole number")
+        }
+        _ => get_processors(),
     }
 }
 

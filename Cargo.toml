@@ -5,7 +5,7 @@ authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
 license-file = "LICENSE"
 description = "Command-line tool to find build artifacts and junk on your computer. Shatters records not glass."
 readme = "README.md"
-repository = "https://nest.pijul.com/vamchale/file-sniffer"
+repository = "https://nest.pijul.com/vamchale/tin-summer"
 documentation = "https://github.com/vmchale/tin-summer#README"
 homepage = "https://github.com/vmchale/tin-summer" # consider hosting on http://vmchale.com/ ?
 

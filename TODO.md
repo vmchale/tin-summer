@@ -47,6 +47,7 @@
 - [ ] don't display tons of files from the same directory
 - [ ] let it run on a single file
 - [ ] check for ignore files in the parent dir too.
+- [ ] remove all expect()/unwrap() values
 
 # Features
 
@@ -93,6 +94,7 @@
     - [ ] darcs boring file
     - [ ] .hginore
   - [ ] excludes
+- [ ] look at tokei/rayon??
 
 # French/German
 

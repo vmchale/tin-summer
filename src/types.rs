@@ -50,7 +50,7 @@ pub struct FileTree {
     files: Vec<NamePair>,
 }
 
-pub fn display_item(name: &str, bytes: FileSize) { 
+pub fn display_item(name: &str, bytes: FileSize) {
     if bytes != FileSize::new(0) {
         let to_formatted = format!("{}", bytes);
         println!("{}\t {}", &to_formatted.green(), name);
@@ -77,7 +77,8 @@ impl FileTree {
             let new = self.files
                 .into_iter()
                 .filter(|a| {
-                    (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
+                    (if dirs_only { a.is_dir } else { true }) &&
+                        Some(a.bytes) > min_bytes.map(FileSize::new)
                 })
                 .take(n)
                 .collect::<Vec<NamePair>>();
@@ -92,7 +93,8 @@ impl FileTree {
             let new = self.files
                 .into_iter()
                 .filter(|a| {
-                    (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
+                    (if dirs_only { a.is_dir } else { true }) &&
+                        Some(a.bytes) > min_bytes.map(FileSize::new)
                 })
                 .collect::<Vec<NamePair>>();
             FileTree {
@@ -107,7 +109,8 @@ impl FileTree {
         self.files = self.files
             .into_iter()
             .filter(|a| {
-                (if dirs_only { a.is_dir } else { true }) && Some(a.bytes) > min_bytes.map(FileSize::new)
+                (if dirs_only { a.is_dir } else { true }) &&
+                    Some(a.bytes) > min_bytes.map(FileSize::new)
             })
             .collect::<Vec<NamePair>>();
 
@@ -178,34 +181,42 @@ impl fmt::Display for FileSize {
             write!(f, "{} b", &pre_size.pad_to_width(4))
         } else if self.size < 1048576 {
             let pre_size = if self.size / 1024 > 9 {
-                format!("{}", self.size / 1024) }
-            else if self.size as f32 / 1024.0 >= 9.95 {
-                 format!("{:.0}", self.size as f32 / 1024.0) }
-            else { format!("{:.1}", self.size as f32 / 1024.0) };
+                format!("{}", self.size / 1024)
+            } else if self.size as f32 / 1024.0 >= 9.95 {
+                format!("{:.0}", self.size as f32 / 1024.0)
+            } else {
+                format!("{:.1}", self.size as f32 / 1024.0)
+            };
             write!(f, "{} kB", &pre_size.pad_to_width(4))
         } else if self.size < 1073741824 {
             // 2^30
             let pre_size = if self.size / 1048576 > 9 {
-                format!("{}", self.size / 1048576) }
-            else if self.size as f32 / 1048576.0 >= 9.95 {
-                 format!("{:.0}", self.size as f32 / 1048576.0) }
-            else { format!("{:.1}", self.size as f32 / 1048576.0) };
+                format!("{}", self.size / 1048576)
+            } else if self.size as f32 / 1048576.0 >= 9.95 {
+                format!("{:.0}", self.size as f32 / 1048576.0)
+            } else {
+                format!("{:.1}", self.size as f32 / 1048576.0)
+            };
             write!(f, "{} MB", &pre_size.pad_to_width(4))
         } else if self.size < 1099511627776 {
             // 2^40
             let pre_size = if self.size / 1073741824 > 9 {
-                format!("{}", self.size / 1073741824) }
-            else if self.size as f32 / 1073741824.0 >= 9.95 {
-                 format!("{:.0}", self.size as f32 / 1073741824.0) }
-            else { format!("{:.1}", self.size as f32 / 1073741824.0) };
+                format!("{}", self.size / 1073741824)
+            } else if self.size as f32 / 1073741824.0 >= 9.95 {
+                format!("{:.0}", self.size as f32 / 1073741824.0)
+            } else {
+                format!("{:.1}", self.size as f32 / 1073741824.0)
+            };
             write!(f, "{} GB", &pre_size.pad_to_width(4))
         } else {
             // for 1 TB and above
             let pre_size = if self.size / 1099511627776 > 9 {
-                format!("{}", self.size / 1099511627776) }
-            else if self.size as f32 / 1099511627776.0 >= 9.95 {
-                 format!("{:.0}", self.size as f32 / 1099511627776.0) }
-            else { format!("{:.1}", self.size as f32 / 1099511627776.0) };
+                format!("{}", self.size / 1099511627776)
+            } else if self.size as f32 / 1099511627776.0 >= 9.95 {
+                format!("{:.0}", self.size as f32 / 1099511627776.0)
+            } else {
+                format!("{:.1}", self.size as f32 / 1099511627776.0)
+            };
             write!(f, "{} TB", &pre_size.pad_to_width(4))
         }
     }
