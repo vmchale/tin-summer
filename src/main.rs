@@ -20,10 +20,13 @@ fn main() {
     let yaml = load_yaml!("cli/options-fr.yml");
     #[cfg(feature = "deutsch")]
     let yaml = load_yaml!("cli/options-de.yml");
-    let matches = App::from_yaml(yaml).version(crate_version!()).get_matches();
+    let matches = App::from_yaml(yaml)
+        .version(crate_version!())
+        .set_term_width(90)
+        .get_matches();
 
     // test stuff
-    if let Some(command) = matches.subcommand_matches("par") {
+    if let Some(command) = matches.subcommand_matches("parallel") {
 
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
@@ -124,7 +127,7 @@ fn main() {
         // display results
         v_filtered.display_tree(init_dir);
 
-    } else if let Some(command) = matches.subcommand_matches("ar") {
+    } else if let Some(command) = matches.subcommand_matches("artifacts") {
 
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));

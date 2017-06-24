@@ -1,9 +1,13 @@
 name: The Tin Summer
 author: Vanessa McHale <vanessa.mchale@reconfigure.io>
 about: Tool to find large files and project build artifacts. Can also find directory sizes. Unlikely to shatter glass.
+after_help: >
+    The Tin Summer is a replacement for du written in Rust. It's currently not quite as stable,
+    but it's already faster and more ergonomic. 
 subcommands:
-    - par:
-        about: Test parallel directory traversals
+    - parallel:
+        alias: "p"
+        about: Test parallel directory traversals.
         args:
             - dir:
                 value_name: DIRECTORY
@@ -14,7 +18,8 @@ subcommands:
                 takes_value: true
                 value_name: NUM
     - sort:
-        about: Find the biggest files/directories
+        alias: "o"
+        about: Find the biggest files/directories.
         args:
             - dir:
                 value_name: DIRECTORY
@@ -50,6 +55,7 @@ subcommands:
                 value_name: SIZE
                 help: Specify a threshold for file size
     - fat:
+        visible_alias: "f"
         about: Show big files/directories
         args:
             - dir:
@@ -77,7 +83,8 @@ subcommands:
                 value_name: NUMBER
                 help: How far to recurse (default 2)
     - all:
-        about: Show all files/directories
+        visible_aliases: ["a", "ll"]
+        about: Show all files/directories. This is basically equivalent to 'du -hc'.
         args:
             - dir:
                 value_name: DIRECTORY
@@ -103,7 +110,8 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
-    - ar:
+    - artifacts:
+        visible_aliases: ["r", "ar"]
         about: Show directories with build artifacts
         args:
             - dir:
