@@ -23,7 +23,7 @@ pub enum Status<T> {
     Data(T),
 }
 
-/// The 'Walk' struct contains all the information we need to traverse a directory. 
+/// The 'Walk' struct contains all the information we need to traverse a directory.
 pub struct Walk {
     pub path: PathBuf,
     gitignore: Option<RegexSet>,
@@ -37,9 +37,8 @@ pub struct Walk {
 }
 
 impl Walk {
-
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
-    /// and will add the relevant directory sizes to it. 
+    /// and will add the relevant directory sizes to it.
     pub fn print_dir(w: Walk, total: Arc<AtomicU64>) -> () {
         let v = read_all(
             &w.path,
@@ -95,7 +94,11 @@ impl Walk {
     /// creating new work for each subdirectory. It's not the most efficient concurrency
     /// imaginable, but it's fast and easy-ish to use. It *also* takes in an 'Arc<AtomicU64>',
     /// which it updates with any file sizes in the directory.
-    pub fn push_subdir(w: &Walk, ref mut worker: &mut chase_lev::Worker<Status<Walk>>, total: Arc<AtomicU64>) {
+    pub fn push_subdir(
+        w: &Walk,
+        mut worker: &mut chase_lev::Worker<Status<Walk>>,
+        total: Arc<AtomicU64>,
+    ) {
 
         let in_paths = &w.path;
 
@@ -121,13 +124,15 @@ impl Walk {
                             let mut new_walk = Walk::new(new_path, w.get_proc());
                             new_walk.bump_depth();
                             worker.push(Status::Data(new_walk));
-                        }
-                        else if t.is_file() {
+                        } else if t.is_file() {
                             if let Ok(l) = val.metadata() {
                                 total.fetch_add(l.len(), Ordering::Relaxed);
-                            }
-                            else {
-                                eprintln!("{}: could not find filesize for file at {}.", "Warning".yellow(), val.path().as_path().to_str().unwrap());
+                            } else {
+                                eprintln!(
+                                    "{}: could not find filesize for file at {}.",
+                                    "Warning".yellow(),
+                                    val.path().as_path().to_str().unwrap()
+                                );
                             }
                         }
                     }
@@ -199,7 +204,7 @@ pub fn print_parallel(w: Walk) -> () {
     let iter = 0..(&w.get_proc() - 1);
 
     // create the producer in another thread
-    let child_producer = thread::spawn(move || { 
+    let child_producer = thread::spawn(move || {
 
         let arc_local = arc_producer.clone();
 
@@ -224,7 +229,7 @@ pub fn print_parallel(w: Walk) -> () {
 
     // set up as many workers as we have threads
     for _ in iter {
-        
+
         // create a new stealer
         let stealer_clone = stealer.clone();
 
@@ -243,7 +248,7 @@ pub fn print_parallel(w: Walk) -> () {
 
         threads.push(child_consumer);
 
-    };
+    }
 
     // join the child producer to the main thread
     let _ = child_producer.join();
@@ -254,7 +259,7 @@ pub fn print_parallel(w: Walk) -> () {
     // get the total size
     let m = arc.load(Ordering::SeqCst);
     let size = FileSize::new(m);
-    
+
     // print directory total.
     if size != FileSize::new(0) {
         let to_formatted = format!("{}", size);

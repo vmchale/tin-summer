@@ -2,12 +2,10 @@
 extern crate clap;
 
 extern crate liboskar;
-extern crate colored;
 extern crate regex;
 
 use liboskar::prelude::*;
-use clap::App;
-use colored::*;
+use clap::{App, AppSettings};
 
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
@@ -23,6 +21,8 @@ fn main() {
     let matches = App::from_yaml(yaml)
         .version(crate_version!())
         .set_term_width(90)
+        .setting(AppSettings::SubcommandRequired)
+        //.setting(AppSettings::ColoredHelp)
         .get_matches();
 
     // test stuff
@@ -237,10 +237,5 @@ fn main() {
 
         // display sorted filenames
         v_sorted.display_tree(init_dir);
-    } else {
-        eprintln!(
-            "{}: Command not recognized. Try 'sniff --help' if you're stuck.",
-            "Error".red()
-        );
     }
 }

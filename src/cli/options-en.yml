@@ -6,7 +6,8 @@ after_help: >
     but it's already faster and more ergonomic. 
 subcommands:
     - parallel:
-        alias: "p"
+        visible_alias: "p"
+        alias: "par"
         about: Test parallel directory traversals.
         args:
             - dir:
@@ -18,7 +19,7 @@ subcommands:
                 takes_value: true
                 value_name: NUM
     - sort:
-        alias: "o"
+        visible_alias: "o"
         about: Find the biggest files/directories.
         args:
             - dir:
@@ -84,7 +85,7 @@ subcommands:
                 help: How far to recurse (default 2)
     - all:
         visible_aliases: ["a", "ll"]
-        about: Show all files/directories. This is basically equivalent to 'du -hc'.
+        about: Show all files/directories. This is basically the equivalent of 'du -hc'.
         args:
             - dir:
                 value_name: DIRECTORY

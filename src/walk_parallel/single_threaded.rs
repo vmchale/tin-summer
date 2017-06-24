@@ -204,8 +204,8 @@ pub fn read_size(
                         if !artifacts_only ||
                             {
                                 is_artifact(
-                                    &val.file_name().to_str().unwrap(),
-                                    &path_string,
+                                    val.file_name().to_str().unwrap(),
+                                    path_string,
                                     artifact_regex,
                                     &metadata,
                                     &gitignore,
@@ -219,7 +219,7 @@ pub fn read_size(
                 }
                 // otherwise, go deeper
                 else if path_type.is_dir() {
-                    let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string) {
+                    let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(path_string) {
                         read_size(
                             &path,
                             depth + 1,
@@ -353,7 +353,7 @@ pub fn read_all(
                         if !artifacts_only ||
                             {
                                 is_artifact(
-                                    &val.file_name().to_str().unwrap(),
+                                    val.file_name().to_str().unwrap(),
                                     path_string,
                                     artifact_regex,
                                     &metadata,
@@ -369,7 +369,7 @@ pub fn read_all(
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
                         if depth + 1 >= d ||
-                            (artifacts_only && REGEX_PROJECT_DIR.is_match(&path_string))
+                            (artifacts_only && REGEX_PROJECT_DIR.is_match(path_string))
                         {
                             let dir_size = {
                                 read_size(
@@ -378,8 +378,8 @@ pub fn read_all(
                                     artifact_regex,
                                     excludes,
                                     &gitignore,
-                                    with_gitignore && !REGEX_PROJECT_DIR.is_match(&path_string),
-                                    artifacts_only && !REGEX_PROJECT_DIR.is_match(&path_string), // FIXME only compute this once
+                                    with_gitignore && !REGEX_PROJECT_DIR.is_match(path_string),
+                                    artifacts_only && !REGEX_PROJECT_DIR.is_match(path_string), // FIXME only compute this once
                                 )
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
