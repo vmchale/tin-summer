@@ -1,0 +1,18 @@
+#!/usr/bin/env ion
+
+# set path to include go binaries
+let PATH=$HOME/.go/bin:$PATH
+
+export GITHUB_TOKEN=$(cat .git-token)
+
+let tag = $(git describe --tags)
+
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-linux-gnu" --file target/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-arm-linux-gnueabihf" --file target/arm-unknown-linux-gnueabihf/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-arm-linux-musleabi" --file target/arm-unknown-linux-musleabi/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-pc-windows.exe" --file target/x86_64-pc-windows-gnu/release/sn.exe
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-freebsd" --file target/x86_64-unknown-freebsd/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-linux-musl" --file target/x86_64-unknown-linux-musl/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-netbsd" --file target/x86_64-unknown-netbsd/release/sn
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn.fish" --file target/completions/sn.fish
+github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn.bash-completion" --file target/completions/sn.bash-completion
