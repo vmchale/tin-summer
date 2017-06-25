@@ -18,6 +18,24 @@ subcommands:
                 long: threads
                 takes_value: true
                 value_name: NUM
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+                help: Regex for paths to exclude
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size
     - sort:
         visible_alias: "o"
         about: Find the biggest files/directories.
@@ -85,7 +103,7 @@ subcommands:
                 help: How far to recurse (default 2)
     - all:
         visible_aliases: ["a", "ll"]
-        about: Show all files/directories. This is basically the equivalent of 'du -hc'.
+        about: Show all files/directories.
         args:
             - dir:
                 value_name: DIRECTORY

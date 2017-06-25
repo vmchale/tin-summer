@@ -36,6 +36,7 @@
 
 - [ ] flag -fd0 should work
 - [ ] custom regex should override the "project dirs" regex?
+- [ ] fix `unwrap()`s and `expect()`s.
 
 # UI/Ergonomics
 
@@ -58,6 +59,7 @@
 - [ ] cool feature: highlight extensions
   - [ ] color-coded by language?
 - [ ] global gitignore
+  - [ ] ~/.darcs/boring
   - [x] darcs boring file?
   - [x] pijul ignore
   - [ ] .hginore

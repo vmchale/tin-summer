@@ -7,6 +7,8 @@ use gitignore::*;
 use std::path::PathBuf;
 use self::num_cpus::get;
 
+/// Gather the information from `.gitignore`, `.ignore`, and darcs `boring` files in a given
+/// directory, and assemble a 'RegexSet' from it.
 pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Option<RegexSet> {
 
     if let Some(ref gitignore) = *maybe_gitignore {
@@ -46,6 +48,8 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Opt
     }
 }
 
+/// Helper function to get the number of CPUs. We subtract 1, because the main thread that's doing
+/// the spawning counts as one OS thread.
 pub fn get_processors() -> usize {
     let n = get();
     if n > 1 {

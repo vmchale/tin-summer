@@ -30,23 +30,30 @@ pub struct Walk {
     hgignore: Option<RegexSet>,
     darcs_boring: Option<RegexSet>,
     excludes: Option<Regex>,
-    max_depth: Option<usize>,
+    max_depth: Option<u8>,
     threshold: Option<u64>,
     start_depth: usize,
     nproc: usize,
+    show_files: bool,
 }
 
 impl Walk {
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
     /// and will add the relevant directory sizes to it.
     pub fn print_dir(w: Walk, total: Arc<AtomicU64>) -> () {
+
+        let excludes = match w.excludes {
+            Some(ref x) => Some(x),
+            _ => None,
+        };
+
         let v = read_all(
             &w.path,
             (w.start_depth as u8),
-            Some(2),
+            w.max_depth,
             None,
-            None,
-            &None,
+            excludes,
+            &w.gitignore,
             false,
             false,
         );
@@ -55,15 +62,31 @@ impl Walk {
 
         total.fetch_add(subdir_size, Ordering::Relaxed);
 
-        // filter by depth
-        let mut v_filtered = v.filtered(None, true);
+        let to_print = if let Some(m) = w.threshold {
+            subdir_size > m 
+        } else { true };
 
-        v_filtered.display_tree(w.path);
+        if to_print {
+            // filter by depth
+            let mut v_filtered = v.filtered(w.threshold, true);
+
+            v_filtered.display_tree(w.path);
+        }
     }
 
     /// set the maximum depth to display
-    pub fn set_depth(&mut self, d: usize) -> () {
+    pub fn set_depth(&mut self, d: u8) -> () {
         self.max_depth = Some(d);
+    }
+
+    /// set the regex for excludes
+    pub fn set_regex(&mut self, r: Regex) -> () {
+        self.excludes = Some(r);
+    }
+
+    /// set the minumum file size
+    pub fn set_threshold(&mut self, n: u64) -> () {
+        self.threshold = Some(n);
     }
 
     fn get_proc(&self) -> usize {
@@ -83,6 +106,7 @@ impl Walk {
             threshold: None,
             start_depth: 0,
             nproc: n,
+            show_files: false,
         }
     }
 
@@ -114,34 +138,52 @@ impl Walk {
                         exit(0x0001)
                     }
                 };
-                match val.file_type() {
-                    Ok(t) => {
-                        // possibility: if the number of directories is less than the number of
-                        // cores, descend two levels!
-                        if t.is_dir() {
-                            let mut new_path = w.path.to_owned();
-                            new_path.push(val.file_name());
-                            let mut new_walk = Walk::new(new_path, w.get_proc());
-                            new_walk.bump_depth();
-                            worker.push(Status::Data(new_walk));
-                        } else if t.is_file() {
-                            if let Ok(l) = val.metadata() {
-                                total.fetch_add(l.len(), Ordering::Relaxed);
-                            } else {
-                                eprintln!(
-                                    "{}: could not find filesize for file at {}.",
-                                    "Warning".yellow(),
-                                    val.path().as_path().to_str().unwrap()
-                                );
+
+                let exclude_check = if let Some(ref x) = w.excludes {
+                    if let Some(r) = val.path().into_os_string().to_str() {
+                        !x.is_match(r)
+                    }
+                    else {
+                        eprintln!("{}: ignoring invalid unicode at: {:?}", "Warning".yellow(), val.path().display());
+                        true
+                    }
+                }
+                else { true };
+
+                if exclude_check {
+                    match val.file_type() {
+                        Ok(t) => {
+                            if t.is_dir() {
+                                let mut new_path = w.path.to_owned();
+                                new_path.push(val.file_name());
+                                let mut new_walk = Walk::new(new_path, w.get_proc());
+                                new_walk.bump_depth();
+                                if let Some(d) = w.max_depth {
+                                    new_walk.set_depth(d);
+                                }
+                                if let Some(b) = w.threshold {
+                                    new_walk.set_threshold(b);
+                                }
+                                worker.push(Status::Data(new_walk));
+                            } else if t.is_file() {
+                                if let Ok(l) = val.metadata() {
+                                    total.fetch_add(l.len(), Ordering::Relaxed);
+                                } else {
+                                    eprintln!(
+                                        "{}: could not find filesize for file at {}.",
+                                        "Warning".yellow(),
+                                        val.path().as_path().to_str().unwrap()
+                                    );
+                                }
                             }
                         }
-                    }
-                    _ => {
-                        eprintln!(
-                            "{}: could not determine file type for: {}",
-                            "Warning".yellow(),
-                            val.file_name().to_str().unwrap()
-                        )
+                        _ => {
+                            eprintln!(
+                                "{}: could not determine file type for: {}",
+                                "Warning".yellow(),
+                                val.file_name().to_str().unwrap()
+                            )
+                        }
                     }
                 }
             }
@@ -191,7 +233,6 @@ pub fn print_parallel(w: Walk) -> () {
     let arc = Arc::new(val);
     let arc_producer = arc.clone();
     let arc_child = arc.clone();
-
     let path_display = w.path.clone();
 
     // set up worker & stealer

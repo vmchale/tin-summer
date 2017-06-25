@@ -136,6 +136,7 @@ pub fn is_artifact(
         }
     }
 }
+
 /// Function to process directory contents and return a `FileTree` struct.
 pub fn read_size(
     in_paths: &PathBuf,

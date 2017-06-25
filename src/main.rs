@@ -31,10 +31,24 @@ fn main() {
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
+        // set depth
+        let depth = get_depth(command.value_of("depth"));
+
         // get the number of processors to be used
         let nproc = get_threads(command.value_of("threads"));
 
-        let w = Walk::new(init_dir, nproc);
+        // set threshold
+        let min_bytes = threshold(command.value_of("threshold"));
+
+        let mut w = Walk::new(init_dir, nproc);
+        w.set_depth(depth);
+        if let Some(b) = min_bytes {
+            w.set_threshold(b);
+        }
+        if let Some(e) = command.value_of("excludes") {
+            w.set_regex(check_regex(e));
+        }
+
         print_parallel(w);
 
     }

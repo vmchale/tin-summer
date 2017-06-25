@@ -8,6 +8,8 @@ use regex::Regex;
 use error::check_regex;
 use utils::get_processors;
 
+/// Parse a string into a regular expression for the 'artifacts' subcommand. Adds ignores for
+/// typical version control directories if none are present.
 pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
     match cli_excludes {
         Some(s) => {
@@ -38,6 +40,8 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
     }
 }
 
+
+/// If the user has supplied a string, parse it, otherwise, read the number of processors.
 pub fn get_threads(num_from_cli: Option<&str>) -> usize {
     match num_from_cli {
         Some(num) => {
@@ -55,6 +59,16 @@ pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
     }
 }
 
+/// Parse a threshold from a command-line flag. 
+///
+/// # Examples
+///
+/// ```
+/// use liboskar::prelude::*;
+/// 
+/// let threshold_string = Some("31M");
+/// assert_eq!(threshold(threshold_string), Some(32505856))
+/// ```
 pub fn threshold(s: Option<&str>) -> Option<u64> {
     s.map(pre_threshold)
 }

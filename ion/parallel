@@ -16,11 +16,11 @@ end
 
 
 # set the benches
-let benches = ["sn par $path" "sn all $path" "du -hacd2 $path"]
+let benches = ["sn par $path" "sn all $path" "du -hacd2 $path" "sn par -d3 $path" "sn all -d3 $path" "du -hacd3 $path"]
 
 # initialize cache
 echo 'initializing file system cache...'
-sn all $path > /dev/null
+sn p $path > /dev/null
 
 #do the actual benchmarks
 bench @benches

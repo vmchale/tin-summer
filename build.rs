@@ -17,18 +17,18 @@ fn main() {
     // generate bash completions if desired
     #[cfg(feature = "bash")]
     app.gen_completions(
-        "sn", // We need to specify the bin name manually
-        Shell::Bash, // Then say which shell to build completions for
+        "sn",
+        Shell::Bash,
         env!("BASH_COMPLETIONS_DIR"),
-    ); // Then say where write the completions to
+    );
 
     // generate fish completions if desired
     let mut app_snd = App::from_yaml(yaml).version(crate_version!());
     #[cfg(feature = "fish")]
     app_snd.gen_completions(
-        "sn", // We need to specify the bin name manually
-        Shell::Fish, // Then say which shell to build completions for
+        "sn",
+        Shell::Fish,
         env!("FISH_COMPLETIONS_DIR"),
-    ); // Then say where write the completions to
+    );
 
 }

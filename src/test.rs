@@ -30,40 +30,11 @@ fn bench_to_string(b: &mut Bencher) {
     b.iter(|| path.as_path().to_str().unwrap())
 }
 
-#[bench]
-fn bench_gitignore_parse_file(b: &mut Bencher) {
-    b.iter(|| {
-        let mut file = File::open("src/testdata/.gitignore").unwrap();
-        let mut contents = String::new();
-        let _ = file.read_to_string(&mut contents);
-        process_to_vector(&contents);
-        ()
-    })
-}
-
-#[bench]
-fn bench_gitignore_parse(b: &mut Bencher) {
-    let file_contents = include_str!("testdata/.gitignore");
-    b.iter(|| process_to_vector(file_contents))
-}
-
-#[test]
-fn cabal_gitignore() {
-    let file_contents = include_str!("testdata/gitignore-tests/cabal-gitignore");
-    let _ = process_to_vector(file_contents);
-}
-
 #[test]
 fn cabal_regex_ignore() {
     let file_contents = include_str!("testdata/gitignore-tests/cabal-gitignore");
     let path = PathBuf::from("testdata/gitignore-tests/cabal-gitignore");
     let _ = file_contents_to_regex(file_contents, &path);
-}
-
-#[test]
-fn profunctor_gitignore() {
-    let file_contents = include_str!("testdata/gitignore-tests/profunctor-gitignore");
-    let _ = process_to_vector(file_contents);
 }
 
 #[bench]
