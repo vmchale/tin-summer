@@ -35,6 +35,7 @@ pub struct Walk {
     start_depth: usize,
     nproc: usize,
     show_files: bool,
+    follow_symlinks: bool,
 }
 
 impl Walk {
@@ -107,6 +108,7 @@ impl Walk {
             start_depth: 0,
             nproc: n,
             show_files: false,
+            follow_symlinks: false,
         }
     }
 

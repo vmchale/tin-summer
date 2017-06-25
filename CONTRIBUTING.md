@@ -1,6 +1,6 @@
 # Contributing to sniff
 
-We emphatically welcome bug reports, issues you may encounter, documentation, and pull requests. We also welcome feature
+I emphatically welcome bug reports, issues you may encounter, documentation, and pull requests. I also welcome feature
 requests, though whether we will incorporate them depends on contributors'
 schedules.
 
@@ -10,7 +10,7 @@ If you'd like me to add support for other languages, just open an issue and tell
 me all file extensions associated with its build artifacts.
 
 Alternately, if you'd like to fork it and open a PR yourself, the relevant regex is
-[here](https://github.com/vmchale/file-sniffer/blob/master/src/lib.rs#L74).
+[here](https://github.com/vmchale/file-sniffer/blob/master/src/walk_parallel/single_threaded.rs#L73).
 
 ## Getting started
 

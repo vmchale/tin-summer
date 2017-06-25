@@ -81,7 +81,7 @@ fn pre_threshold(t_from_cli: &str) -> u64 {
                 "{}: failed to parse threshold. defaulting to 1M",
                 "Warning".yellow()
             );
-            31457280 // 30 MB
+            1048576 // 1 MB
         }
     }
 }

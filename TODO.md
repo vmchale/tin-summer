@@ -37,6 +37,7 @@
 - [ ] flag -fd0 should work
 - [ ] custom regex should override the "project dirs" regex?
 - [ ] fix `unwrap()`s and `expect()`s.
+- [ ] `-d1` should work with `parallel`
 
 # UI/Ergonomics
 
@@ -47,6 +48,7 @@
 - [ ] warn users when contradictory flags are issued
 - [ ] don't display tons of files from the same directory
 - [ ] let it run on a single file
+- [ ] symlinks!!
 - [ ] check for ignore files in the parent dir too.
 - [ ] remove all expect()/unwrap() values
 

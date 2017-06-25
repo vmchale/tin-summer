@@ -58,7 +58,7 @@ fn main() {
         // set threshold
         let min_bytes = match threshold(command.value_of("threshold")) {
             Some(t) => t,
-            _ => 1048576,
+            _ => 31457280, // 30 MB
         };
 
         // set depth
