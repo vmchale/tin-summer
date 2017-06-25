@@ -31,22 +31,20 @@
 - [x] make a pun about the tin drum?
 - [x] still use gitignore even w/ user-supplied regex
 - [x] print by significant figures
+- [x] `-d1` should work with `parallel`
+- [x] flag to print all (e.g. no max depth/etc.)
 
 # Bugs
 
-- [ ] flag -fd0 should work
 - [ ] custom regex should override the "project dirs" regex?
-- [ ] fix `unwrap()`s and `expect()`s.
-- [ ] `-d1` should work with `parallel`
 
 # UI/Ergonomics
 
+- [ ] fix `unwrap()`s and `expect()`s.
 - [x] excludes w/ regex
   - [x] fix bugs w/ excludes & overzealous use of .gitignores
   - [ ] set include paths w/ glob
-- [ ] flag to print all (e.g. no max depth/etc.)
-- [ ] warn users when contradictory flags are issued
-- [ ] don't display tons of files from the same directory
+- [ ] silent flag
 - [ ] let it run on a single file
 - [ ] symlinks!!
 - [ ] check for ignore files in the parent dir too.
@@ -78,8 +76,7 @@
 # Performance
 
 - [ ] parity with du without threading
-  - [ ] test walkdir crate
-  - [ ] dual-threading to pop off values?
+  - [x] dual-threading to pop off values?
 - [ ] print directories immediately rather than adding them to a vector?
   - [ ] all
   - [ ] fat
@@ -88,8 +85,9 @@
 # Parallel traversals
 
 - [ ] determine whether to use multiple threads automatically
-- [ ] feed results into a queue and pop them off in another thread
-- [ ] make generic structure for a traversal in parallel that respects necessary
+- [ ] More intelligent concurrency (two levels down?)
+- [x] feed results into a queue and pop them off in another thread
+- [x] make generic structure for a traversal in parallel that respects necessary
   features
   - [ ] global ignores
   - [ ] ignore files
@@ -97,7 +95,7 @@
     - [ ] pijul .ignore
     - [ ] darcs boring file
     - [ ] .hginore
-  - [ ] excludes
+  - [x] excludes
 - [ ] look at tokei/rayon??
 
 # French/German

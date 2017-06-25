@@ -18,6 +18,10 @@ subcommands:
                 long: threads
                 takes_value: true
                 value_name: NUM
+            - files:
+                short: f
+                long: files
+                help: Whether to print files in addition to directories (default false)
             - excludes:
                 short: e
                 long: exclude
@@ -30,6 +34,10 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
             - threshold:
                 short: t
                 long: threshold
@@ -63,6 +71,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
               #- silent:
               #short: s
               #long: silent
@@ -91,6 +103,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
             - files:
                 short: f
                 long: files
@@ -119,6 +135,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: PATH
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
             - files:
                 short: f
                 long: files
@@ -142,6 +162,10 @@ subcommands:
                 takes_value: true
                 value_name: SIZE
                 help: Specify a threshold for file size
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
             - files:
                 short: f
                 long: files

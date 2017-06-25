@@ -59,13 +59,13 @@ pub fn get_dir(path_from_cli: Option<&str>) -> PathBuf {
     }
 }
 
-/// Parse a threshold from a command-line flag. 
+/// Parse a threshold from a command-line flag.
 ///
 /// # Examples
 ///
 /// ```
 /// use liboskar::prelude::*;
-/// 
+///
 /// let threshold_string = Some("31M");
 /// assert_eq!(threshold(threshold_string), Some(32505856))
 /// ```

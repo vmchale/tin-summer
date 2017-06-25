@@ -405,6 +405,26 @@ pub fn read_all(
                             );
                         }
                     }
+                    else {
+                        let mut subtree = read_all(
+                            &path,
+                            depth + 1,
+                            max_depth,
+                            artifact_regex,
+                            excludes,
+                            &gitignore,
+                            with_gitignore,
+                            artifacts_only,
+                        );
+                        let dir_size = subtree.file_size;
+                        tree.push(
+                            path_string.to_string(),
+                            dir_size,
+                            Some(&mut subtree),
+                            depth + 1,
+                            true,
+                        );
+                    }
                 }
             }
         }

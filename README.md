@@ -102,7 +102,8 @@ export CLICOLOR=0
   * Provides Sorted output
   * Finds build artifacts
   * Reads file sizes, not disk usage
-  * Written in Rust
+  * Extensible in Rust
+  * Benefits from upstream improvements in Rust ecosystem
 
 #### Screenshots (alacritty + solarized dark)
 

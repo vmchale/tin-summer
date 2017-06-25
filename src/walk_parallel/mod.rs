@@ -63,13 +63,19 @@ impl Walk {
 
         total.fetch_add(subdir_size, Ordering::Relaxed);
 
-        let to_print = if let Some(m) = w.threshold {
-            subdir_size > m 
-        } else { true };
+        let mut to_print = if let Some(m) = w.threshold {
+            subdir_size > m
+        } else {
+            true
+        };
+
+        if let Some(0) = w.max_depth {
+            to_print = false;
+        }
 
         if to_print {
             // filter by depth
-            let mut v_filtered = v.filtered(w.threshold, true);
+            let mut v_filtered = v.filtered(w.threshold, w.show_files, w.max_depth);
 
             v_filtered.display_tree(w.path);
         }
@@ -88,6 +94,11 @@ impl Walk {
     /// set the minumum file size
     pub fn set_threshold(&mut self, n: u64) -> () {
         self.threshold = Some(n);
+    }
+
+    /// include files when printing
+    pub fn with_files(&mut self) -> () {
+        self.show_files = true;
     }
 
     fn get_proc(&self) -> usize {
@@ -144,13 +155,17 @@ impl Walk {
                 let exclude_check = if let Some(ref x) = w.excludes {
                     if let Some(r) = val.path().into_os_string().to_str() {
                         !x.is_match(r)
-                    }
-                    else {
-                        eprintln!("{}: ignoring invalid unicode at: {:?}", "Warning".yellow(), val.path().display());
+                    } else {
+                        eprintln!(
+                            "{}: ignoring invalid unicode at: {:?}",
+                            "Warning".yellow(),
+                            val.path().display()
+                        );
                         true
                     }
-                }
-                else { true };
+                } else {
+                    true
+                };
 
                 if exclude_check {
                     match val.file_type() {
@@ -169,7 +184,14 @@ impl Walk {
                                 worker.push(Status::Data(new_walk));
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
-                                    total.fetch_add(l.len(), Ordering::Relaxed);
+                                    let size = l.len();
+                                    total.fetch_add(size, Ordering::Relaxed);
+                                    if w.show_files {
+                                        if size != 0  {
+                                            let to_formatted = format!("{}", FileSize::new(size));
+                                            println!("{}\t {}", &to_formatted.green(), val.path().display());
+                                        }
+                                    }
                                 } else {
                                     eprintln!(
                                         "{}: could not find filesize for file at {}.",

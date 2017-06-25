@@ -8,20 +8,31 @@ let CLICOLOR=0
 
 # set to a suitable path & decide whether to produce reports
 let reports = "false"
+let parallel = "true"
+let benchpath = "reports/bench.html"
+let path = $HOME/programming
 for x in @args
     if test $x = "+reports"
         let reports = "true"
     end
+    if test $x = "+seq"
+        let parallel = "false"
+        let benchpath = "reports/bench-seq.html"
+        let path = "."
+    end
 end
 
-#let path = /home/vanessa/programming/haskell/forks/cabal
-let path = $HOME/programming
 
 # set regex to compare to
 let regex = '\'(.*?\\.(a|la|lo|o|ll|keter|bc|dyn_o|out|d|rlib|crate|min\\.js|hi|dyn_hi|jsexe|webapp|js\\.externs|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|js_o|so.*|dump-.*|vba|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)\$|total)\' '
 
+let excluded = 'target/debug$'
+
 # set the benches
-let benches = ["sn all $path" "sn p $path" "du -hacd2 $path" "sn fat $path" "du -hacd2 -t1M $path" "sn fat $path --exclude target/debug" "du -hacd2 -t1M $path --exclude target/debug" "sn ar $path"] # "du -hac $path | rg $regex" "du -hac $path | grep -P $regex" "sn ar -g $path" "sn ar $path"]
+let benches = ["sn ar $path" "sn all $path" "du -hacd2 $path" "sn fat $path" "du -hacd2 -t30M $path" "sn fat $path --exclude $excluded" "du -hacd2 -t30M $path --exclude target/debug"]
+if test $parallel = "true"
+    let benches = ["sn p $path" "du -hacd2 $path" "sn p -t30M $path" "du -hacd2 -t30M $path" "sn p -t30M --exclude $excluded $path" "du -hacd2 -t30M $path --exclude target/debug"]
+end
 
 # initialize cache
 echo 'initializing file system cache...'
@@ -32,7 +43,7 @@ sn all $path > /dev/null
 if test $reports = "true"
     echo 'generating reports with benchmarks...'
     mkdir -p reports/
-    bench --output reports/bench.html @benches
+    bench --output $benchpath @benches
 else
     bench @benches
 end

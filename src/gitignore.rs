@@ -6,7 +6,7 @@ use regex::RegexSet;
 use nom::IResult;
 use std::path::PathBuf;
 
-/// Given a darcs boring file's contents, process it as a RegexSet. The second
+/// Given a darcs boring file's contents, process it as a `RegexSet`. The second
 /// argument is a file path, included so that we print nice errors.
 pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
 
@@ -29,7 +29,7 @@ pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
 
 }
 
-/// Given a `.gitignore` or `.ignore` file's contents, process it as a RegexSet. The second
+/// Given a `.gitignore` or `.ignore` file's contents, process it as a `RegexSet`. The second
 /// argument is a file path, included so that we print nice errors.
 pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     let processed_vec: Vec<&str> = process_to_vector(file);

@@ -108,13 +108,19 @@ impl FileTree {
         }
     }
 
-    pub fn filtered(mut self, min_bytes: Option<u64>, dirs_only: bool) -> FileTree {
+    pub fn filtered(
+        mut self,
+        min_bytes: Option<u64>,
+        dirs_only: bool,
+        max_depth: Option<u8>,
+    ) -> FileTree {
 
         self.files = self.files
             .into_iter()
             .filter(|a| {
                 (if dirs_only { a.is_dir } else { true }) &&
-                    Some(a.bytes) > min_bytes.map(FileSize::new)
+                    Some(a.bytes) > min_bytes.map(FileSize::new) &&
+                    (Some(a.depth) <= max_depth || !max_depth.is_some())
             })
             .collect::<Vec<NamePair>>();
 

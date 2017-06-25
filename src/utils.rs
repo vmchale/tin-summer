@@ -8,7 +8,7 @@ use std::path::PathBuf;
 use self::num_cpus::get;
 
 /// Gather the information from `.gitignore`, `.ignore`, and darcs `boring` files in a given
-/// directory, and assemble a 'RegexSet' from it.
+/// directory, and assemble a `RegexSet` from it.
 pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Option<RegexSet> {
 
     if let Some(ref gitignore) = *maybe_gitignore {

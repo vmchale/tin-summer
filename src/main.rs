@@ -3,7 +3,9 @@ extern crate clap;
 
 extern crate liboskar;
 extern crate regex;
+extern crate colored;
 
+use colored::*;
 use liboskar::prelude::*;
 use clap::{App, AppSettings};
 
@@ -22,7 +24,6 @@ fn main() {
         .version(crate_version!())
         .set_term_width(90)
         .setting(AppSettings::SubcommandRequired)
-        //.setting(AppSettings::ColoredHelp)
         .get_matches();
 
     // test stuff
@@ -31,8 +32,11 @@ fn main() {
         // set path to dir
         let init_dir = get_dir(command.value_of("dir"));
 
-        // set depth
-        let depth = get_depth(command.value_of("depth"));
+        // set flag to print everything
+        let print_all = command.is_present("all");
+
+        // set whether to print files too
+        let print_files = command.is_present("files");
 
         // get the number of processors to be used
         let nproc = get_threads(command.value_of("threads"));
@@ -41,10 +45,20 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         let mut w = Walk::new(init_dir, nproc);
-        w.set_depth(depth);
         if let Some(b) = min_bytes {
             w.set_threshold(b);
         }
+        if !print_all {
+            let depth = get_depth(command.value_of("depth"));
+            w.set_depth(depth);
+        }
+        else if command.is_present("depth") {
+            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        }
+        if print_files {
+            w.with_files();
+        }
+
         if let Some(e) = command.value_of("excludes") {
             w.set_regex(check_regex(e));
         }
@@ -62,12 +76,18 @@ fn main() {
         };
 
         // set depth
-        let depth = get_depth(command.value_of("depth"));
+        let depth = if !command.is_present("all") 
+            { Some(get_depth(command.value_of("depth"))) }
+        else if command.is_present("depth") {
+            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+            None
+        }
+        else { None };
 
         // don't print warnings
         //let silent = command.is_present("silent");
 
-        // don't print warnings
+        // set whether to print files too
         let print_files = command.is_present("files");
 
         // set regex for exclusions
@@ -82,7 +102,7 @@ fn main() {
                 read_all(
                     &init_dir,
                     0,
-                    Some(depth),
+                    depth,
                     None,
                     Some(&check_regex(r)),
                     &None,
@@ -90,11 +110,11 @@ fn main() {
                     false,
                 )
             }
-            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
+            _ => read_all(&init_dir, 0, depth, None, None, &None, false, false),
         };
 
         // filter by depth
-        let mut v_filtered = v.filtered(Some(min_bytes), !print_files);
+        let mut v_filtered = v.filtered(Some(min_bytes), !print_files, depth);
 
         // display results
         v_filtered.display_tree(init_dir);
@@ -106,12 +126,18 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
-        let depth = get_depth(command.value_of("depth"));
+        let depth = if !command.is_present("all") 
+            { Some(get_depth(command.value_of("depth"))) }
+        else if command.is_present("depth") {
+            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+            None
+        }
+        else { None };
 
         // set regex for exclusions
         let regex = command.value_of("excludes");
 
-        // don't print warnings
+        // set whether to print files too
         let print_files = command.is_present("files");
 
         // set path to dir
@@ -123,7 +149,7 @@ fn main() {
                 read_all(
                     &init_dir,
                     0,
-                    Some(depth),
+                    depth,
                     None,
                     Some(&check_regex(r)),
                     &None,
@@ -131,12 +157,12 @@ fn main() {
                     false,
                 )
             }
-            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
+            _ => read_all(&init_dir, 0, depth, None, None, &None, false, false),
         };
 
 
         // filter by depth
-        let mut v_filtered = v.filtered(min_bytes, !print_files);
+        let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
 
         // display results
         v_filtered.display_tree(init_dir);
@@ -147,7 +173,13 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
-        let depth = get_depth(command.value_of("depth"));
+        let depth = if !command.is_present("all") 
+            { Some(get_depth(command.value_of("depth"))) }
+        else if command.is_present("depth") {
+            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+            None
+        }
+        else { None };
 
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count"));
@@ -155,7 +187,7 @@ fn main() {
         // decide whether to sort
         let should_sort = command.is_present("sort");
 
-        // don't print warnings
+        // set whether to print files too
         let print_files = command.is_present("files");
 
         // set regex for artifacts
@@ -174,7 +206,7 @@ fn main() {
             read_all(
                 &init_dir,
                 0,
-                Some(depth),
+                depth,
                 Some(&re),
                 Some(&excludes),
                 &None,
@@ -186,7 +218,7 @@ fn main() {
             read_all(
                 &init_dir,
                 0,
-                Some(depth),
+                depth,
                 None,
                 Some(&excludes),
                 &None,
@@ -198,7 +230,7 @@ fn main() {
         let mut v_processed = if should_sort {
             v.sort(Some(num_int), min_bytes, !print_files)
         } else {
-            v.filtered(min_bytes, !print_files)
+            v.filtered(min_bytes, !print_files, depth)
         };
 
         v_processed.display_tree(init_dir);
@@ -213,9 +245,15 @@ fn main() {
         let num_int = get_num(command.value_of("count"));
 
         // set depth
-        let depth = get_depth(command.value_of("depth"));
+        let depth = if !command.is_present("all") 
+            { Some(get_depth(command.value_of("depth"))) }
+        else if command.is_present("depth") {
+            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+            None
+        }
+        else { None };
 
-        // don't print warnings
+        // set whether to print files too
         let print_files = command.is_present("files");
 
         // set number of things to fetch for sort
@@ -235,7 +273,7 @@ fn main() {
                 read_all(
                     &init_dir,
                     0,
-                    Some(depth),
+                    depth,
                     None,
                     Some(&check_regex(r)),
                     &None,
@@ -243,7 +281,7 @@ fn main() {
                     false,
                 )
             }
-            _ => read_all(&init_dir, 0, Some(depth), None, None, &None, false, false),
+            _ => read_all(&init_dir, 0, depth, None, None, &None, false, false),
         };
 
         // sort them

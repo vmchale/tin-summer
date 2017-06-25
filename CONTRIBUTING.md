@@ -4,6 +4,11 @@ I emphatically welcome bug reports, issues you may encounter, documentation, and
 requests, though whether we will incorporate them depends on contributors'
 schedules.
 
+## Binaries for other platforms
+
+If you'd like binaries for any of the platforms listed
+[here](https://github.com/japaric/cross), open a PR and I will add them.
+
 ## Support for other languages
 
 If you'd like me to add support for other languages, just open an issue and tell
