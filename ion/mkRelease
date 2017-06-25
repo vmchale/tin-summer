@@ -1,0 +1,6 @@
+#!/usr/bin/env ion
+
+# set path to include sn
+let PATH=$HOME/.cargo/bin:$PATH
+
+cargo release --no-dev-version -l @args[1..]
