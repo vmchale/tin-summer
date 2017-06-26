@@ -75,7 +75,7 @@ impl Walk {
 
         if to_print {
             // filter by depth
-            let mut v_filtered = v.filtered(w.threshold, w.show_files, w.max_depth);
+            let mut v_filtered = v.filtered(w.threshold, !w.show_files, w.max_depth);
 
             v_filtered.display_tree(w.path);
         }
@@ -174,6 +174,9 @@ impl Walk {
                                 let mut new_path = w.path.to_owned();
                                 new_path.push(val.file_name());
                                 let mut new_walk = Walk::new(new_path, w.get_proc());
+                                if w.show_files {
+                                    new_walk.with_files();
+                                }
                                 new_walk.bump_depth();
                                 if let Some(d) = w.max_depth {
                                     new_walk.set_depth(d);
@@ -186,11 +189,13 @@ impl Walk {
                                 if let Ok(l) = val.metadata() {
                                     let size = l.len();
                                     total.fetch_add(size, Ordering::Relaxed);
-                                    if w.show_files {
-                                        if size != 0  {
-                                            let to_formatted = format!("{}", FileSize::new(size));
-                                            println!("{}\t {}", &to_formatted.green(), val.path().display());
-                                        }
+                                    if w.show_files && size != 0 {
+                                        let to_formatted = format!("{}", FileSize::new(size));
+                                        println!(
+                                            "{}\t {}",
+                                            &to_formatted.green(),
+                                            val.path().display()
+                                        );
                                     }
                                 } else {
                                     eprintln!(
@@ -322,7 +327,7 @@ pub fn print_parallel(w: Walk) -> () {
     let _ = threads.into_iter().map(|v| v.join().unwrap()).count();
 
     // get the total size
-    let m = arc.load(Ordering::SeqCst);
+    let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?
     let size = FileSize::new(m);
 
     // print directory total.

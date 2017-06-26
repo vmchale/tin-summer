@@ -404,8 +404,7 @@ pub fn read_all(
                                 true,
                             );
                         }
-                    }
-                    else {
+                    } else {
                         let mut subtree = read_all(
                             &path,
                             depth + 1,

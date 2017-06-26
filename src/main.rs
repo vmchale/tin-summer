@@ -51,9 +51,11 @@ fn main() {
         if !print_all {
             let depth = get_depth(command.value_of("depth"));
             w.set_depth(depth);
-        }
-        else if command.is_present("depth") {
-            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
         }
         if print_files {
             w.with_files();
@@ -76,13 +78,17 @@ fn main() {
         };
 
         // set depth
-        let depth = if !command.is_present("all") 
-            { Some(get_depth(command.value_of("depth"))) }
-        else if command.is_present("depth") {
-            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        let depth = if !command.is_present("all") {
+            Some(get_depth(command.value_of("depth")))
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
             None
-        }
-        else { None };
+        } else {
+            None
+        };
 
         // don't print warnings
         //let silent = command.is_present("silent");
@@ -126,13 +132,17 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
-        let depth = if !command.is_present("all") 
-            { Some(get_depth(command.value_of("depth"))) }
-        else if command.is_present("depth") {
-            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        let depth = if !command.is_present("all") {
+            Some(get_depth(command.value_of("depth")))
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
             None
-        }
-        else { None };
+        } else {
+            None
+        };
 
         // set regex for exclusions
         let regex = command.value_of("excludes");
@@ -173,13 +183,17 @@ fn main() {
         let min_bytes = threshold(command.value_of("threshold"));
 
         // set depth
-        let depth = if !command.is_present("all") 
-            { Some(get_depth(command.value_of("depth"))) }
-        else if command.is_present("depth") {
-            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        let depth = if !command.is_present("all") {
+            Some(get_depth(command.value_of("depth")))
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
             None
-        }
-        else { None };
+        } else {
+            None
+        };
 
         // set number of things to fetch for sort
         let num_int = get_num(command.value_of("count"));
@@ -245,13 +259,17 @@ fn main() {
         let num_int = get_num(command.value_of("count"));
 
         // set depth
-        let depth = if !command.is_present("all") 
-            { Some(get_depth(command.value_of("depth"))) }
-        else if command.is_present("depth") {
-            eprintln!("{}: flag --all is not compatible with --depth", "Warning".yellow());
+        let depth = if !command.is_present("all") {
+            Some(get_depth(command.value_of("depth")))
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
             None
-        }
-        else { None };
+        } else {
+            None
+        };
 
         // set whether to print files too
         let print_files = command.is_present("files");

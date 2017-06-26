@@ -7,6 +7,8 @@ export GITHUB_TOKEN=$(cat .git-token)
 
 let tag = $(git describe --tags)
 
+github-release release -u vmchale -r tin-summer --tag $tag --name @args[1..]
+
 github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-linux-gnu" --file target/release/sn
 github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-armv7-linux-gnueabihf" --file target/arm-unknown-linux-gnueabihf/release/sn
 github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-armv7-linux-musleabi" --file target/arm-unknown-linux-musleabi/release/sn
