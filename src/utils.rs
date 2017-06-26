@@ -21,7 +21,7 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Opt
         } {
         let mut contents = String::new();
         file.read_to_string(&mut contents)
-            .expect("File read failed.");
+            .expect("File read failed."); // ok because we check that the file exists
         Some(file_contents_to_regex(&contents, &gitignore_path))
     } else if let (darcs_path, Ok(mut file)) =
         {
@@ -31,7 +31,7 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Opt
         } {
         let mut contents = String::new();
         file.read_to_string(&mut contents)
-            .expect("File read failed.");
+            .expect("File read failed."); // ok because we check that the file exists
         Some(darcs_contents_to_regex(&contents, &darcs_path))
     } else if let (ignore_path, Ok(mut file)) =
         {
@@ -41,7 +41,7 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Opt
         } {
         let mut contents = String::new();
         file.read_to_string(&mut contents)
-            .expect("File read failed.");
+            .expect("File read failed."); // ok because we check that the file exists
         Some(file_contents_to_regex(&contents, &ignore_path))
     } else {
         None

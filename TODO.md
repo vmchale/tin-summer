@@ -33,32 +33,24 @@
 - [x] print by significant figures
 - [x] `-d1` should work with `parallel`
 - [x] flag to print all (e.g. no max depth/etc.)
-
-# Bugs
-
-- [ ] custom regex should override the "project dirs" regex?
+- [x] excludes w/ regex
+  - [x] fix bugs w/ excludes & overzealous use of .gitignores
+  - [x] multiple included paths
+- [x] let it run on a single file
+- [x] improve ergonomics (and speed) by guessing language of project
+  directory
 
 # UI/Ergonomics
 
-- [ ] fix `unwrap()`s and `expect()`s.
-- [x] excludes w/ regex
-  - [x] fix bugs w/ excludes & overzealous use of .gitignores
-  - [ ] set include paths w/ glob
-- [ ] silent flag
-- [ ] let it run on a single file
+- [ ] silent flag to ignore warnings?
 - [ ] symlinks!!
-- [ ] check for ignore files in the parent dir too.
-- [ ] remove all expect()/unwrap() values
 
 # Features
 
-- [ ] flag to follow symlinks
-  - [x] ignore symlinks by default
-- [ ] improve ergonomics (and possibly speed) by guessing language of project
-  directory
 - [ ] cool feature: highlight extensions
   - [ ] color-coded by language?
 - [ ] global gitignore
+  - [ ] check for ignore files in the parent dir too.
   - [ ] ~/.darcs/boring
   - [x] darcs boring file?
   - [x] pijul ignore
@@ -78,6 +70,7 @@
 - [ ] parity with du without threading
   - [x] dual-threading to pop off values?
 - [ ] print directories immediately rather than adding them to a vector?
+  MsQueue?
   - [ ] all
   - [ ] fat
   - [ ] ar
@@ -96,7 +89,7 @@
     - [ ] darcs boring file
     - [ ] .hginore
   - [x] excludes
-- [ ] look at tokei/rayon??
+- [ ] look at tokei/rayon for globbed paths.
 
 # French/German
 

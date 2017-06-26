@@ -1,3 +1,5 @@
+extern crate glob;
+
 use std::fs;
 use regex::{RegexSet, Regex};
 use utils::*;
@@ -6,9 +8,64 @@ use colored::*;
 use std::process::exit;
 use types::*;
 use std::fs::Metadata;
+use error::*;
+use self::glob::glob;
+use std::result::Result;
 
 #[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::PermissionsExt;
+
+fn glob_exists(s: &str) -> bool {
+    glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors is good?
+}
+
+/// Helper function to identify project directories. The heuristic is as follows: 
+///
+/// 1. For `.stack-work`, look for a 
+pub fn is_project_dir(p: &str, name: &str) -> bool {
+    // for project directories
+    lazy_static! {
+        static ref REGEX_PROJECT_DIR: Regex = 
+            Regex::new(r"(.stack-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$")
+            .unwrap();
+    }
+
+    if REGEX_PROJECT_DIR.is_match(name) {
+        let mut parent_path = PathBuf::from(p);
+        let mut parent_string = p.to_owned();
+        match name {
+            ".stack-work" => {
+                let mut hpack = parent_path.clone();
+                parent_path.push("cabal.project");
+                hpack.push("package.yaml");
+                parent_string.push_str("/../*.cabal");
+                parent_path.exists() || hpack.exists() || glob_exists(&parent_string)
+            }
+            "target" => {
+                parent_path.push("../Cargo.toml");
+                parent_path.exists()
+            }
+            "elm-stuff" => {
+                let mut package_path = PathBuf::from(p);
+                package_path.push("../elm-package.json");
+                package_path.exists()
+            }
+            "build" | "dist" | "dist-newstyle" => {
+                parent_path.push("../setup.py");
+                parent_string.push_str("/../*.cabal");
+                parent_path.exists() || glob_exists("")
+            }
+            _ => {
+                parent_path.push("../setup.py");
+                parent_path.exists() && str::ends_with(name, ".egg-info")
+            }
+        }
+    } else {
+        false
+    }
+
+}
+
 
 /// Helper function to determine whether a path points
 ///
@@ -47,7 +104,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
             .unwrap();
     }
 
@@ -70,7 +127,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r".*?\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
+                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
                 .unwrap();
         }
 
@@ -99,7 +156,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r".*?\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
             .unwrap();
     }
 
@@ -119,7 +176,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r".*?\.(exe|a|la|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
+                Regex::new(r"\.(exe|a|la|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|p_hi|p_o|prof|tix)$")
                 .unwrap();
         }
 
@@ -156,13 +213,6 @@ pub fn read_size(
         None
     };
 
-    // for project directories
-    lazy_static! {
-        static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"(.stack-work|dist|dist-newstyle|target|.*\.egg-info|elm-stuff)$")
-            .unwrap();
-    }
-
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
 
@@ -171,8 +221,7 @@ pub fn read_size(
             let val = match p {
                 Ok(x) => x,
                 _ => {
-                    eprintln!("{}: path error at {:?}.", "Error".red(), p);
-                    exit(0x0001)
+                    panic!("{}", Internal::IoError);
                 }
             };
             let path = val.path();
@@ -195,7 +244,7 @@ pub fn read_size(
             // if they don't match the exclusion regex
             if bool_loop {
 
-                let path_type = val.file_type().unwrap();
+                let path_type = val.file_type().unwrap(); // ok because we already checked
 
                 // append file size/name for a file
                 if path_type.is_file() {
@@ -205,7 +254,7 @@ pub fn read_size(
                         if !artifacts_only ||
                             {
                                 is_artifact(
-                                    val.file_name().to_str().unwrap(),
+                                    val.file_name().to_str().unwrap(), // ok because we already checked
                                     path_string,
                                     artifact_regex,
                                     &metadata,
@@ -220,7 +269,10 @@ pub fn read_size(
                 }
                 // otherwise, go deeper
                 else if path_type.is_dir() {
-                    let dir_size = if artifacts_only && REGEX_PROJECT_DIR.is_match(path_string) {
+                    let dir_size = if artifacts_only &&
+                        is_project_dir(path_string, val.file_name().to_str().unwrap())
+                    {
+                        // REGEX_PROJECT_DIR.is_match(path_string) {
                         read_size(
                             &path,
                             depth + 1,
@@ -303,13 +355,6 @@ pub fn read_all(
         None
     };
 
-    // for project directories
-    lazy_static! {
-        static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"(.stack-work|dist|dist-newstyle|target|.*\.egg-info|elm-stuff)$")
-            .unwrap();
-    }
-
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
 
@@ -319,7 +364,7 @@ pub fn read_all(
             let val = match p {
                 Ok(x) => x,
                 _ => {
-                    eprintln!("{}: path error at {:?}.", "Error".red(), p);
+                    eprintln!("{}:  {:?}.", "Error".red(), p);
                     exit(0x0001)
                 }
             };
@@ -344,7 +389,7 @@ pub fn read_all(
             // exclusion regex
             if bool_loop {
 
-                let path_type = val.file_type().unwrap();
+                let path_type = val.file_type().unwrap(); // ok because we already checked
 
                 // append file size/name for a file
                 if path_type.is_file() {
@@ -354,7 +399,7 @@ pub fn read_all(
                         if !artifacts_only ||
                             {
                                 is_artifact(
-                                    val.file_name().to_str().unwrap(),
+                                    val.file_name().to_str().unwrap(), // ok because we already checked
                                     path_string,
                                     artifact_regex,
                                     &metadata,
@@ -370,7 +415,8 @@ pub fn read_all(
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
                         if depth + 1 >= d ||
-                            (artifacts_only && REGEX_PROJECT_DIR.is_match(path_string))
+                            (artifacts_only &&
+                                 is_project_dir(path_string, val.file_name().to_str().unwrap()))
                         {
                             let dir_size = {
                                 read_size(
@@ -379,8 +425,16 @@ pub fn read_all(
                                     artifact_regex,
                                     excludes,
                                     &gitignore,
-                                    with_gitignore && !REGEX_PROJECT_DIR.is_match(path_string),
-                                    artifacts_only && !REGEX_PROJECT_DIR.is_match(path_string), // FIXME only compute this once
+                                    with_gitignore &&
+                                        !is_project_dir(
+                                            path_string,
+                                            val.file_name().to_str().unwrap(),
+                                        ),
+                                    artifacts_only &&
+                                        !is_project_dir(
+                                            path_string,
+                                            val.file_name().to_str().unwrap(),
+                                        ), // FIXME only compute this once
                                 )
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
@@ -447,12 +501,22 @@ pub fn read_all(
     }
     // 2: check the path is actually a directory
     else if !in_paths.is_dir() {
-        eprintln!(
-            "{}: {} is not a directory.",
-            "Error".red(),
-            &in_paths.display()
-        );
-        exit(0x0001);
+
+        if artifacts_only {
+            eprintln!(
+                "{}: {} is not a directory; not searching for artifacts",
+                "Warning".yellow(),
+                &in_paths.display()
+            );
+        }
+
+        if let Ok(l) = in_paths.metadata() {
+            let size = l.len();
+            let to_formatted = format!("{}", FileSize::new(size));
+            println!("{}\t {}", &to_formatted.green(), in_paths.display());
+        } else {
+            panic!("{}", Internal::IoError);
+        }
     }
     // 3: otherwise, give a warning about permissions
     else {

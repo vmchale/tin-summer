@@ -13,6 +13,7 @@ use std::path::PathBuf;
 use colored::*;
 use std::process::exit;
 use std::thread;
+use error::*;
 use types::FileSize;
 
 pub use walk_parallel::single_threaded::*;
@@ -36,6 +37,7 @@ pub struct Walk {
     nproc: usize,
     show_files: bool,
     follow_symlinks: bool,
+    artifacts_only: bool,
 }
 
 impl Walk {
@@ -120,6 +122,7 @@ impl Walk {
             nproc: n,
             show_files: false,
             follow_symlinks: false,
+            artifacts_only: false,
         }
     }
 
@@ -201,7 +204,7 @@ impl Walk {
                                     eprintln!(
                                         "{}: could not find filesize for file at {}.",
                                         "Warning".yellow(),
-                                        val.path().as_path().to_str().unwrap()
+                                        val.path().display()
                                     );
                                 }
                             }
@@ -210,7 +213,7 @@ impl Walk {
                             eprintln!(
                                 "{}: could not determine file type for: {}",
                                 "Warning".yellow(),
-                                val.file_name().to_str().unwrap()
+                                val.path().display()
                             )
                         }
                     }
@@ -234,12 +237,21 @@ impl Walk {
         }
         // 2: check the path is actually a directory
         else if !in_paths.is_dir() {
-            eprintln!(
-                "{}: {} is not a directory.",
-                "Error".red(),
-                &in_paths.display()
-            );
-            exit(0x0001);
+            if w.artifacts_only {
+                eprintln!(
+                    "{}: {} is not a directory; not searching for artifacts",
+                    "Warning".yellow(),
+                    &in_paths.display()
+                );
+            }
+
+            if let Ok(l) = in_paths.metadata() {
+                let size = l.len();
+                let to_formatted = format!("{}", FileSize::new(size));
+                println!("{}\t {}", &to_formatted.green(), in_paths.display());
+            } else {
+                panic!("{}", Internal::IoError);
+            }
         }
         // 3: otherwise, give a warning about permissions
         else {
@@ -324,7 +336,17 @@ pub fn print_parallel(w: Walk) -> () {
     let _ = child_producer.join();
 
     // join the workers to the main thread
-    let _ = threads.into_iter().map(|v| v.join().unwrap()).count();
+    let _ = threads
+        .into_iter()
+        .map(|v| {
+            let result = v.join();
+            if let Ok(exit) = result {
+                exit
+            } else if let Err(e) = result {
+                panic!("{:?}", e)
+            }
+        })
+        .count();
 
     // get the total size
     let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?

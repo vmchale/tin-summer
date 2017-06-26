@@ -7,7 +7,7 @@ cargo build --release
 let binpath = target/release/sn
 
 # set to a suitable path
-let path = /home/vanessa/programming
+let path = .
 for x in @args[1..]
     if test -n $x
         let path = $x

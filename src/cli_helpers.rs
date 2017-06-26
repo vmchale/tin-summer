@@ -5,7 +5,8 @@ use nom::IResult;
 use std::process::exit;
 use std::path::PathBuf;
 use regex::Regex;
-use error::check_regex;
+use error::*;
+use clap::Values;
 use utils::get_processors;
 
 /// Parse a string into a regular expression for the 'artifacts' subcommand. Adds ignores for
@@ -18,14 +19,18 @@ pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
             x.push_str(r")|(\.git|\.pijul|_darcs|\.hg)$");
             check_regex(&x)
         }
-        _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg)$").unwrap(),
+        _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg)$").unwrap(), // ok because static
     }
 }
 
 pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
     if let Some(n) = depth_from_cli {
-        n.parse::<u8>()
-            .expect("Please enter a positive whole number")
+        if let Ok(n) = n.parse::<u8>() {
+            n
+        } else {
+            eprintln!("{}", Internal::ParseNum);
+            exit(0x0f01);
+        }
     } else {
         2
     }
@@ -33,8 +38,12 @@ pub fn get_depth(depth_from_cli: Option<&str>) -> u8 {
 
 pub fn get_num(num_from_cli: Option<&str>) -> usize {
     if let Some(num) = num_from_cli {
-        num.parse::<usize>()
-            .expect("Please enter a positive whole number")
+        if let Ok(n) = num.parse::<usize>() {
+            n
+        } else {
+            eprintln!("{}", Internal::ParseNum);
+            exit(0x0f01);
+        }
     } else {
         8
     }
@@ -45,10 +54,24 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
 pub fn get_threads(num_from_cli: Option<&str>) -> usize {
     match num_from_cli {
         Some(num) => {
-            num.parse::<usize>()
-                .expect("Please enter a positive whole number")
+            if let Ok(n) = num.parse::<usize>() {
+                n
+            } else {
+                eprintln!("{}", Internal::ParseNum);
+                exit(0x0f01);
+            }
         }
         _ => get_processors(),
+    }
+}
+
+pub fn get_dirs(paths_from_cli: Option<Values>) -> Vec<PathBuf> {
+    if let Some(read) = paths_from_cli {
+        read.map(PathBuf::from).collect()
+    } else {
+        let mut v = Vec::new();
+        v.push(PathBuf::from("."));
+        v
     }
 }
 
@@ -89,8 +112,12 @@ fn pre_threshold(t_from_cli: &str) -> u64 {
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
 
     let pre: String = nums.into_iter().collect();
-    let n = pre.parse::<u64>()
-        .expect("Error parsing integer at cli_helpers.rs:58");
+    let n = if let Ok(n) = pre.parse::<u64>() {
+        n
+    } else {
+        eprintln!("{}", Internal::ParseNum);
+        exit(0x0f01);
+    };
 
     match size_tag {
         b"G" | b"g" => n * 1073741824,

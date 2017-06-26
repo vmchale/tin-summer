@@ -8,10 +8,11 @@ subcommands:
     - parallel:
         visible_alias: "p"
         alias: "par"
-        about: Test parallel directory traversals.
+        about: Same as 'all', but concurrently. 
         args:
             - dir:
                 value_name: DIRECTORY
+                multiple: true
                 help: Directory to search
             - threads:
                 short: j
@@ -50,6 +51,7 @@ subcommands:
         args:
             - dir:
                 value_name: DIRECTORY
+                multiple: true
                 help: Directory to search
             - count: 
                 short: n
@@ -91,6 +93,7 @@ subcommands:
         args:
             - dir:
                 value_name: DIRECTORY
+                multiple: true
                 help: Directory to search
             - threshold:
                 short: t
@@ -123,6 +126,7 @@ subcommands:
         args:
             - dir:
                 value_name: DIRECTORY
+                multiple: true
                 help: Directory to search
             - threshold:
                 short: t
@@ -155,6 +159,7 @@ subcommands:
         args:
             - dir:
                 value_name: DIRECTORY
+                multiple: true
                 help: Directory to search
             - threshold:
                 short: t
@@ -190,12 +195,6 @@ subcommands:
                 short: g
                 long: no-gitignore
                 help: Don't bother using .gitignore or darcs boring file information for faster traversal
-            - regex:
-                short: r
-                long: regex
-                takes_value: true
-                value_name: REGEX
-                help: Specify a custom regex for picking out artifacts. For instance, to find '.rlib' files only, you could do 'sniff ar -r .*?rlib$'
             - depth: 
                 short: d
                 long: depth
