@@ -12,7 +12,9 @@ If you'd like binaries for any of the platforms listed
 ## Support for other languages
 
 If you'd like me to add support for other languages, just open an issue and tell
-me all file extensions associated with its build artifacts.
+me all file extensions associated with its build artifacts, plus common names
+for build directories, and names/extensions of any configuration files typically
+used.
 
 Alternately, if you'd like to fork it and open a PR yourself, the relevant regex is
 [here](https://github.com/vmchale/file-sniffer/blob/master/src/walk_parallel/single_threaded.rs#L73).

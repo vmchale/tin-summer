@@ -9,10 +9,20 @@ use self::num_cpus::get;
 
 /// Gather the information from `.gitignore`, `.ignore`, and darcs `boring` files in a given
 /// directory, and assemble a `RegexSet` from it.
-pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Option<RegexSet> {
+pub fn mk_ignores(in_paths: &PathBuf, maybe_ignore: &Option<RegexSet>) -> Option<RegexSet> {
 
-    if let Some(ref gitignore) = *maybe_gitignore {
-        Some(gitignore.to_owned())
+    if let Some(ref ignore) = *maybe_ignore {
+        Some(ignore.to_owned())
+    } else if let (ignore_path, Ok(mut file)) =
+        {
+            let mut ignore_path = in_paths.clone();
+            ignore_path.push(".ignore");
+            (ignore_path.clone(), File::open(ignore_path.clone()))
+        } {
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)
+            .expect("File read failed."); // ok because we check that the file exists
+        Some(file_contents_to_regex(&contents, &ignore_path))
     } else if let (gitignore_path, Ok(mut file)) =
         {
             let mut gitignore_path = in_paths.clone();
@@ -33,16 +43,6 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_gitignore: &Option<RegexSet>) -> Opt
         file.read_to_string(&mut contents)
             .expect("File read failed."); // ok because we check that the file exists
         Some(darcs_contents_to_regex(&contents, &darcs_path))
-    } else if let (ignore_path, Ok(mut file)) =
-        {
-            let mut ignore_path = in_paths.clone();
-            ignore_path.push(".ignore");
-            (ignore_path.clone(), File::open(ignore_path.clone()))
-        } {
-        let mut contents = String::new();
-        file.read_to_string(&mut contents)
-            .expect("File read failed."); // ok because we check that the file exists
-        Some(file_contents_to_regex(&contents, &ignore_path))
     } else {
         None
     }

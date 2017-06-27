@@ -4,7 +4,7 @@
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those
-artifacts. 
+artifacts.
 
 `sn` is also a replacement for `du`. It has far nicer
 output, saner commands and defaults, and it even runs faster on big directories
@@ -82,14 +82,14 @@ To turn off colorized output:
 export CLICOLOR=0
 ```
 
-### Comparison
+### Comparison (or, 100 Things I Hate About du)
 
 #### Reasons to use `du`
 
   * Reads disk usage, not file sizes
   * Optionally dereferences symlinks
-  * Slightly faster on small directories 
-  * Well-supported
+  * Slightly faster on small directories
+  * Stable and well-supported
 
 #### Reasons to use `sn`
 
@@ -105,6 +105,29 @@ export CLICOLOR=0
   * Extensible in Rust
   * Benefits from upstream improvements in Rust ecosystem
 
+#### Benchmark results
+
+| Directory | Tool | Command | Time |
+| --------- || ---- | ------- | ---- |
+| Source | sn | `sn p` | 60.74 ms |
+| Source | sn | `sn a` | 99.92 ms |
+| Source | du | `du -hacd2` | 88.28 ms |
+| Build | sn | `sn p`| 185.2 ms |
+| Build | sn | `sn a` | 271.9 ms |
+| Build | du | `du -hacd2` | 195.5 ms |
+| Project | sn | `sn p` | 36.68 ms |
+| Project | sn | `sn a` | 42.90 ms |
+| Project | du | `du -hacd2` | 35.53 ms |
+
+These commands are all essentially equivalent in function, except that `sn p`
+may use more threads than `sn a` or `du`.
+
+Results were obtained using Gabriel Gonzalez's [bench](https://github.com/Gabriel439/bench)
+tool. "Source" was my programming directory alone, comprising data, source code,
+and version control; around 600MB total. "Project" was a single polyglot project,
+plus artifacts; around 1GB total. "Build" was my programming directory, with
+current projects built; around 4GB total.
+
 #### Screenshots (alacritty + solarized dark)
 
 ##### The Tin Summer
@@ -119,7 +142,8 @@ export CLICOLOR=0
 
 Currently, `sn` looks for files that either have an extension associated with
 build artifacts, or executable files that are ignored by version control. It also looks for "build
-directories", like `.stack-work`, `elm-stuff`, etc. and it considers *all* their
+directories", like `.stack-work`, `elm-stuff`, etc. and if it finds a
+configuration file like `tweet-hs.cabal`, it considers *all* their
 contents to be build artifacts.
 
 #### Languages Supported
@@ -136,4 +160,5 @@ The *intent* is to support basically anything, so feel free to open a PR or star
   - [x] Vimscript
   - [x] Idris
   - [x] FORTRAN
+  - [ ] Ruby
   - [ ] C

@@ -20,7 +20,7 @@ fn bench_cli_options(b: &mut Bencher) {
     b.iter(|| {
         App::from_yaml(yaml)
             .version(crate_version!())
-            .get_matches_from(vec!["sn", "ar", "-g", "."])
+            .get_matches_from(vec!["sn", "ar", "."])
     })
 }
 

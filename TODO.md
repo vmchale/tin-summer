@@ -37,8 +37,14 @@
   - [x] fix bugs w/ excludes & overzealous use of .gitignores
   - [x] multiple included paths
 - [x] let it run on a single file
+- [x] don't call `is_project_dir()` three times
 - [x] improve ergonomics (and speed) by guessing language of project
   directory
+
+# Bugs
+
+- [ ] when using `--all` with `ar`, it should not recurse arbitrarily far.
+- [ ] when `--all` is used with `sort`, it *should* recurse arbitrarily far.
 
 # UI/Ergonomics
 
@@ -64,6 +70,12 @@
   - [ ] idris
   - [ ] elm
   - [ ] python
+
+# Code maintenance
+
+- [ ] make `read_all()` take a struct.
+- [ ] strip out machinery for `with_gitignore` and `artifact_regex`
+
 
 # Performance
 
@@ -97,4 +109,4 @@
   - [ ] make an error type & use that to organize things
 - [x] change french/german binary name
   - [ ] upsteam PR to clap-rs?
-- [ ] fix build.rs
+- [x] fix build.rs

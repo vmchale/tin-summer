@@ -19,9 +19,19 @@ fn glob_exists(s: &str) -> bool {
     glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors is good?
 }
 
-/// Helper function to identify project directories. The heuristic is as follows: 
+/// Helper function to identify project directories. The heuristic is as follows:
 ///
-/// 1. For `.stack-work`, look for a 
+/// 1. For `.stack-work`, look for a `.cabal` file or a `package.yaml` file in the parent
+///    directory.
+/// 2. For `target`, look for a `Cargo.toml` file in the parent directory.
+/// 3. For `elm-stuff`, look for `elm-package.json` in the parent directory.
+/// 4. For `build`, `dist`, look for a `.cabal`, `setup.py` or `cabal.project` file.
+/// 5. For `dist-newstyle`, look for a `.cabal` or `cabal.project` file.
+/// 6. For `nimcache`, look for a `.nim` file in the parent directory.
+/// 6. Otherwise, if `setup.py` is in the parent directory and it ends with `.egg-info`, return
+///    true.
+/// 7. In all other cases, return false, but still proceed into the directory to search files by
+///    extension.
 pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
@@ -40,6 +50,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 hpack.push("package.yaml");
                 parent_string.push_str("/../*.cabal");
                 parent_path.exists() || hpack.exists() || glob_exists(&parent_string)
+            }
+            "nimcache" => {
+                parent_string.push_str("/../*.nim");
+                glob_exists(&parent_string)
             }
             "target" => {
                 parent_path.push("../Cargo.toml");
@@ -250,7 +264,6 @@ pub fn read_size(
                 if path_type.is_file() {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
-                        // faster on Windows
                         if !artifacts_only ||
                             {
                                 is_artifact(
@@ -272,7 +285,6 @@ pub fn read_size(
                     let dir_size = if artifacts_only &&
                         is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        // REGEX_PROJECT_DIR.is_match(path_string) {
                         read_size(
                             &path,
                             depth + 1,
@@ -414,9 +426,21 @@ pub fn read_all(
                 // otherwise, go deeper
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
-                        if depth + 1 >= d ||
-                            (artifacts_only &&
-                                 is_project_dir(path_string, val.file_name().to_str().unwrap()))
+                        if depth + 1 >= d && (!with_gitignore || !artifacts_only) {
+                            let dir_size = {
+                                read_size(
+                                    &path,
+                                    depth + 1,
+                                    artifact_regex,
+                                    excludes,
+                                    &gitignore,
+                                    with_gitignore,
+                                    artifacts_only,
+                                )
+                            };
+                            tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
+                        } else if artifacts_only &&
+                                   is_project_dir(path_string, val.file_name().to_str().unwrap())
                         {
                             let dir_size = {
                                 read_size(
@@ -425,16 +449,8 @@ pub fn read_all(
                                     artifact_regex,
                                     excludes,
                                     &gitignore,
-                                    with_gitignore &&
-                                        !is_project_dir(
-                                            path_string,
-                                            val.file_name().to_str().unwrap(),
-                                        ),
-                                    artifacts_only &&
-                                        !is_project_dir(
-                                            path_string,
-                                            val.file_name().to_str().unwrap(),
-                                        ), // FIXME only compute this once
+                                    false,
+                                    false,
                                 )
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
