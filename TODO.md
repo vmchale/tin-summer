@@ -24,6 +24,7 @@
   - [x] look in .gitignore
     - [x] check executable permissions/binary file-ness
   - [x] regex
+- [x] strip out machinery for `with_gitignore` and `artifact_regex`
 - [x] de/fr/bo translations would be nice
   - [x] stabilize interface w/ at least --exclude for artifact
 - [x] fix .gitignore parser
@@ -40,16 +41,20 @@
 - [x] don't call `is_project_dir()` three times
 - [x] improve ergonomics (and speed) by guessing language of project
   directory
-
-# Bugs
-
-- [ ] when using `--all` with `ar`, it should not recurse arbitrarily far.
-- [ ] when `--all` is used with `sort`, it *should* recurse arbitrarily far.
+- [x] subcommand to print files by default
+  - [x] organize the subcommands in a saner manner
+- [x] threshold flag should apply to the whole thing, so `sn fat` should not
+  print main dir in such cases.
+- [x] bug w/ `sort` & `-d0`.
+- [x] when using `--all` with `ar`, it should not recurse arbitrarily far.
+- [x] when `--all` is used with `sort`, it *should* recurse arbitrarily far.
+  - [x] and `sn ar --sort` as well (currently it just explodes)
 
 # UI/Ergonomics
 
 - [ ] silent flag to ignore warnings?
 - [ ] symlinks!!
+- [ ] get block sizes not file lengths?
 
 # Features
 
@@ -71,10 +76,14 @@
   - [ ] elm
   - [ ] python
 
+# Tests
+
+- [ ] test w/ actual file tree & `assert\_eq!()`
+- [ ] test parsing of *all* ignore files
+
 # Code maintenance
 
 - [ ] make `read_all()` take a struct.
-- [ ] strip out machinery for `with_gitignore` and `artifact_regex`
 
 
 # Performance

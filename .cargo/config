@@ -1,2 +1,0 @@
-[target.arm-unknown-linux-gnueabihf]
-rustflags = ["-C", "target-cpu=cortex-a53"]

@@ -47,7 +47,7 @@ Note that this might need to be run as root, depending on your setup.
 To list directory and file sizes for the current directory:
 
 ```
-$ sn all -f
+$ sn f
 ```
 
 To get a list of directory sizes concurrently, excluding version control: 
@@ -107,26 +107,27 @@ export CLICOLOR=0
 
 #### Benchmark results
 
-| Directory | Tool | Command | Time |
+| Directory Size | Tool | Command | Time |
 | --------- || ---- | ------- | ---- |
-| Source | sn | `sn p` | 60.74 ms |
-| Source | sn | `sn a` | 99.92 ms |
-| Source | du | `du -hacd2` | 88.28 ms |
-| Build | sn | `sn p`| 185.2 ms |
-| Build | sn | `sn a` | 271.9 ms |
-| Build | du | `du -hacd2` | 195.5 ms |
-| Project | sn | `sn p` | 36.68 ms |
-| Project | sn | `sn a` | 42.90 ms |
-| Project | du | `du -hacd2` | 35.53 ms |
+| 600MB | sn | `sn p` | 60.74 ms |
+| 600MB | sn | `sn d` | 99.92 ms |
+| 600MB | du | `du -hacd2` | 88.28 ms |
+| 4GB | sn | `sn p`| 185.2 ms |
+| 4GB | sn | `sn d` | 271.9 ms |
+| 4GB | du | `du -hacd2` | 195.5 ms |
+| 1GB | sn | `sn p` | 36.68 ms |
+| 1GB | sn | `sn d` | 42.90 ms |
+| 1GB | du | `du -hacd2` | 35.53 ms |
+| 700MB | sn | `sn p` | 91.05 ms |
+| 700MB | sn | `sn d` | 176.3 ms |
+| 700MB | du | `du -hacd2` | 153.8 ms |
+| 7MB | sn | `sn p` | 19.48 ms |
+| 7MB | sn | `sn d` | 12.72 ms |
+| 7MB | du | `du -hacd2` | 10.13 ms |
 
 These commands are all essentially equivalent in function, except that `sn p`
-may use more threads than `sn a` or `du`.
-
-Results were obtained using Gabriel Gonzalez's [bench](https://github.com/Gabriel439/bench)
-tool. "Source" was my programming directory alone, comprising data, source code,
-and version control; around 600MB total. "Project" was a single polyglot project,
-plus artifacts; around 1GB total. "Build" was my programming directory, with
-current projects built; around 4GB total.
+may use more threads than `sn a` or `du`. Results were obtained using Gabriel Gonzalez's [bench](https://github.com/Gabriel439/bench)
+tool.
 
 #### Screenshots (alacritty + solarized dark)
 

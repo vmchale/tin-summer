@@ -111,19 +111,8 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => {
-                    read_all(
-                        &dir,
-                        0,
-                        depth,
-                        None,
-                        Some(&check_regex(r)),
-                        &None,
-                        false,
-                        false,
-                    )
-                }
-                _ => read_all(&dir, 0, depth, None, None, &None, false, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
+                _ => read_all(&dir, 0, depth, None, &None, false),
             };
 
             // filter by depth
@@ -134,7 +123,7 @@ fn main() {
         }
     }
     // find large files
-    else if let Some(command) = matches.subcommand_matches("all") {
+    else if let Some(command) = matches.subcommand_matches("directories") {
 
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
@@ -165,19 +154,50 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => {
-                    read_all(
-                        &dir,
-                        0,
-                        depth,
-                        None,
-                        Some(&check_regex(r)),
-                        &None,
-                        false,
-                        false,
-                    )
-                }
-                _ => read_all(&dir, 0, depth, None, None, &None, false, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
+                _ => read_all(&dir, 0, depth, None, &None, false),
+            };
+
+
+            // filter by depth
+            let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
+
+            // display results
+            v_filtered.display_tree(dir);
+        }
+    } else if let Some(command) = matches.subcommand_matches("files") {
+
+        // set threshold
+        let min_bytes = threshold(command.value_of("threshold"));
+
+        // set depth
+        let depth = if !command.is_present("all") {
+            Some(get_depth(command.value_of("depth")))
+        } else if command.is_present("depth") {
+            eprintln!(
+                "{}: flag --all is not compatible with --depth",
+                "Warning".yellow()
+            );
+            None
+        } else {
+            None
+        };
+
+        // set regex for exclusions
+        let regex = command.value_of("excludes");
+
+        // set whether to print files too
+        let print_files = true;
+
+        // set path to dirs
+        let dirs = get_dirs(command.values_of("dir"));
+
+        for dir in dirs {
+
+            // get relevant filenames &c.
+            let v = match regex {
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
+                _ => read_all(&dir, 0, depth, None, &None, false),
             };
 
 
@@ -206,8 +226,12 @@ fn main() {
             None
         };
 
-        // set number of things to fetch for sort
-        let num_int = get_num(command.value_of("count"));
+        // set number to print out
+        let num_int = if command.is_present("count") {
+            Some(get_num(command.value_of("count")))
+        } else {
+            None
+        };
 
         // decide whether to sort
         let should_sort = command.is_present("sort");
@@ -215,47 +239,17 @@ fn main() {
         // set whether to print files too
         let print_files = command.is_present("files");
 
-        // set regex for artifacts
-        let artifacts = command.value_of("regex");
-
-        // decide whether to use gitignore information
-        let no_gitignore = command.is_present("gitignore");
-
         // set path to dirs
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
 
             // get relevant filenames &c.
-            let v = if let Some(r) = artifacts {
-                let re = check_regex(r);
-                let excludes = get_excludes(command.value_of("excludes"));
-                read_all(
-                    &dir,
-                    0,
-                    depth,
-                    Some(&re),
-                    Some(&excludes),
-                    &None,
-                    !no_gitignore,
-                    true,
-                )
-            } else {
-                let excludes = get_excludes(command.value_of("excludes"));
-                read_all(
-                    &dir,
-                    0,
-                    depth,
-                    None,
-                    Some(&excludes),
-                    &None,
-                    !no_gitignore,
-                    true,
-                )
-            };
+            let excludes = get_excludes(command.value_of("excludes"));
+            let v = read_all(&dir, 0, depth, Some(&excludes), &None, true);
 
             let mut v_processed = if should_sort {
-                v.sort(Some(num_int), min_bytes, !print_files)
+                v.sort(num_int, min_bytes, !print_files, depth)
             } else {
                 v.filtered(min_bytes, !print_files, depth)
             };
@@ -269,9 +263,6 @@ fn main() {
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
 
-        // set number of things to fetch for sort
-        let num_int = get_num(command.value_of("count"));
-
         // set depth
         let depth = if !command.is_present("all") {
             Some(get_depth(command.value_of("depth")))
@@ -281,6 +272,13 @@ fn main() {
                 "Warning".yellow()
             );
             None
+        } else {
+            None
+        };
+
+        // set number to print out
+        let num_int = if command.is_present("count") {
+            Some(get_num(command.value_of("count")))
         } else {
             None
         };
@@ -302,23 +300,12 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => {
-                    read_all(
-                        &dir,
-                        0,
-                        depth,
-                        None,
-                        Some(&check_regex(r)),
-                        &None,
-                        false,
-                        false,
-                    )
-                }
-                _ => read_all(&dir, 0, depth, None, None, &None, false, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
+                _ => read_all(&dir, 0, depth, None, &None, false),
             };
 
             // sort them
-            let mut v_sorted = v.sort(Some(num_int), min_bytes, !print_files);
+            let mut v_sorted = v.sort(num_int, min_bytes, !print_files, depth);
 
             // display sorted filenames
             v_sorted.display_tree(dir);

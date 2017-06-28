@@ -73,7 +73,14 @@ impl FileTree {
         maybe_num: Option<usize>,
         min_bytes: Option<u64>,
         dirs_only: bool,
+        max_depth: Option<u8>,
     ) -> FileTree {
+
+        let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
+            self.file_size 
+        } else {
+            FileSize::new(0)
+        };
 
         // filter by depth & truncate
         if let Some(n) = maybe_num {
@@ -82,12 +89,13 @@ impl FileTree {
                 .into_iter()
                 .filter(|a| {
                     (if dirs_only { a.is_dir } else { true }) &&
-                        Some(a.bytes) > min_bytes.map(FileSize::new)
+                        Some(a.bytes) > min_bytes.map(FileSize::new) &&
+                        (!max_depth.is_some() || Some(a.depth) <= max_depth)
                 })
                 .take(n)
                 .collect::<Vec<NamePair>>();
             FileTree {
-                file_size: self.file_size,
+                file_size: self_size,
                 files: new,
             }
         }
@@ -98,11 +106,12 @@ impl FileTree {
                 .into_iter()
                 .filter(|a| {
                     (if dirs_only { a.is_dir } else { true }) &&
-                        Some(a.bytes) > min_bytes.map(FileSize::new)
+                        Some(a.bytes) > min_bytes.map(FileSize::new) &&
+                        (!max_depth.is_some() || Some(a.depth) <= max_depth)
                 })
                 .collect::<Vec<NamePair>>();
             FileTree {
-                file_size: self.file_size,
+                file_size: self_size,
                 files: new,
             }
         }
@@ -115,17 +124,23 @@ impl FileTree {
         max_depth: Option<u8>,
     ) -> FileTree {
 
+        let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
+            self.file_size 
+        } else {
+            FileSize::new(0)
+        };
+
         self.files = self.files
             .into_iter()
             .filter(|a| {
                 (if dirs_only { a.is_dir } else { true }) &&
                     Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                    (Some(a.depth) <= max_depth || !max_depth.is_some())
+                    (!max_depth.is_some() || Some(a.depth) <= max_depth)
             })
             .collect::<Vec<NamePair>>();
 
         FileTree {
-            file_size: self.file_size,
+            file_size: self_size,
             files: self.files,
         }
     }

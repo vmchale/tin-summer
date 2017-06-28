@@ -111,7 +111,6 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
-    re: Option<&Regex>,
     metadata: &Metadata,
     gitignore: &Option<RegexSet>,
 ) -> bool {
@@ -122,22 +121,8 @@ pub fn is_artifact(
             .unwrap();
     }
 
-    // match on the user's expression if it exists
-    if let Some(r) = re {
-        if r.is_match(path_str) {
-            true
-        } else if let &Some(ref x) = gitignore {
-            if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
-                x.is_match(full_path)
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
     // otherwise, use builtin expressions
-    else {
+    {
 
         lazy_static! {
             static ref REGEX: Regex = 
@@ -163,7 +148,6 @@ pub fn is_artifact(
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
-    re: Option<&Regex>,
     _: &Metadata,
     gitignore: &Option<RegexSet>,
 ) -> bool {
@@ -174,19 +158,7 @@ pub fn is_artifact(
             .unwrap();
     }
 
-    if let Some(r) = re {
-        if r.is_match(path_str) {
-            true
-        } else if let &Some(ref x) = gitignore {
-            if REGEX_GITIGNORE.is_match(path_str) {
-                x.is_match(full_path)
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    } else {
+    {
 
         lazy_static! {
             static ref REGEX: Regex = 
@@ -212,16 +184,14 @@ pub fn is_artifact(
 pub fn read_size(
     in_paths: &PathBuf,
     depth: u8,
-    artifact_regex: Option<&Regex>,
     excludes: Option<&Regex>,
     maybe_gitignore: &Option<RegexSet>,
-    with_gitignore: bool,
     artifacts_only: bool,
 ) -> FileSize {
 
     // attempt to read the .gitignore
     let mut size = FileSize::new(0);
-    let gitignore = if with_gitignore {
+    let gitignore = if artifacts_only {
         mk_ignores(in_paths, maybe_gitignore)
     } else {
         None
@@ -269,7 +239,6 @@ pub fn read_size(
                                 is_artifact(
                                     val.file_name().to_str().unwrap(), // ok because we already checked
                                     path_string,
-                                    artifact_regex,
                                     &metadata,
                                     &gitignore,
                                 )
@@ -285,25 +254,9 @@ pub fn read_size(
                     let dir_size = if artifacts_only &&
                         is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        read_size(
-                            &path,
-                            depth + 1,
-                            artifact_regex,
-                            excludes,
-                            &gitignore,
-                            false,
-                            false,
-                        )
+                        read_size(&path, depth + 1, excludes, &gitignore, false)
                     } else {
-                        read_size(
-                            &path,
-                            depth + 1,
-                            artifact_regex,
-                            excludes,
-                            &gitignore,
-                            with_gitignore,
-                            artifacts_only,
-                        )
+                        read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
                     };
                     size.add(dir_size);
                 }
@@ -352,16 +305,14 @@ pub fn read_all(
     in_paths: &PathBuf,
     depth: u8,
     max_depth: Option<u8>,
-    artifact_regex: Option<&Regex>,
     excludes: Option<&Regex>,
     maybe_gitignore: &Option<RegexSet>,
-    with_gitignore: bool,
     artifacts_only: bool,
 ) -> FileTree {
 
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
-    let gitignore = if with_gitignore {
+    let gitignore = if artifacts_only {
         mk_ignores(in_paths, maybe_gitignore)
     } else {
         None
@@ -413,7 +364,6 @@ pub fn read_all(
                                 is_artifact(
                                     val.file_name().to_str().unwrap(), // ok because we already checked
                                     path_string,
-                                    artifact_regex,
                                     &metadata,
                                     &gitignore,
                                 )
@@ -426,32 +376,9 @@ pub fn read_all(
                 // otherwise, go deeper
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
-                        if depth + 1 >= d && (!with_gitignore || !artifacts_only) {
+                        if depth + 1 >= d && !artifacts_only {
                             let dir_size = {
-                                read_size(
-                                    &path,
-                                    depth + 1,
-                                    artifact_regex,
-                                    excludes,
-                                    &gitignore,
-                                    with_gitignore,
-                                    artifacts_only,
-                                )
-                            };
-                            tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
-                        } else if artifacts_only &&
-                                   is_project_dir(path_string, val.file_name().to_str().unwrap())
-                        {
-                            let dir_size = {
-                                read_size(
-                                    &path,
-                                    depth + 1,
-                                    artifact_regex,
-                                    excludes,
-                                    &gitignore,
-                                    false,
-                                    false,
-                                )
+                                read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
@@ -459,10 +386,8 @@ pub fn read_all(
                                 &path,
                                 depth + 1,
                                 max_depth,
-                                artifact_regex,
                                 excludes,
                                 &gitignore,
-                                with_gitignore,
                                 artifacts_only,
                             );
                             let dir_size = subtree.file_size;
@@ -474,15 +399,18 @@ pub fn read_all(
                                 true,
                             );
                         }
+                    } else if artifacts_only &&
+                        is_project_dir(path_string, val.file_name().to_str().unwrap()) {
+                        let dir_size =
+                            { read_size(&path, depth + 1, excludes, &gitignore, false) };
+                        tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let mut subtree = read_all(
                             &path,
                             depth + 1,
                             max_depth,
-                            artifact_regex,
                             excludes,
                             &gitignore,
-                            with_gitignore,
                             artifacts_only,
                         );
                         let dir_size = subtree.file_size;

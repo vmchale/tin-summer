@@ -47,7 +47,7 @@ subcommands:
                 help: Specify a threshold for file size
     - sort:
         visible_alias: "o"
-        about: Find the biggest files/directories.
+        about: Find the biggest directories (optionally include files).
         args:
             - dir:
                 value_name: DIRECTORY
@@ -89,7 +89,7 @@ subcommands:
                 help: Specify a threshold for file size
     - fat:
         visible_alias: "f"
-        about: Show big files/directories
+        about: Find the biggest directories (optionally include files).
         args:
             - dir:
                 value_name: DIRECTORY
@@ -120,9 +120,10 @@ subcommands:
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
-    - all:
-        visible_aliases: ["a", "ll"]
-        about: Show all files/directories.
+    - directories:
+        visible_aliases: ["d", "dir"]
+        aliases: ["a", "all"]
+        about: Show all directories.
         args:
             - dir:
                 value_name: DIRECTORY
@@ -147,6 +148,35 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
+            - depth: 
+                short: d
+                long: depth
+                takes_value: true
+                value_name: NUMBER
+                help: How far to recurse (default 2)
+    - files:
+        visible_aliases: ["l"]
+        about: Show all files/directories.
+        args:
+            - dir:
+                value_name: DIRECTORY
+                multiple: true
+                help: Directory to search
+            - threshold:
+                short: t
+                long: threshold
+                takes_value: true
+                value_name: SIZE
+                help: Specify a threshold for file size
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: PATH
+            - all:
+                short: a
+                long: all
+                help: Print all directory entries (no max depth)
             - depth: 
                 short: d
                 long: depth

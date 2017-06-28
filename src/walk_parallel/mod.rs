@@ -54,10 +54,8 @@ impl Walk {
             &w.path,
             (w.start_depth as u8),
             w.max_depth,
-            None,
             excludes,
             &w.gitignore,
-            false,
             false,
         );
 
