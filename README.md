@@ -31,17 +31,16 @@ Make sure you are on nightly; otherwise
  $ rustup run nightly cargo install tin-summer
 ```
 
-<!-- #### Shell completions
+#### Shell completions
 
 After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can install the
-`bash` or `fish` features like so:
+`bash` or `fish` features like so:-->
 
 ```bash
  $ cargo install --features fish tin-summer
 ```
 
 Note that this might need to be run as root, depending on your setup.
--->
 
 ## Use
 
@@ -95,7 +94,6 @@ export CLICOLOR=0
 #### Reasons to use `sn`
 
   * Faster on large directories
-  * Faster when excluding directories
   * Uses [regex](https://github.com/rust-lang/regex) for exclusions, making it
     dramatically faster than `du` when used with the `--exclude` flag.
   * Defaults to human-readable output

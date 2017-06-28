@@ -7,7 +7,7 @@ description = "Command-line tool to find build artifacts and junk on your comput
 readme = "README.md"
 repository = "https://nest.pijul.com/vamchale/tin-summer"
 documentation = "https://github.com/vmchale/tin-summer#README"
-homepage = "https://github.com/vmchale/tin-summer" # consider hosting on http://vmchale.com/ ?
+homepage = "https://github.com/vmchale/tin-summer"
 
 #build = "build.rs"
 
