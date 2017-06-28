@@ -31,7 +31,7 @@ Make sure you are on nightly; otherwise
  $ rustup run nightly cargo install tin-summer
 ```
 
-#### Shell completions
+<!-- #### Shell completions
 
 After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can install the
 `bash` or `fish` features like so:
@@ -41,7 +41,7 @@ After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can install 
 ```
 
 Note that this might need to be run as root, depending on your setup.
-
+-->
 ## Use
 
 To list directory and file sizes for the current directory:
@@ -94,6 +94,7 @@ export CLICOLOR=0
 #### Reasons to use `sn`
 
   * Faster on large directories
+  * Faster when excluding directories
   * Uses [regex](https://github.com/rust-lang/regex) for exclusions, making it
     dramatically faster than `du` when used with the `--exclude` flag.
   * Defaults to human-readable output
@@ -103,7 +104,6 @@ export CLICOLOR=0
   * Finds build artifacts
   * Reads file sizes, not disk usage
   * Extensible in Rust
-  * Benefits from upstream improvements in Rust ecosystem
 
 #### Benchmark results
 
