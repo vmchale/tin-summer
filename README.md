@@ -42,6 +42,7 @@ After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can install 
 
 Note that this might need to be run as root, depending on your setup.
 -->
+
 ## Use
 
 To list directory and file sizes for the current directory:
@@ -108,7 +109,7 @@ export CLICOLOR=0
 #### Benchmark results
 
 | Directory Size | Tool | Command | Time |
-| --------- || ---- | ------- | ---- |
+| -------------- | ---- | ------- | ---- |
 | 600MB | sn | `sn p` | 60.74 ms |
 | 600MB | sn | `sn d` | 99.92 ms |
 | 600MB | du | `du -hacd2` | 88.28 ms |
