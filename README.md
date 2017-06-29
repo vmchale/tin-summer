@@ -75,7 +75,7 @@ export CLICOLOR=0
 
 #### Reasons to use `du`
 
-  * Reads disk usage, not file sizes
+  * Reads disk usage, not just file sizes
   * Optionally dereferences symlinks
   * Slightly faster on small directories
   * Stable and well-supported

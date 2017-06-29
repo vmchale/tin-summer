@@ -6,6 +6,26 @@ use regex::RegexSet;
 use gitignore::*;
 use std::path::PathBuf;
 use self::num_cpus::get;
+use std::fs::Metadata;
+
+#[cfg(target_os = "linux")]
+use std::os::linux::fs::MetadataExt;
+
+#[cfg(target_os = "linux")]
+pub fn size(m: &Metadata, blocks: bool) -> u64 {
+    if blocks {
+        m.st_blocks() * 512
+    }
+    else {
+        m.len()
+    }
+}
+
+#[cfg(target_os = "windows")]
+pub fn size(m: &Metadata, _: bool) -> u64 {
+    m.len()
+}
+
 
 /// Gather the information from `.gitignore`, `.ignore`, and darcs `boring` files in a given
 /// directory, and assemble a `RegexSet` from it.

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 extern crate crossbeam;
 
 pub mod single_threaded;
@@ -12,6 +10,7 @@ use regex::{RegexSet, Regex};
 use std::path::PathBuf;
 use colored::*;
 use std::process::exit;
+use utils::size;
 use std::thread;
 use error::*;
 use types::FileSize;
@@ -37,6 +36,7 @@ pub struct Walk {
     start_depth: usize,
     nproc: usize,
     show_files: bool,
+    get_blocks: bool,
     follow_symlinks: bool,
     artifacts_only: bool,
 }
@@ -103,6 +103,11 @@ impl Walk {
     }
 
     /// include files when printing
+    pub fn blocks(&mut self) -> () {
+        self.get_blocks = true;
+    }
+
+    /// include files when printing
     pub fn artifacts_only(&mut self) -> () {
         self.artifacts_only = true;
     }
@@ -125,6 +130,7 @@ impl Walk {
             start_depth: 0,
             nproc: n,
             show_files: false,
+            get_blocks: false,
             follow_symlinks: false,
             artifacts_only: false,
         }
@@ -194,7 +200,7 @@ impl Walk {
                                 worker.push(Status::Data(new_walk)); // pass a vector of Arc's to do 2-level traversals?
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
-                                    let size = l.len();
+                                    let size = size(&l, w.get_blocks);// l.len();
                                     total.fetch_add(size, Ordering::Relaxed);
                                     if w.show_files && size != 0 {
                                         let to_formatted = format!("{}", FileSize::new(size));
@@ -250,7 +256,7 @@ impl Walk {
             }
 
             if let Ok(l) = in_paths.metadata() {
-                let size = l.len();
+                let size = size(&l, w.get_blocks);// l.len();
                 let to_formatted = format!("{}", FileSize::new(size));
                 println!("{}\t {}", &to_formatted.green(), in_paths.display());
             } else {
