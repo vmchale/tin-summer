@@ -50,6 +50,10 @@
 - [x] when `--all` is used with `sort`, it *should* recurse arbitrarily far.
   - [x] and `sn ar --sort` as well (currently it just explodes)
 
+# Bugs
+
+- [ ] `-j1` should work
+
 # UI/Ergonomics
 
 - [ ] silent flag to ignore warnings?

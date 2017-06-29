@@ -25,6 +25,7 @@ pub enum Status<T> {
 }
 
 /// The 'Walk' struct contains all the information we need to traverse a directory.
+#[derive(Debug)]
 pub struct Walk {
     pub path: PathBuf,
     gitignore: Option<RegexSet>,
@@ -190,7 +191,7 @@ impl Walk {
                                 if let Some(b) = w.threshold {
                                     new_walk.set_threshold(b);
                                 }
-                                worker.push(Status::Data(new_walk));
+                                worker.push(Status::Data(new_walk)); // pass a vector of Arc's to do 2-level traversals?
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
                                     let size = l.len();

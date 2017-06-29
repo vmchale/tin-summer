@@ -16,7 +16,7 @@ use std::result::Result;
 use std::os::unix::fs::PermissionsExt;
 
 fn glob_exists(s: &str) -> bool {
-    glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors is good?
+    glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors shouldn't happen.
 }
 
 /// Helper function to identify project directories. The heuristic is as follows:

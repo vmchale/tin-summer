@@ -7,11 +7,11 @@ cargo release --no-dev-version -l @args[1]
 
 # run the builds
 #mkdir -p target/completions
-export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
-export PATH=$HOME/.cargo/bin:$PATH
 #export BASH_COMPLETIONS_DIR="target/completions"
 #export FISH_COMPLETIONS_DIR="target/completions"
 #cargo build --features "bash, fish" &&
+export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 cargo build --release &&
 cargo build --target=x86_64-pc-windows-gnu --release &&
 cargo build --target=arm-unknown-linux-gnueabihf --release &&

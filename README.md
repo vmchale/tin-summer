@@ -8,7 +8,7 @@ artifacts.
 
 `sn` is also a replacement for `du`. It has far nicer
 output, saner commands and defaults, and it even runs faster on big directories
-thanks to multithreading.
+thanks to multithreading (more on that later).
 
 ## Installation
 
@@ -30,17 +30,6 @@ Make sure you are on nightly; otherwise
 ```bash
  $ rustup run nightly cargo install tin-summer
 ```
-
-#### Shell completions
-
-After setting `BASH_COMPLETIONS_DIR` or `FISH_COMPLETIONS_DIR`, you can install the
-`bash` or `fish` features like so:-->
-
-```bash
- $ cargo install --features fish tin-summer
-```
-
-Note that this might need to be run as root, depending on your setup.
 
 ## Use
 
