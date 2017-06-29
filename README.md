@@ -126,7 +126,9 @@ export CLICOLOR=0
 
 These commands are all essentially equivalent in function, except that `sn p`
 may use more threads than `sn a` or `du`. Results were obtained using Gabriel Gonzalez's [bench](https://github.com/Gabriel439/bench)
-tool.
+tool. You can see pretty criterion graphs
+[here](http://vmchale.com/bench/tin-summer.html) or
+[here](http://vmchale.com/bench/tin-summer-parallel.html).
 
 #### Screenshots (alacritty + solarized dark)
 

@@ -239,7 +239,7 @@ pub fn read_size(
                                 is_artifact(
                                     val.file_name().to_str().unwrap(), // ok because we already checked
                                     path_string,
-                                    &metadata,
+                                    &metadata, // FIXME check metadata only when we know it matches gitignore
                                     &gitignore,
                                 )
                             } {
@@ -380,6 +380,11 @@ pub fn read_all(
                             let dir_size = {
                                 read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
                             };
+                            tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
+                        } else if artifacts_only &&
+                            is_project_dir(path_string, val.file_name().to_str().unwrap()) {
+                            let dir_size =
+                                { read_size(&path, depth + 1, excludes, &gitignore, false) };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
                             let mut subtree = read_all(

@@ -56,7 +56,7 @@ impl Walk {
             w.max_depth,
             excludes,
             &w.gitignore,
-            false,
+            w.artifacts_only,
         );
 
         let subdir_size = v.file_size.get();
@@ -99,6 +99,11 @@ impl Walk {
     /// include files when printing
     pub fn with_files(&mut self) -> () {
         self.show_files = true;
+    }
+
+    /// include files when printing
+    pub fn artifacts_only(&mut self) -> () {
+        self.artifacts_only = true;
     }
 
     fn get_proc(&self) -> usize {

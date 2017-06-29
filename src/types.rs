@@ -7,6 +7,8 @@ use std::fmt;
 use std::path::PathBuf;
 use colored::*;
 
+/// This is just a wrapper around a `u64` so that we can implement our own `Display` trait for our
+/// file sizes.
 #[derive(Ord, Eq, PartialOrd, PartialEq, Debug, Copy, Clone)]
 pub struct FileSize {
     size: u64,

@@ -55,6 +55,7 @@
 - [ ] silent flag to ignore warnings?
 - [ ] symlinks!!
 - [ ] get block sizes not file lengths?
+- [ ] mention [the bug tracker?](https://nest.pijul.com/vamchale/tin-summer/issues) for internal errors.
 
 # Features
 

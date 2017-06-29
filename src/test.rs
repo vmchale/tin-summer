@@ -51,41 +51,36 @@ fn bench_processors(b: &mut Bencher) {
 }
 
 #[bench]
-fn bench_traversal_large(b: &mut Bencher) {
+fn bench_traversal_size(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_size(&p, 4, None, None, &None, false, false))
+    b.iter(|| read_size(&p, 4, None, &None, false))
 }
 
 #[bench]
 fn bench_traversal_all(b: &mut Bencher) {
     let p = PathBuf::from(".");
-    b.iter(|| read_all(&p, 4, None, None, None, &None, false, true))
+    b.iter(|| read_all(&p, 4, None, None, &None, false))
 }
 
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, &None, false, false))
+    b.iter(|| read_all(&p, 4, None, None, &None, false))
 }
 
-#[bench]
-fn bench_traversal_gitignore(b: &mut Bencher) {
-    let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, &None, true, true))
-}
 #[bench]
 fn bench_traversal_sort(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        let v = read_all(&p, 4, None, None, None, &None, false, true);
-        v.sort(None, None, false)
+        let v = read_all(&p, 4, None, None, &None, false);
+        v.sort(None, None, false, None)
     })
 }
 
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, None, &None, false, true))
+    b.iter(|| read_all(&p, 4, None, None, &None, true))
 }
 
 #[bench]
@@ -95,7 +90,6 @@ fn bench_extension_regex(b: &mut Bencher) {
         is_artifact(
             "libdoggo.rlib",
             "target/release/libdoggo.rlib",
-            None,
             &metadata,
             &None,
         )
@@ -159,7 +153,6 @@ fn bench_extension_regex_long(b: &mut Bencher) {
         is_artifact(
             "sniff",
             "target/arm-unknown-linux-musleabi/release/sniff",
-            None,
             &metadata,
             &None,
         )
