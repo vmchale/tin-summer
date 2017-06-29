@@ -3,7 +3,7 @@
 # set path to include sn
 let PATH=$HOME/.cargo/bin:$PATH
 
-cargo release --no-dev-version -l @args[1..]
+cargo release --no-dev-version -l @args[1]
 
 # run the builds
 #mkdir -p target/completions
@@ -28,7 +28,7 @@ export GITHUB_TOKEN=$(cat .git-token)
 
 let tag = $(git describe --tags)
 
-github-release release -u vmchale -r tin-summer --tag $tag --name @args[1..]
+github-release release -u vmchale -r tin-summer --tag $tag --name @args[2]
 
 github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-x86_64-linux-gnu" --file target/release/sn
 github-release upload --user vmchale --repo tin-summer --tag $tag --name "sn-armv7-linux-gnueabihf" --file target/arm-unknown-linux-gnueabihf/release/sn
