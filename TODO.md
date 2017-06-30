@@ -93,7 +93,6 @@
 # Performance
 
 - [ ] parity with du without threading
-  - [x] dual-threading to pop off values?
 - [ ] print directories immediately rather than adding them to a vector?
   MsQueue?
   - [ ] all
