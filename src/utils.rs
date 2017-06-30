@@ -11,7 +11,7 @@ use std::fs::Metadata;
 #[cfg(target_os = "linux")]
 use std::os::linux::fs::MetadataExt;
 
-#[cfg(target_os = "darwin")]
+#[cfg(target_os = "mac_os")]
 use std::os::unix::fs::MetadataExt;
 
 #[cfg(target_os = "linux")]
@@ -28,7 +28,7 @@ pub fn size(m: &Metadata, _: bool) -> u64 {
     m.len()
 }
 
-#[cfg(target_os = "darwin")]
+#[cfg(target_os = "mac_os")]
 pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks {
         m.blocks() * 512 // idk if this is correct on bsd/linux
