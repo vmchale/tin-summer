@@ -11,6 +11,10 @@ use std::fs::Metadata;
 #[cfg(target_os = "linux")]
 use std::os::linux::fs::MetadataExt;
 
+#[cfg(not(target_os = "linux"))]
+#[cfg(not(target_os = "windows"))]
+use std::os::unix::fs::MetadataExt;
+
 #[cfg(target_os = "linux")]
 pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks {

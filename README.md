@@ -116,7 +116,7 @@ tool. You can see pretty criterion graphs
 [here](http://vmchale.com/bench/tin-summer.html) or
 [here](http://vmchale.com/bench/tin-summer-parallel.html).
 
-In summary: yes, `sn` is actually faster on larger directories, but it is also
+In summary: yes, `sn` actually is faster on larger directories, but it is also
 slower on small ones.
 
 #### Screenshots (alacritty + solarized dark)
