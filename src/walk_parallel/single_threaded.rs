@@ -300,6 +300,7 @@ pub fn read_size(
 
     size
 }
+
 /// Function to process directory contents and return a `FileTree` struct.
 pub fn read_all(
     in_paths: &PathBuf,
@@ -382,7 +383,8 @@ pub fn read_all(
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else if artifacts_only &&
-                            is_project_dir(path_string, val.file_name().to_str().unwrap()) {
+                                   is_project_dir(path_string, val.file_name().to_str().unwrap())
+                        {
                             let dir_size =
                                 { read_size(&path, depth + 1, excludes, &gitignore, false) };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
@@ -405,9 +407,9 @@ pub fn read_all(
                             );
                         }
                     } else if artifacts_only &&
-                        is_project_dir(path_string, val.file_name().to_str().unwrap()) {
-                        let dir_size =
-                            { read_size(&path, depth + 1, excludes, &gitignore, false) };
+                               is_project_dir(path_string, val.file_name().to_str().unwrap())
+                    {
+                        let dir_size = { read_size(&path, depth + 1, excludes, &gitignore, false) };
                         tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let mut subtree = read_all(

@@ -15,8 +15,7 @@ use std::os::linux::fs::MetadataExt;
 pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks {
         m.st_blocks() * 512
-    }
-    else {
+    } else {
         m.len()
     }
 }

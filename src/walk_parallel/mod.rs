@@ -200,7 +200,7 @@ impl Walk {
                                 worker.push(Status::Data(new_walk)); // pass a vector of Arc's to do 2-level traversals?
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
-                                    let size = size(&l, w.get_blocks);// l.len();
+                                    let size = size(&l, w.get_blocks); // l.len();
                                     total.fetch_add(size, Ordering::Relaxed);
                                     if w.show_files && size != 0 {
                                         let to_formatted = format!("{}", FileSize::new(size));
@@ -256,7 +256,7 @@ impl Walk {
             }
 
             if let Ok(l) = in_paths.metadata() {
-                let size = size(&l, w.get_blocks);// l.len();
+                let size = size(&l, w.get_blocks); // l.len();
                 let to_formatted = format!("{}", FileSize::new(size));
                 println!("{}\t {}", &to_formatted.green(), in_paths.display());
             } else {

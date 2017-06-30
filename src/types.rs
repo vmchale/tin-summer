@@ -79,7 +79,7 @@ impl FileTree {
     ) -> FileTree {
 
         let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
-            self.file_size 
+            self.file_size
         } else {
             FileSize::new(0)
         };
@@ -127,7 +127,7 @@ impl FileTree {
     ) -> FileTree {
 
         let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
-            self.file_size 
+            self.file_size
         } else {
             FileSize::new(0)
         };

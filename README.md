@@ -71,7 +71,7 @@ To turn off colorized output:
 export CLICOLOR=0
 ```
 
-### Comparison (or, 100 Things I Hate About du)
+### Comparison (or, 10 Things I Hate About du)
 
 #### Reasons to use `du`
 
@@ -103,9 +103,6 @@ export CLICOLOR=0
 | 4GB | sn | `sn p`| 185.2 ms |
 | 4GB | sn | `sn d` | 271.9 ms |
 | 4GB | du | `du -hacd2` | 195.5 ms |
-| 1GB | sn | `sn p` | 36.68 ms |
-| 1GB | sn | `sn d` | 42.90 ms |
-| 1GB | du | `du -hacd2` | 35.53 ms |
 | 700MB | sn | `sn p` | 91.05 ms |
 | 700MB | sn | `sn d` | 176.3 ms |
 | 700MB | du | `du -hacd2` | 153.8 ms |
@@ -118,6 +115,9 @@ may use more threads than `sn a` or `du`. Results were obtained using Gabriel Go
 tool. You can see pretty criterion graphs
 [here](http://vmchale.com/bench/tin-summer.html) or
 [here](http://vmchale.com/bench/tin-summer-parallel.html).
+
+In summary: yes, `sn` is actually faster on larger directories, but it is also
+slower on small ones.
 
 #### Screenshots (alacritty + solarized dark)
 
