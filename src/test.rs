@@ -37,6 +37,14 @@ fn cabal_regex_ignore() {
     let _ = file_contents_to_regex(file_contents, &path);
 }
 
+#[test]
+fn bug_regex_ignore() {
+    let file_contents = include_str!("testdata/gitignore-tests/another-gitignore");
+    let path = PathBuf::from("testdata/gitignore-tests/another-gitignore");
+    let reg = file_contents_to_regex(file_contents, &path);
+    println!("{:?}", reg);
+}
+
 #[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("testdata/.gitignore");

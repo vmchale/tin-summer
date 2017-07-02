@@ -301,11 +301,10 @@ pub fn read_size(
     // 1: check the path exists
     else if !in_paths.exists() {
         eprintln!(
-            "{}: path '{}' does not exist.",
+            "{}: path '{}' does not exist, or you do not have permission to enter.",
             "Error".red(),
             &in_paths.display()
         );
-        exit(0x0001);
     }
     // 2: check the path is actually a directory
     else if !in_paths.is_dir() {
@@ -471,11 +470,10 @@ pub fn read_all(
     // 1: check the path exists
     else if !in_paths.exists() {
         eprintln!(
-            "{}: path '{}' does not exist.",
+            "{}: path '{}' does not exist, or you do not have permission to enter.",
             "Error".red(),
             &in_paths.display()
         );
-        exit(0x0001);
     }
     // 2: check the path is actually a directory
     else if !in_paths.is_dir() {
