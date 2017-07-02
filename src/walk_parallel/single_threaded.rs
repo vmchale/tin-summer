@@ -406,7 +406,7 @@ pub fn read_all(
                     if let Some(d) = max_depth {
                         if depth + 1 >= d && !artifacts_only {
                             let dir_size = {
-                                read_size(&path_string, excludes)//, depth + 1, excludes, &gitignore, artifacts_only)
+                                read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else if artifacts_only &&
