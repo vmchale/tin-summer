@@ -8,7 +8,7 @@ cargo run -- sort $dir # to make sure non-ascii displays correctly
 let binpath = target/release/sn
 
 # set to a suitable path
-let path = .
+let path = $HOME/programming
 for x in @args[1..]
     if test -n $x
         let path = $x
@@ -16,8 +16,8 @@ for x in @args[1..]
 end
 
 # initialize cache
-#echo 'initializing file system cache...'
-#sn all $path > /dev/null
+echo 'initializing file system cache...'
+sn all $path > /dev/null
 
-#let benches = ["sn par $path" "$binpath par $path" "sn all $path" "$binpath all $path" "sn sort $path" "$binpath sort $path" "sn ar $path" "$binpath ar $path"]
-#bench @benches
+let benches = ["sn par $path" "$binpath par $path" "sn all $path" "$binpath all $path" "sn all $path --exclude target/debug" "$binpath all $path --exclude target/debug" "sn ar $path" "$binpath ar $path"]
+bench @benches

@@ -27,6 +27,7 @@ fish = []
 verbose = []
 
 [dependencies]
+walkdir = "1.0"
 num_cpus = "1.6"
 nom = "3.1"
 colored = "1.5"

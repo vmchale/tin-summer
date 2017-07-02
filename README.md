@@ -6,9 +6,9 @@ If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those
 artifacts.
 
-`sn` is also a replacement for `du`. It has far nicer
+`sn` is also a replacement for `du`. It has nicer
 output, saner commands and defaults, and it even runs faster on big directories
-thanks to multithreading (more on that later).
+thanks to multithreading.
 
 ## Installation
 
@@ -117,7 +117,8 @@ tool. You can see pretty criterion graphs
 [here](http://vmchale.com/bench/tin-summer-parallel.html).
 
 In summary: yes, `sn` actually is faster on larger directories, but it is also
-slower on small ones.
+slower on small ones. I'm hoping to make it faster in the future; the current
+naïve concurrency model has obvious directions for improvement.
 
 #### Screenshots (alacritty + solarized dark)
 

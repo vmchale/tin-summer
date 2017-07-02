@@ -57,6 +57,7 @@
 # UI/Ergonomics
 
 - [ ] silent flag to ignore warnings?
+- [ ] vim plugin
 - [ ] symlinks!!
 - [ ] get block sizes not file lengths?
 - [ ] mention [the bug tracker?](https://nest.pijul.com/vamchale/tin-summer/issues) for internal errors.

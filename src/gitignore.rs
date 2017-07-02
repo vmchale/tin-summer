@@ -1,7 +1,6 @@
 extern crate regex;
 
 use colored::*;
-use std::process::exit;
 use regex::RegexSet;
 use nom::IResult;
 use std::path::PathBuf;
@@ -10,7 +9,7 @@ use std::path::PathBuf;
 /// argument is a file path, included so that we print nice errors.
 pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
 
-    let processed_vec: Vec<&str> = process_darcs_full(file);
+    let processed_vec: Vec<&str> = process_darcs_full(file, file_path);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
@@ -32,7 +31,7 @@ pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
 /// Given a `.gitignore` or `.ignore` file's contents, process it as a `RegexSet`. The second
 /// argument is a file path, included so that we print nice errors.
 pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
-    let processed_vec: Vec<&str> = process_to_vector(file);
+    let processed_vec: Vec<&str> = process_to_vector(file, file_path);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
@@ -50,22 +49,22 @@ pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     }
 }
 
-fn process_to_vector(input: &str) -> Vec<&str> {
+fn process_to_vector<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process(input) {
         IResult::Done(_, result) => result,
         _ => {
-            eprintln!("{}: Failed to parse gitignore", "Error".red());
-            exit(0xf001)
+            eprintln!("{}: Failed to parse gitignore at: {}", "Error".red(), file_path.display());
+            Vec::new()
         }
     }
 }
 
-fn process_darcs_full(input: &str) -> Vec<&str> {
+fn process_darcs_full<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process_darcs(input) {
         IResult::Done(_, result) => result,
         _ => {
-            eprintln!("{}: Failed to parse gitignore", "Error".red());
-            exit(0xf001)
+            eprintln!("{}: Failed to parse darcs boring file at: {}", "Error".red(), file_path.display());
+            Vec::new()
         }
     }
 }

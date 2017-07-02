@@ -1,4 +1,5 @@
 extern crate glob;
+extern crate walkdir;
 
 use std::fs;
 use regex::{RegexSet, Regex};
@@ -10,6 +11,8 @@ use types::*;
 use std::fs::Metadata;
 use error::*;
 use self::glob::glob;
+use self::walkdir::WalkDir;
+use self::walkdir::WalkDirIterator;
 use std::result::Result;
 
 #[cfg(not(target_os = "windows"))]
@@ -18,6 +21,30 @@ use std::os::unix::fs::PermissionsExt;
 fn glob_exists(s: &str) -> bool {
     glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors shouldn't happen.
 }
+
+pub fn read_all_walkdir(
+    in_paths: &str,
+    excludes: Option<&Regex>,
+) -> FileSize {
+
+    let mut total = FileSize::new(0);
+
+    if let Some(r) = excludes {
+        for entry in WalkDir::new(in_paths).into_iter().filter_entry(|e| !r.is_match(e.file_name().to_str().unwrap())) {
+            let l = entry.unwrap().metadata().unwrap().len();
+            total.add(FileSize::new(l));
+        }
+    }
+    else {
+        for entry in WalkDir::new(in_paths).into_iter().filter_map(|e| e.ok()) {
+            let l = entry.metadata().unwrap().len();
+            total.add(FileSize::new(l));
+        }
+    }
+
+    total
+}
+    
 
 /// Helper function to identify project directories. The heuristic is as follows:
 ///
@@ -379,7 +406,7 @@ pub fn read_all(
                     if let Some(d) = max_depth {
                         if depth + 1 >= d && !artifacts_only {
                             let dir_size = {
-                                read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
+                                read_size(&path_string, excludes)//, depth + 1, excludes, &gitignore, artifacts_only)
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else if artifacts_only &&
