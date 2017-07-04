@@ -567,24 +567,12 @@ pub fn read_all_fast(
 
         // iterate over all the entries in the directory
         for p in paths {
-            // TODO consider a filter on the iterator!
             let val = match p {
                 Ok(x) => x,
                 _ => {
-                    eprintln!("{}:  {:?}.", "Error".red(), p);
+                    eprintln!("{}: unexpected failure on {:?} failed.", "Error".red(), p);
                     exit(0x0001)
                 }
-            };
-            let path = val.path();
-            let path_string: &str = if let Some(x) = path.as_path().to_str() {
-                x
-            } else {
-                eprintln!(
-                    "{}: skipping invalid unicode filepath at {:?}",
-                    "Warning".yellow(),
-                    path
-                );
-                ""
             };
 
             // only consider path if we're not using regex excludes or if they don't match the
@@ -597,6 +585,17 @@ pub fn read_all_fast(
                     if let Ok(metadata) = val.metadata() {
                         // faster on Windows
                         {
+                            let path = val.path();
+                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                                x
+                            } else {
+                                eprintln!(
+                                    "{}: skipping invalid unicode filepath at {:?}",
+                                    "Warning".yellow(),
+                                    path
+                                );
+                                ""
+                            };
                             let file_size = FileSize::new(metadata.len());
                             tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                         }
@@ -606,11 +605,33 @@ pub fn read_all_fast(
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
                         if depth + 1 >= d {
+                            let path = val.path();
+                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                                x
+                            } else {
+                                eprintln!(
+                                    "{}: skipping invalid unicode filepath at {:?}",
+                                    "Warning".yellow(),
+                                    path
+                                );
+                                ""
+                            };
                             let dir_size = {
                                 read_no_excludes(&path, None, &None, false)
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
+                            let path = val.path();
+                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                                x
+                            } else {
+                                eprintln!(
+                                    "{}: skipping invalid unicode filepath at {:?}",
+                                    "Warning".yellow(),
+                                    path
+                                );
+                                ""
+                            };
                             let mut subtree = read_all_fast(
                                 &path,
                                 depth + 1,
@@ -626,6 +647,17 @@ pub fn read_all_fast(
                             );
                         }
                     } else {
+                        let path = val.path();
+                        let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                            x
+                        } else {
+                            eprintln!(
+                                "{}: skipping invalid unicode filepath at {:?}",
+                                "Warning".yellow(),
+                                path
+                            );
+                            ""
+                        };
                         let mut subtree = read_all_fast(
                             &path,
                             depth + 1,
