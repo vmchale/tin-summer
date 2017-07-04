@@ -51,14 +51,23 @@ impl Walk {
             _ => None,
         };
 
-        let v = read_all(
-            &w.path,
-            (w.start_depth as u8),
-            w.max_depth,
-            excludes,
-            &w.gitignore,
-            w.artifacts_only,
-        );
+        let v = if excludes.is_some() || w.artifacts_only {
+            read_all(
+                &w.path,
+                (w.start_depth as u8),
+                w.max_depth,
+                excludes,
+                &w.gitignore,
+                w.artifacts_only,
+            )
+        }
+        else {
+            read_all_fast(
+                &w.path,
+                (w.start_depth as u8),
+                w.max_depth
+            )
+        };
 
         let subdir_size = v.file_size.get();
 

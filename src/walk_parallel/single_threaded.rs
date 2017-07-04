@@ -1,5 +1,4 @@
 extern crate glob;
-extern crate walkdir;
 
 use std::fs;
 use regex::{RegexSet, Regex};
@@ -11,8 +10,6 @@ use types::*;
 use std::fs::Metadata;
 use error::*;
 use self::glob::glob;
-use self::walkdir::WalkDir;
-use self::walkdir::WalkDirIterator;
 use std::result::Result;
 
 #[cfg(not(target_os = "windows"))]
@@ -21,30 +18,6 @@ use std::os::unix::fs::PermissionsExt;
 fn glob_exists(s: &str) -> bool {
     glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors shouldn't happen.
 }
-
-pub fn read_all_walkdir(
-    in_paths: &str,
-    excludes: Option<&Regex>,
-) -> FileSize {
-
-    let mut total = FileSize::new(0);
-
-    if let Some(r) = excludes {
-        for entry in WalkDir::new(in_paths).into_iter().filter_entry(|e| !r.is_match(e.file_name().to_str().unwrap())) {
-            let l = entry.unwrap().metadata().unwrap().len();
-            total.add(FileSize::new(l));
-        }
-    }
-    else {
-        for entry in WalkDir::new(in_paths).into_iter().filter_map(|e| e.ok()) {
-            let l = entry.metadata().unwrap().len();
-            total.add(FileSize::new(l));
-        }
-    }
-
-    total
-}
-    
 
 /// Helper function to identify project directories. The heuristic is as follows:
 ///
@@ -210,7 +183,6 @@ pub fn is_artifact(
 /// Function to process directory contents and return a `FileTree` struct.
 pub fn read_size(
     in_paths: &PathBuf,
-    depth: u8,
     excludes: Option<&Regex>,
     maybe_gitignore: &Option<RegexSet>,
     artifacts_only: bool,
@@ -281,9 +253,9 @@ pub fn read_size(
                     let dir_size = if artifacts_only &&
                         is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        read_size(&path, depth + 1, excludes, &gitignore, false)
+                        read_size(&path, excludes, &gitignore, false)
                     } else {
-                        read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
+                        read_size(&path, excludes, &gitignore, artifacts_only)
                     };
                     size.add(dir_size);
                 }
@@ -405,14 +377,14 @@ pub fn read_all(
                     if let Some(d) = max_depth {
                         if depth + 1 >= d && !artifacts_only {
                             let dir_size = {
-                                read_size(&path, depth + 1, excludes, &gitignore, artifacts_only)
+                                read_size(&path, excludes, &gitignore, artifacts_only)
                             };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else if artifacts_only &&
                                    is_project_dir(path_string, val.file_name().to_str().unwrap())
                         {
                             let dir_size =
-                                { read_size(&path, depth + 1, excludes, &gitignore, false) };
+                                { read_size(&path, excludes, &gitignore, false) };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
                             let mut subtree = read_all(
@@ -435,7 +407,7 @@ pub fn read_all(
                     } else if artifacts_only &&
                                is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        let dir_size = { read_size(&path, depth + 1, excludes, &gitignore, false) };
+                        let dir_size = { read_size(&path, excludes, &gitignore, false) };
                         tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let mut subtree = read_all(
@@ -485,6 +457,203 @@ pub fn read_all(
                 &in_paths.display()
             );
         }
+
+        if let Ok(l) = in_paths.metadata() {
+            let size = l.len();
+            let to_formatted = format!("{}", FileSize::new(size));
+            println!("{}\t {}", &to_formatted.green(), in_paths.display());
+        } else {
+            panic!("{}", Internal::IoError);
+        }
+    }
+    // 3: otherwise, give a warning about permissions
+    else {
+        eprintln!(
+            "{}: permission denied for directory: {}",
+            "Warning".yellow(),
+            &in_paths.display()
+        );
+    }
+
+    tree
+}
+
+/// Function to process directory contents and return a `FileTree` struct.
+pub fn read_no_excludes(
+    in_paths: &PathBuf,
+    _: Option<&Regex>,
+    _: &Option<RegexSet>,
+    _: bool,
+) -> FileSize {
+
+    // attempt to read the .gitignore
+    let mut size = FileSize::new(0);
+
+    // try to read directory contents
+    if let Ok(paths) = fs::read_dir(in_paths) {
+
+        // iterate over all the entries in the directory
+        for p in paths {
+            let val = match p {
+                Ok(x) => x,
+                _ => {
+                    panic!("{}", Internal::IoError);
+                }
+            };
+            // only consider path if we're not using regex excludes or
+            // if they don't match the exclusion regex
+            let path_type = val.file_type().unwrap(); // ok because we already checked
+
+            // append file size/name for a file
+            if path_type.is_file() {
+                // if this fails, it's probably because `path` is a broken symlink
+                if let Ok(metadata) = val.metadata() {
+                    let file_size = FileSize::new(metadata.len());
+                    size.add(file_size);
+                }
+            }
+            // otherwise, go deeper
+            else if path_type.is_dir() {
+                let dir_size = {
+                    let path = val.path();
+                    read_no_excludes(&path, None, &None, false)
+                };
+                size.add(dir_size);
+            }
+        }
+    }
+    // if we can't read the directory contents, figure out why
+    // 1: check the path exists
+    else if !in_paths.exists() {
+        eprintln!(
+            "{}: path '{}' does not exist, or you do not have permission to enter.",
+            "Error".red(),
+            &in_paths.display()
+        );
+    }
+    // 2: check the path is actually a directory
+    else if !in_paths.is_dir() {
+        eprintln!(
+            "{}: {} is not a directory.",
+            "Error".red(),
+            &in_paths.display()
+        );
+        exit(0x0001);
+    }
+    // 3: otherwise, give a warning about permissions
+    else {
+        eprintln!(
+            "{}: permission denied for directory: {}",
+            "Warning".yellow(),
+            &in_paths.display()
+        );
+    }
+
+    size
+}
+
+/// Function to process directory contents and return a `FileTree` struct.
+pub fn read_all_fast(
+    in_paths: &PathBuf,
+    depth: u8,
+    max_depth: Option<u8>,
+) -> FileTree {
+
+    // attempt to read the .gitignore
+    let mut tree = FileTree::new();
+
+    // try to read directory contents
+    if let Ok(paths) = fs::read_dir(in_paths) {
+
+        // iterate over all the entries in the directory
+        for p in paths {
+            // TODO consider a filter on the iterator!
+            let val = match p {
+                Ok(x) => x,
+                _ => {
+                    eprintln!("{}:  {:?}.", "Error".red(), p);
+                    exit(0x0001)
+                }
+            };
+            let path = val.path();
+            let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                x
+            } else {
+                eprintln!(
+                    "{}: skipping invalid unicode filepath at {:?}",
+                    "Warning".yellow(),
+                    path
+                );
+                ""
+            };
+
+            // only consider path if we're not using regex excludes or if they don't match the
+            // exclusion regex
+                let path_type = val.file_type().unwrap(); // ok because we already checked
+
+                // append file size/name for a file
+                if path_type.is_file() {
+                    // if this fails, it's probably because `path` is a broken symlink
+                    if let Ok(metadata) = val.metadata() {
+                        // faster on Windows
+                        {
+                            let file_size = FileSize::new(metadata.len());
+                            tree.push(path_string.to_string(), file_size, None, depth + 1, false);
+                        }
+                    }
+                }
+                // otherwise, go deeper
+                else if path_type.is_dir() {
+                    if let Some(d) = max_depth {
+                        if depth + 1 >= d {
+                            let dir_size = {
+                                read_no_excludes(&path, None, &None, false)
+                            };
+                            tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
+                        } else {
+                            let mut subtree = read_all_fast(
+                                &path,
+                                depth + 1,
+                                max_depth,
+                            );
+                            let dir_size = subtree.file_size;
+                            tree.push(
+                                path_string.to_string(),
+                                dir_size,
+                                Some(&mut subtree),
+                                depth + 1,
+                                true,
+                            );
+                        }
+                    } else {
+                        let mut subtree = read_all_fast(
+                            &path,
+                            depth + 1,
+                            max_depth,
+                        );
+                        let dir_size = subtree.file_size;
+                        tree.push(
+                            path_string.to_string(),
+                            dir_size,
+                            Some(&mut subtree),
+                            depth + 1,
+                            true,
+                        );
+                    }
+            }
+        }
+    }
+    // if we can't read the directory contents, figure out why
+    // 1: check the path exists
+    else if !in_paths.exists() {
+        eprintln!(
+            "{}: path '{}' does not exist, or you do not have permission to enter.",
+            "Error".red(),
+            &in_paths.display()
+        );
+    }
+    // 2: check the path is actually a directory
+    else if !in_paths.is_dir() {
 
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();

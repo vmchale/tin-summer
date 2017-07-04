@@ -9,7 +9,8 @@ let CLICOLOR=0
 let reports = "false"
 let parallel = "true"
 let benchpath = "reports/bench.html"
-let path = $HOME/git-builds/rust
+#let path = $HOME/git-builds/rust
+let path = $HOME/programming
 for x in @args
     if test $x = "+reports"
         let reports = "true"
@@ -34,7 +35,7 @@ end
 
 # initialize cache
 echo 'initializing file system cache...'
-sn all $path > /dev/null
+sn p $path > /dev/null
 
 #do the actual benchmarks
 

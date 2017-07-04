@@ -57,8 +57,11 @@
 # UI/Ergonomics
 
 - [ ] silent flag to ignore warnings?
+- [ ] get rid of walkdir dependency
 - [ ] vim plugin
 - [ ] symlinks!!
+- [ ] flag to fail on nonrecoverable failures
+  - [ ] fail without breaking when we can.
 - [ ] get block sizes not file lengths?
 - [ ] mention [the bug tracker?](https://nest.pijul.com/vamchale/tin-summer/issues) for internal errors.
 
@@ -94,6 +97,8 @@
 # Performance
 
 - [ ] parity with du without threading
+  - [ ] separate functions based on whether we are using exclusions/artifacts or
+    not
 - [ ] print directories immediately rather than adding them to a vector?
   MsQueue?
   - [ ] all

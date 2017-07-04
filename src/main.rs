@@ -155,7 +155,7 @@ fn main() {
             // get relevant filenames &c.
             let v = match regex {
                 Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
-                _ => read_all(&dir, 0, depth, None, &None, false),
+                _ => read_all_fast(&dir, 0, depth),
             };
 
 
@@ -165,6 +165,7 @@ fn main() {
             // display results
             v_filtered.display_tree(dir);
         }
+
     } else if let Some(command) = matches.subcommand_matches("files") {
 
         // set threshold
