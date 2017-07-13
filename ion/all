@@ -1,11 +1,11 @@
 #!/usr/bin/env ion
 mkdir -p target/completions
 export PATH=/home/vanessa/.cargo/bin:$PATH
-export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
+#export PATH=/home/vanessa/arm-bins/cross-compilation/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin:$PATH
 cargo build --release &&
-cargo build --target=x86_64-pc-windows-gnu --release &&
-cargo build --target=arm-unknown-linux-gnueabihf --release &&
-cargo build --target=x86_64-unknown-linux-musl --release &&
+cross build --target=x86_64-pc-windows-gnu --release &&
+#cross build --target=arm-unknown-linux-gnueabihf --release &&
+cross build --target=x86_64-unknown-linux-musl --release &&
 cross build --target=arm-unknown-linux-musleabi --release &&
 cross build --target=x86_64-unknown-freebsd --release &&
 cross build --target=x86_64-unknown-netbsd --release &&
