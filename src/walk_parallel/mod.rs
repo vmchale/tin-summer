@@ -196,6 +196,9 @@ impl Walk {
                                 let mut new_path = w.path.to_owned();
                                 new_path.push(val.file_name());
                                 let mut new_walk = Walk::new(new_path, w.get_proc());
+                                if w.excludes.is_some() {
+                                    new_walk.set_regex(w.excludes.clone().unwrap());
+                                }
                                 if w.show_files {
                                     new_walk.with_files();
                                 }

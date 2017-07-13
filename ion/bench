@@ -9,8 +9,7 @@ let CLICOLOR=0
 let reports = "false"
 let parallel = "true"
 let benchpath = "reports/bench.html"
-#let path = $HOME/git-builds/rust
-let path = $HOME/programming
+let path = $HOME
 for x in @args
     if test $x = "+reports"
         let reports = "true"
