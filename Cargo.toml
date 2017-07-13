@@ -9,10 +9,10 @@ repository = "https://nest.pijul.com/vamchale/tin-summer"
 documentation = "https://github.com/vmchale/tin-summer#README"
 homepage = "https://github.com/vmchale/tin-summer"
 
-#build = "build.rs"
+build = "build.rs"
 
-#[build-dependencies]
-#clap = {version = "2.25", features = ["yaml"]}
+[build-dependencies]
+clap = {version = "2.25", features = ["yaml"]}
 
 [profile.release]
 lto = true
