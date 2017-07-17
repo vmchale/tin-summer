@@ -37,7 +37,7 @@ test_script:
       cargo test --target %TARGET% &&
       cargo test --target %TARGET% --release &&
       cargo run --target %TARGET% -- all &&
-      cargo run --target %TARGET% -- all --release
+      cargo run --target %TARGET% --release -- all
     )
 
 before_deploy:
