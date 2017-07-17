@@ -15,9 +15,15 @@ thanks to multithreading.
 
 ## Installation
 
+### Script
+
+```
+curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer
+```
+
 ### Binary install
 
-The easiest way to install is to download a binary from the [releases
+If the script doesn't work for you, you can download a binary from the [releases
 page](https://github.com/vmchale/tin-summer/releases).
 
 ### Cargo

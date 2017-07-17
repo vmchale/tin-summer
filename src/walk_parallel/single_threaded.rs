@@ -108,6 +108,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.mod`: FORTRAN
 /// - `.ji`, `.jld`: julia
 /// - `.go.v`: Go-compiled verilog
+/// - `.go.teak`: Go-generated teak
 #[cfg(not(target_os = "windows"))]
 pub fn is_artifact(
     path_str: &str,
@@ -127,7 +128,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.v|p_hi|p_o|prof|tix)$")
+                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix)$")
                 .unwrap();
         }
 

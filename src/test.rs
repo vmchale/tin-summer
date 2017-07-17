@@ -3,7 +3,7 @@ extern crate test;
 
 use clap::App;
 use std::fs;
-use regex::Regex;
+use regex::{Regex, RegexSet};
 use std::path::PathBuf;
 use std::mem::replace;
 use test::test::Bencher;
@@ -11,8 +11,14 @@ use prelude::*;
 use gitignore::*;
 use std::fs::File;
 use std::io::prelude::*;
-use regex::RegexSet;
 use colored::*;
+
+#[test]
+fn test_regex_set() {
+    let set = Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$").unwrap(); 
+    let full_path = "bad_print_underscore.check.out";
+    assert_eq!(set.is_match(full_path), false);
+}
 
 #[bench]
 fn bench_cli_options(b: &mut Bencher) {

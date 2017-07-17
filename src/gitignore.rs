@@ -95,11 +95,18 @@ named!(darcs<&str, &str>,
     )
 );
 
+named!(line<&str, &str>,
+    do_parse!(
+        tag!("\n") >>
+        ("$\n")
+    )
+);
+
 named!(options<&str, &str>,
     alt!(
-        tag!("\n") |
+        line |
         gitignore_comment |
-        is_not!("*?.#") |
+        is_not!("*?.#\n") |
         parse_asterix |
         parse_period |
         parse_questionmark |
