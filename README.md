@@ -17,6 +17,8 @@ thanks to multithreading.
 
 ### Script
 
+Enter the following in a command prompt:
+
 ```
 curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer
 ```
@@ -28,7 +30,7 @@ page](https://github.com/vmchale/tin-summer/releases).
 
 ### Cargo
 
-If your platform doesn't have binaries, get [cargo](https://rustup.rs/). Then:
+If your platform doesn't have binaries, or you just want to build from source, get [cargo](https://rustup.rs/). Then:
 
 ```bash
  $ cargo install tin-summer
