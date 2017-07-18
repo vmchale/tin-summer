@@ -1,0 +1,10 @@
+#!/usr/bin/env ion
+
+#cargo release -l @args[1]
+cargo publish
+
+let tag = @args[1]
+
+git tag -a $tag
+
+git push origin $tag
