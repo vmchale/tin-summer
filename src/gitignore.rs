@@ -53,7 +53,11 @@ fn process_to_vector<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process(input) {
         IResult::Done(_, result) => result,
         _ => {
-            eprintln!("{}: Failed to parse gitignore at: {}", "Error".red(), file_path.display());
+            eprintln!(
+                "{}: Failed to parse gitignore at: {}",
+                "Error".red(),
+                file_path.display()
+            );
             Vec::new()
         }
     }
@@ -63,7 +67,11 @@ fn process_darcs_full<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process_darcs(input) {
         IResult::Done(_, result) => result,
         _ => {
-            eprintln!("{}: Failed to parse darcs boring file at: {}", "Error".red(), file_path.display());
+            eprintln!(
+                "{}: Failed to parse darcs boring file at: {}",
+                "Error".red(),
+                file_path.display()
+            );
             Vec::new()
         }
     }

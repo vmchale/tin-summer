@@ -1,7 +1,7 @@
 #!/usr/bin/env ion
 
 #cargo release -l @args[1]
-cargo publish
+#cargo publish
 
 let tag = @args[1]
 

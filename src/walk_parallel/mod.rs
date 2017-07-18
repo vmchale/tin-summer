@@ -60,13 +60,8 @@ impl Walk {
                 &w.gitignore,
                 w.artifacts_only,
             )
-        }
-        else {
-            read_all_fast(
-                &w.path,
-                (w.start_depth as u8),
-                w.max_depth
-            )
+        } else {
+            read_all_fast(&w.path, (w.start_depth as u8), w.max_depth)
         };
 
         let subdir_size = v.file_size.get();
@@ -298,10 +293,8 @@ pub fn print_parallel(w: Walk) -> () {
     let path_display = w.path.clone();
 
     // set up worker & stealer
-    let (mut worker, stealer): (
-        chase_lev::Worker<Status<Walk>>,
-        chase_lev::Stealer<Status<Walk>>,
-    ) = chase_lev::deque();
+    let (mut worker, stealer): (chase_lev::Worker<Status<Walk>>,
+                                chase_lev::Stealer<Status<Walk>>) = chase_lev::deque();
 
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);

@@ -243,7 +243,8 @@ pub fn read_size(
                                     &metadata, // FIXME check metadata only when we know it matches gitignore
                                     &gitignore,
                                 )
-                            } {
+                            }
+                        {
                             // should check size before whether it's an artifact?
                             let file_size = FileSize::new(metadata.len());
                             size.add(file_size);
@@ -368,7 +369,8 @@ pub fn read_all(
                                     &metadata,
                                     &gitignore,
                                 )
-                            } {
+                            }
+                        {
                             let file_size = FileSize::new(metadata.len());
                             tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                         }
@@ -385,8 +387,9 @@ pub fn read_all(
                         } else if artifacts_only &&
                                    is_project_dir(path_string, val.file_name().to_str().unwrap())
                         {
-                            let dir_size =
-                                { read_size(&path, excludes, &gitignore, false) };
+                            let dir_size = {
+                                read_size(&path, excludes, &gitignore, false)
+                            };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
                             let mut subtree = read_all(
@@ -409,7 +412,9 @@ pub fn read_all(
                     } else if artifacts_only &&
                                is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        let dir_size = { read_size(&path, excludes, &gitignore, false) };
+                        let dir_size = {
+                            read_size(&path, excludes, &gitignore, false)
+                        };
                         tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let mut subtree = read_all(
@@ -555,11 +560,7 @@ pub fn read_no_excludes(
 }
 
 /// Function to process directory contents and return a `FileTree` struct.
-pub fn read_all_fast(
-    in_paths: &PathBuf,
-    depth: u8,
-    max_depth: Option<u8>,
-) -> FileTree {
+pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> FileTree {
 
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
@@ -579,75 +580,49 @@ pub fn read_all_fast(
 
             // only consider path if we're not using regex excludes or if they don't match the
             // exclusion regex
-                let path_type = val.file_type().unwrap(); // ok because we already checked
+            let path_type = val.file_type().unwrap(); // ok because we already checked
 
-                // append file size/name for a file
-                if path_type.is_file() {
-                    // if this fails, it's probably because `path` is a broken symlink
-                    if let Ok(metadata) = val.metadata() {
-                        // faster on Windows
-                        {
-                            let path = val.path();
-                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
-                                x
-                            } else {
-                                eprintln!(
-                                    "{}: skipping invalid unicode filepath at {:?}",
-                                    "Warning".yellow(),
-                                    path
-                                );
-                                ""
-                            };
-                            let file_size = FileSize::new(metadata.len());
-                            tree.push(path_string.to_string(), file_size, None, depth + 1, false);
-                        }
+            // append file size/name for a file
+            if path_type.is_file() {
+                // if this fails, it's probably because `path` is a broken symlink
+                if let Ok(metadata) = val.metadata() {
+                    // faster on Windows
+                    {
+                        let path = val.path();
+                        let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                            x
+                        } else {
+                            eprintln!(
+                                "{}: skipping invalid unicode filepath at {:?}",
+                                "Warning".yellow(),
+                                path
+                            );
+                            ""
+                        };
+                        let file_size = FileSize::new(metadata.len());
+                        tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                     }
                 }
-                // otherwise, go deeper
-                else if path_type.is_dir() {
-                    if let Some(d) = max_depth {
-                        if depth + 1 >= d {
-                            let path = val.path();
-                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
-                                x
-                            } else {
-                                eprintln!(
-                                    "{}: skipping invalid unicode filepath at {:?}",
-                                    "Warning".yellow(),
-                                    path
-                                );
-                                ""
-                            };
-                            let dir_size = {
-                                read_no_excludes(&path, None, &None, false)
-                            };
-                            tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
+            }
+            // otherwise, go deeper
+            else if path_type.is_dir() {
+                if let Some(d) = max_depth {
+                    if depth + 1 >= d {
+                        let path = val.path();
+                        let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                            x
                         } else {
-                            let path = val.path();
-                            let path_string: &str = if let Some(x) = path.as_path().to_str() {
-                                x
-                            } else {
-                                eprintln!(
-                                    "{}: skipping invalid unicode filepath at {:?}",
-                                    "Warning".yellow(),
-                                    path
-                                );
-                                ""
-                            };
-                            let mut subtree = read_all_fast(
-                                &path,
-                                depth + 1,
-                                max_depth,
+                            eprintln!(
+                                "{}: skipping invalid unicode filepath at {:?}",
+                                "Warning".yellow(),
+                                path
                             );
-                            let dir_size = subtree.file_size;
-                            tree.push(
-                                path_string.to_string(),
-                                dir_size,
-                                Some(&mut subtree),
-                                depth + 1,
-                                true,
-                            );
-                        }
+                            ""
+                        };
+                        let dir_size = {
+                            read_no_excludes(&path, None, &None, false)
+                        };
+                        tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let path = val.path();
                         let path_string: &str = if let Some(x) = path.as_path().to_str() {
@@ -660,11 +635,7 @@ pub fn read_all_fast(
                             );
                             ""
                         };
-                        let mut subtree = read_all_fast(
-                            &path,
-                            depth + 1,
-                            max_depth,
-                        );
+                        let mut subtree = read_all_fast(&path, depth + 1, max_depth);
                         let dir_size = subtree.file_size;
                         tree.push(
                             path_string.to_string(),
@@ -674,6 +645,28 @@ pub fn read_all_fast(
                             true,
                         );
                     }
+                } else {
+                    let path = val.path();
+                    let path_string: &str = if let Some(x) = path.as_path().to_str() {
+                        x
+                    } else {
+                        eprintln!(
+                            "{}: skipping invalid unicode filepath at {:?}",
+                            "Warning".yellow(),
+                            path
+                        );
+                        ""
+                    };
+                    let mut subtree = read_all_fast(&path, depth + 1, max_depth);
+                    let dir_size = subtree.file_size;
+                    tree.push(
+                        path_string.to_string(),
+                        dir_size,
+                        Some(&mut subtree),
+                        depth + 1,
+                        true,
+                    );
+                }
             }
         }
     }

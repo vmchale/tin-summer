@@ -122,7 +122,6 @@ fn main() {
             v_filtered.display_tree(dir);
         }
     }
-
     // find large files
     else if let Some(command) = matches.subcommand_matches("directories") {
 
