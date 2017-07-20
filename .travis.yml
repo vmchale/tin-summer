@@ -59,7 +59,8 @@ deploy:
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   on:
     condition: $TRAVIS_RUST_VERSION = nightly
-    tags: true
+    tags: false
+    all_branches: true
   provider: releases
   skip_cleanup: true
 
