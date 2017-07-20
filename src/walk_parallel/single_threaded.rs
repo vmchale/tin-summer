@@ -65,9 +65,11 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.exists()
             }
             "build" | "dist" | "dist-newstyle" => {
+                let mut cabal_project = parent_path.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
-                parent_path.exists() || glob_exists("")
+                cabal_project.push("cabal.project");
+                parent_path.exists() || glob_exists(&parent_string) || cabal_project.exists()
             }
             _ => {
                 parent_path.push("../setup.py");

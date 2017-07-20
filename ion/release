@@ -7,4 +7,4 @@ let tag = @args[1]
 
 git tag -a $tag
 
-git push origin $tag
+git push origin --tags # $tag
