@@ -67,6 +67,7 @@
 
 # Features
 
+- [ ] parse Makefiles
 - [ ] cool feature: highlight extensions
   - [ ] color-coded by language?
 - [ ] global gitignore
