@@ -1,4 +1,5 @@
 extern crate crossbeam;
+extern crate walkdir;
 
 pub mod single_threaded;
 
@@ -6,6 +7,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::fs;
 use self::crossbeam::sync::chase_lev;
+use self::walkdir::WalkDir;
 use regex::{RegexSet, Regex};
 use std::path::PathBuf;
 use colored::*;
@@ -14,6 +16,7 @@ use utils::size;
 use std::thread;
 use error::*;
 use types::FileSize;
+use std::path::Path;
 
 pub use walk_parallel::single_threaded::*;
 
@@ -278,6 +281,19 @@ impl Walk {
             );
         }
 
+    }
+}
+
+
+// FIXME take optional reference to a regex
+pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
+    for dir in WalkDir::new(p)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|p| exclude.clone().map(|e| e.is_match(&p.path().to_string_lossy().to_string())) != Some(false))
+        .filter(|p| is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string())))
+    {
+        fs::remove_dir_all(dir.path()).unwrap_or(());
     }
 }
 

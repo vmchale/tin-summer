@@ -26,8 +26,19 @@ fn main() {
         .setting(AppSettings::SubcommandRequired)
         .get_matches();
 
+    if let Some(command) = matches.subcommand_matches("clean") {
+        let regex = command.value_of("excludes").map(|r| check_regex(r));
+
+        // set path to dirs
+        let dirs = get_dirs(command.values_of("dir"));
+
+        for dir in dirs {
+            clean_project_dirs(dir, regex.clone());
+        }
+    }
+        
     // test stuff
-    if let Some(command) = matches.subcommand_matches("parallel") {
+    else if let Some(command) = matches.subcommand_matches("parallel") {
 
         // set flag to print everything
         let print_all = command.is_present("all");

@@ -5,6 +5,19 @@ after_help: >
     The Tin Summer is a replacement for du written in Rust. It's currently not quite as stable,
     but it's already faster, prettier, and easier to use.
 subcommands:
+    - clean:
+        visible_alias: "c"
+        about: Clean up artifacts if possible.
+        args:
+            - dir:
+                value_name: DIRECTORY
+                multiple: true
+                help: Directory to search
+            - excludes:
+                short: e
+                long: exclude
+                takes_value: true
+                value_name: NUM
     - parallel:
         visible_alias: "p"
         alias: "par"
