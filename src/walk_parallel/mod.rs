@@ -285,15 +285,27 @@ impl Walk {
 }
 
 
-// FIXME take optional reference to a regex
+// FIXME take optional reference to a regex; unwrap_or() should give a warning
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
+
+    lazy_static! {
+        static ref REGEX: Regex = 
+            Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix)$")
+            .unwrap();
+    }
+
     for dir in WalkDir::new(p)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|p| exclude.clone().map(|e| e.is_match(&p.path().to_string_lossy().to_string())) != Some(false))
-        .filter(|p| is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string())))
+        .filter(|p| REGEX.is_match(&p.path().to_string_lossy().to_string()) || is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string())))
     {
-        fs::remove_dir_all(dir.path()).unwrap_or(());
+        if dir.file_type().is_file() {
+            fs::remove_file(dir.path()).unwrap_or(());
+        }
+        else if dir.file_type().is_dir() {
+            fs::remove_dir_all(dir.path()).unwrap_or(());
+        }
     }
 }
 

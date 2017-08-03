@@ -79,11 +79,11 @@
 - [x] regex should only match against file name, not full path
 - [x] replace du
 - [ ] add option to *only* search ignored files for `ar` (?)
-- [ ] autoclean option
-  - [ ] haskell
-  - [ ] rust
+- [x] autoclean option
+  - [x] haskell
+  - [x] rust
   - [ ] idris
-  - [ ] elm
+  - [x] elm
   - [ ] python
 
 # Tests
