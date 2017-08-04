@@ -56,6 +56,7 @@
 
 # UI/Ergonomics
 
+- [ ] warn before cleaning e.g. home directory
 - [ ] silent flag to ignore warnings?
 - [ ] get rid of walkdir dependency
 - [ ] vim plugin
@@ -67,6 +68,7 @@
 
 # Features
 
+- [ ] remove docs for elm/Idris while cleaning
 - [ ] parse Makefiles
 - [ ] cool feature: highlight extensions
   - [ ] color-coded by language?
