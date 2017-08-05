@@ -165,3 +165,9 @@ The *intent* is to support basically anything, so feel free to open a PR or star
   - [x] FORTRAN
   - [ ] Ruby
   - [ ] C
+
+##### Autoclean
+
+`sn` can clean up your artifacts for you, but only for the above-indicated
+languages. It is still experimental, but it has been tested and should not
+delete unwanted files (though it may not clean everything it should).
