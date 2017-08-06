@@ -8,6 +8,8 @@ extern crate colored;
 use colored::*;
 use liboskar::prelude::*;
 use clap::{App, AppSettings};
+use std::env;
+use std::path::PathBuf;
 
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
@@ -27,13 +29,29 @@ fn main() {
         .get_matches();
 
     if let Some(command) = matches.subcommand_matches("clean") {
+
+        // check that we aren't in the home dir
+        let home_dir_str = match env::var("HOME") {
+            Ok(val) => val,
+            _ => "/home".to_string(),
+        };
+
+        let home_dir = PathBuf::from(home_dir_str);
+
         let regex = command.value_of("excludes").map(|r| check_regex(r));
 
         // set path to dirs
         let dirs = get_dirs(command.values_of("dir"));
 
+        let force = command.is_present("force");
+
         for dir in dirs {
-            clean_project_dirs(dir, regex.clone());
+            if (dir != home_dir) && !force {
+                clean_project_dirs(dir, regex.clone());
+            }
+            else {
+                eprintln!("{}: not cleaning directory '{}', as it is your home directory. To clean your home directory, rerun with --force.", "Warning".yellow(), dir.display())
+            }
         }
     }
         

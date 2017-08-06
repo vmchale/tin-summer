@@ -52,24 +52,22 @@
 
 # Bugs
 
-- [ ] `-j1` should work
+- [x] `-j1` should work
 
 # UI/Ergonomics
 
-- [ ] warn before cleaning e.g. home directory
+- [x] warn before cleaning home directory
 - [ ] silent flag to ignore warnings?
-- [ ] get rid of walkdir dependency
 - [ ] vim plugin
 - [ ] symlinks!!
 - [ ] flag to fail on nonrecoverable failures
   - [ ] fail without breaking when we can.
 - [ ] get block sizes not file lengths?
-- [ ] mention [the bug tracker?](https://nest.pijul.com/vamchale/tin-summer/issues) for internal errors.
 
 # Features
 
-- [ ] remove docs for elm/Idris while cleaning
-- [ ] parse Makefiles
+- [ ] optionally remove docs for elm/Idris while cleaning
+- [ ] parse Makefiles (clean)
 - [ ] cool feature: highlight extensions
   - [ ] color-coded by language?
 - [ ] global gitignore
@@ -80,15 +78,14 @@
   - [ ] .hginore
 - [x] regex should only match against file name, not full path
 - [x] replace du
-- [ ] add option to *only* search ignored files for `ar` (?)
 - [x] autoclean option
   - [x] haskell
   - [x] rust
-  - [ ] idris
+  - [xi idris
+  - [x] TeX
   - [x] elm
   - [ ] python
-- [ ] .deb distributed with CI
-- [ ] .deb should include completions (when they're ready), and manpages.
+- [ ] .deb should include completions and manpages.
 
 # Tests
 
@@ -102,13 +99,8 @@
 # Performance
 
 - [ ] parity with du without threading
-  - [ ] separate functions based on whether we are using exclusions/artifacts or
-    not
 - [ ] print directories immediately rather than adding them to a vector?
   MsQueue?
-  - [ ] all
-  - [ ] fat
-  - [ ] ar
 
 # Parallel traversals
 
@@ -124,7 +116,7 @@
     - [ ] darcs boring file
     - [ ] .hginore
   - [x] excludes
-- [ ] look at tokei/rayon for globbed paths.
+- [ ] look at rayon for globbed paths.
 
 # French/German
 

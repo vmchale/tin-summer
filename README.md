@@ -155,12 +155,13 @@ The following is a list of languages `sn artifacts` has been tested with.
 The *intent* is to support basically anything, so feel free to open a PR or start an issue.
 
   - [x] Haskell (incl. GHCJS)
-  - [x] rust
-  - [x] julia
-  - [x] python
+  - [x] Rust
+  - [x] Julia
+  - [x] Python
   - [x] Elm
-  - [x] nim
+  - [x] Nim
   - [x] Vimscript
+  - [x] TeX
   - [x] Idris
   - [x] FORTRAN
   - [ ] Ruby
