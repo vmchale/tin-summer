@@ -9,10 +9,10 @@ repository = "https://nest.pijul.com/vamchale/tin-summer"
 documentation = "https://github.com/vmchale/tin-summer#README"
 homepage = "https://github.com/vmchale/tin-summer"
 
-#build = "build.rs"
+build = "build.rs"
 
-#[build-dependencies]
-#clap = {version = "2.25", features = ["yaml"]}
+[build-dependencies]
+clap = {version = "2.25", features = ["yaml"]}
 
 [profile.release]
 lto = true
@@ -45,3 +45,7 @@ name = "liboskar"
 [[bin]]
 path = "src/main.rs"
 name = "sn"
+
+[package.metadata.deb]
+extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."
+license-file = [ "LICENSE" ]

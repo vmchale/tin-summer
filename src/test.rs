@@ -59,20 +59,8 @@ fn bench_processors(b: &mut Bencher) {
 
 #[bench]
 fn bench_traversal_size(b: &mut Bencher) {
-    let p = PathBuf::from(".");
+    let p = PathBuf::from("src/testdata");
     b.iter(|| read_size(&p, None, &None, false))
-}
-
-#[bench]
-fn bench_traversal_no_excludes(b: &mut Bencher) {
-    let p = PathBuf::from(".");
-    b.iter(|| read_no_excludes(&p, None, &None, false))
-}
-
-#[bench]
-fn bench_traversal_all(b: &mut Bencher) {
-    let p = PathBuf::from(".");
-    b.iter(|| read_all(&p, 0, None, None, &None, false))
 }
 
 #[bench]

@@ -87,6 +87,8 @@
   - [ ] idris
   - [x] elm
   - [ ] python
+- [ ] .deb distributed with CI
+- [ ] .deb should include completions (when they're ready), and manpages.
 
 # Tests
 

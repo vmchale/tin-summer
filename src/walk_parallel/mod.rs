@@ -284,13 +284,32 @@ impl Walk {
     }
 }
 
+fn latex_log<P: AsRef<Path>>(p: P) -> bool {
+   
+    lazy_static! {
+        static ref LOG: Regex = 
+            Regex::new(r"\.log$")
+            .unwrap();
+    }
 
-// FIXME take optional reference to a regex; unwrap_or() should give a warning
+    if LOG.is_match(&p.as_ref().to_string_lossy().to_string()) {
+        let mut parent = (&p.as_ref()).parent().unwrap().to_string_lossy().to_string();
+        parent.push_str("/*.tex");
+        glob_exists(&parent)
+    }
+    else {
+        false
+    }
+
+}
+
+// TODO figure out why the unwrap_or is failing?
+// FIXME take optional reference to a regex
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
 
     lazy_static! {
         static ref REGEX: Regex = 
-            Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix)$")
+            Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix|synctex\.gz)$")
             .unwrap();
     }
 
@@ -298,7 +317,9 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|p| exclude.clone().map(|e| e.is_match(&p.path().to_string_lossy().to_string())) != Some(false))
-        .filter(|p| REGEX.is_match(&p.path().to_string_lossy().to_string()) || is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string())))
+        .filter(|p| REGEX.is_match(&p.path().to_string_lossy().to_string()) 
+                || is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string()))
+                || latex_log(&p.path()))
     {
         if dir.file_type().is_file() {
             fs::remove_file(dir.path()).unwrap_or(());

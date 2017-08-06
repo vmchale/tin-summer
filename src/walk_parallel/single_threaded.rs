@@ -15,7 +15,7 @@ use std::result::Result;
 #[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::PermissionsExt;
 
-fn glob_exists(s: &str) -> bool {
+pub fn glob_exists(s: &str) -> bool {
     glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors shouldn't happen.
 }
 
@@ -130,7 +130,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix)$")
+                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak)|p_hi|p_o|prof|tix|synctex\.gz)$")
                 .unwrap();
         }
 
