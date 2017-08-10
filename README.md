@@ -99,7 +99,7 @@ export CLICOLOR=0
   * Defaults to human-readable output
   * Colorized output
   * Nicer help via [clap](https://github.com/kbknapp/clap-rs)
-  * Provides Sorted output
+  * Provides sorted output
   * Finds build artifacts
   * Reads file sizes, not disk usage
   * Extensible in Rust

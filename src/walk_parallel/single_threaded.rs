@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"(.stack-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$")
+            Regex::new(r"(.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$")
             .unwrap();
     }
 
@@ -57,6 +57,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             }
             "target" => {
                 parent_path.push("../Cargo.toml");
+                parent_path.exists()
+            }
+            ".reco-work" => {
+                parent_path.push("../main.go");
                 parent_path.exists()
             }
             "elm-stuff" => {

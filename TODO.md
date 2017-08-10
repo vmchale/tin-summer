@@ -52,6 +52,7 @@
 
 # Bugs
 
+- [ ] `sn p` on a file shouldn't hang indefinitely
 - [x] `-j1` should work
 
 # UI/Ergonomics
@@ -66,6 +67,7 @@
 
 # Features
 
+- [ ] make a `.deb` crate
 - [ ] optionally remove docs for elm/Idris while cleaning
 - [ ] parse Makefiles (clean)
 - [ ] cool feature: highlight extensions
@@ -84,7 +86,7 @@
   - [xi idris
   - [x] TeX
   - [x] elm
-  - [ ] python
+  - [x] python
 - [ ] .deb should include completions and manpages.
 
 # Tests
