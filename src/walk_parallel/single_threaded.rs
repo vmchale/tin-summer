@@ -72,7 +72,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 let mut cabal_project = parent_path.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
-                cabal_project.push("cabal.project");
+                cabal_project.push("../cabal.project");
                 parent_path.exists() || glob_exists(&parent_string) || cabal_project.exists()
             }
             _ => {
