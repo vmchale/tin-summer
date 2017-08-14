@@ -35,10 +35,12 @@ pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
 
-    let maybe_set = RegexSet::new(lines);
+    let maybe_set = RegexSet::new(lines.clone());
     if let Ok(s) = maybe_set {
         s
     } else {
+        println!("{:?}", lines.collect::<Vec<&str>>());
+        println!("{:?}", maybe_set);
         eprintln!(
             "{}: failed to parse .gitignore/.ignore at {:?}, ignoring",
             "Warning".yellow(),
@@ -114,10 +116,11 @@ named!(options<&str, &str>,
     alt!(
         line |
         gitignore_comment |
-        is_not!("*?.#\n") |
+        is_not!("*?+.#\n") |
         parse_asterix |
         parse_period |
         parse_questionmark |
+        parse_plus |
         parse_not_comment
     )
 );
@@ -144,6 +147,13 @@ named!(gitignore_comment<&str, &str>,
         is_not!("\n") >>
         ("\n")
     )
+);
+
+named!(parse_plus<&str, &str>,
+   do_parse!(
+       tag!("+") >>
+       ("\\+")
+   )
 );
 
 named!(parse_period<&str, &str>,
