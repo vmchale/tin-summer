@@ -10,6 +10,7 @@ use liboskar::prelude::*;
 use clap::{App, AppSettings};
 use std::env;
 use std::path::PathBuf;
+use std::process::Command;
 
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
@@ -28,7 +29,19 @@ fn main() {
         .setting(AppSettings::SubcommandRequired)
         .get_matches();
 
-    if let Some(command) = matches.subcommand_matches("clean") {
+    if let Some(_) = matches.subcommand_matches("update") {
+
+        let script = Command::new("bash")
+            .arg("-c")
+            .arg("curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer --force")
+            .output()
+            .expect("failed to execute update script.");
+
+        let script_string = String::from_utf8(script.stderr).unwrap();
+
+        println!("{}", script_string);
+
+    } else if let Some(command) = matches.subcommand_matches("clean") {
 
         // check that we aren't in the home dir
         let home_dir_str = match env::var("HOME") {
@@ -48,13 +61,15 @@ fn main() {
         for dir in dirs {
             if (dir != home_dir) && !force {
                 clean_project_dirs(dir, regex.clone());
-            }
-            else {
-                eprintln!("{}: not cleaning directory '{}', as it is your home directory. To clean your home directory, rerun with --force.", "Warning".yellow(), dir.display())
+            } else {
+                eprintln!(
+                    "{}: not cleaning directory '{}', as it is your home directory. To clean your home directory, rerun with --force.",
+                    "Warning".yellow(),
+                    dir.display()
+                )
             }
         }
     }
-        
     // test stuff
     else if let Some(command) = matches.subcommand_matches("parallel") {
 

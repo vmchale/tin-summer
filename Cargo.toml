@@ -1,51 +1,50 @@
 [package]
-name = "tin-summer"
-version = "1.13.4"
 authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
-license-file = "LICENSE"
+build = "build.rs"
 description = "Command-line tool to find build artifacts and thing occupying space on your computer. Shatters records not glass."
-readme = "README.md"
-repository = "https://nest.pijul.com/vamchale/tin-summer"
 documentation = "https://github.com/vmchale/tin-summer#README"
 homepage = "https://github.com/vmchale/tin-summer"
-
-build = "build.rs"
-
-[build-dependencies]
-clap = {version = "2.25", features = ["yaml"]}
-
-[profile.release]
-lto = true
-
-[features]
-default = ["english"]
-english = []
-deutsch = []
-francais = []
-bash = []
-fish = []
-verbose = []
+license-file = "LICENSE"
+name = "tin-summer"
+readme = "README.md"
+repository = "https://nest.pijul.com/vamchale/tin-summer"
+version = "1.13.4"
+[metadata.deb]
+extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."
+license-file = ["LICENSE"]
+[[bin]]
+name = "sn"
+path = "src/main.rs"
+[build-dependencies.clap]
+features = ["yaml"]
+version = "2.26.0"
 
 [dependencies]
-num_cpus = "1.6"
-walkdir = "1.0"
-nom = "3.1"
-colored = "1.5"
-clap = {version = "2.25", features = ["yaml"]}
-regex = "0.2"
-pad = "0.1"
-lazy_static = "0.2"
-crossbeam = "0.2"
-glob = "0.2"
+colored = "1.5.2"
+crossbeam = "0.3.0"
+glob = "0.2.11"
+lazy_static = "0.2.8"
+nom = "3.2.0"
+num_cpus = "1.6.2"
+pad = "0.1.4"
+regex = "0.2.2"
+walkdir = "1.0.7"
+
+[dependencies.clap]
+features = ["yaml"]
+version = "2.26.0"
+
+[features]
+bash = []
+default = ["english"]
+deutsch = []
+english = []
+fish = []
+francais = []
+verbose = []
 
 [lib]
-path = "src/lib.rs"
 name = "liboskar"
-
-[[bin]]
-path = "src/main.rs"
-name = "sn"
-
-[package.metadata.deb]
-extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."
-license-file = [ "LICENSE" ]
+path = "src/lib.rs"
+[profile.release]
+lto = true

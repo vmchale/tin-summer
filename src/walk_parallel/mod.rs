@@ -153,7 +153,7 @@ impl Walk {
     /// which it updates with any file sizes in the directory.
     pub fn push_subdir(
         w: &Walk,
-        mut worker: &mut chase_lev::Worker<Status<Walk>>,
+        worker: &mut chase_lev::Worker<Status<Walk>>,
         total: Arc<AtomicU64>,
     ) {
 
@@ -285,7 +285,7 @@ impl Walk {
 }
 
 fn latex_log<P: AsRef<Path>>(p: P) -> bool {
-   
+
     lazy_static! {
         static ref LOG: Regex = 
             Regex::new(r"\.log$")
@@ -293,11 +293,14 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
     }
 
     if LOG.is_match(&p.as_ref().to_string_lossy().to_string()) {
-        let mut parent = (&p.as_ref()).parent().unwrap().to_string_lossy().to_string();
+        let mut parent = (&p.as_ref())
+            .parent()
+            .unwrap()
+            .to_string_lossy()
+            .to_string();
         parent.push_str("/*.tex");
         glob_exists(&parent)
-    }
-    else {
+    } else {
         false
     }
 
@@ -316,15 +319,25 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
     for dir in WalkDir::new(p)
         .into_iter()
         .filter_map(|e| e.ok())
-        .filter(|p| exclude.clone().map(|e| e.is_match(&p.path().to_string_lossy().to_string())) != Some(false))
-        .filter(|p| REGEX.is_match(&p.path().to_string_lossy().to_string()) 
-                || is_project_dir(&p.path().to_string_lossy().to_string(), &p.path().file_name().map(|x| x.to_string_lossy().to_string()).unwrap_or("".to_string()))
-                || latex_log(&p.path()))
+        .filter(|p| {
+            exclude.clone().map(|e| {
+                e.is_match(&p.path().to_string_lossy().to_string())
+            }) != Some(false)
+        })
+        .filter(|p| {
+            REGEX.is_match(&p.path().to_string_lossy().to_string()) ||
+                is_project_dir(
+                    &p.path().to_string_lossy().to_string(),
+                    &p.path()
+                        .file_name()
+                        .map(|x| x.to_string_lossy().to_string())
+                        .unwrap_or("".to_string()),
+                ) || latex_log(&p.path())
+        })
     {
         if dir.file_type().is_file() {
             fs::remove_file(dir.path()).unwrap_or(());
-        }
-        else if dir.file_type().is_dir() {
+        } else if dir.file_type().is_dir() {
             fs::remove_dir_all(dir.path()).unwrap_or(());
         }
     }
