@@ -31,6 +31,7 @@ fn main() {
 
     if let Some(_) = matches.subcommand_matches("update") {
 
+        // TODO add a --force flag here.
         let script = Command::new("bash")
             .arg("-c")
             .arg("curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer --force")
