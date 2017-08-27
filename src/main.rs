@@ -29,14 +29,19 @@ fn main() {
         .setting(AppSettings::SubcommandRequired)
         .get_matches();
 
-    if let Some(_) = matches.subcommand_matches("update") {
+    if let Some(x) = matches.subcommand_matches("update") {
 
-        // TODO add a --force flag here.
-        let script = Command::new("bash")
-            .arg("-c")
-            .arg("curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer --force")
-            .output()
-            .expect("failed to execute update script.");
+        let force = x.is_present("force");
+
+        let s = if force {
+            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/project-init --force"
+        } else {
+            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/project-init"
+        };
+
+        let script = Command::new("bash").arg("-c").arg(s).output().expect(
+            "failed to execute update script.",
+        );
 
         let script_string = String::from_utf8(script.stderr).unwrap();
 

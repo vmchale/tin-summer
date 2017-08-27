@@ -8,6 +8,11 @@ subcommands:
     - update:
         visible_alias: "u"
         about: The program grows up.
+        args:
+            - force:
+                short: f
+                long: force
+                help: Force installation even when binary already exists.
     - clean:
         visible_alias: "c"
         about: Clean up artifacts if possible.
