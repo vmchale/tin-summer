@@ -1,5 +1,3 @@
-extern crate regex;
-
 use colored::*;
 use nom::IResult;
 use std::process::exit;

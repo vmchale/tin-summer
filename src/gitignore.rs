@@ -1,5 +1,3 @@
-extern crate regex;
-
 use colored::*;
 use regex::RegexSet;
 use nom::IResult;

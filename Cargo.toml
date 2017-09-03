@@ -27,8 +27,11 @@ lazy_static = "0.2.8"
 nom = "3.2.0"
 num_cpus = "1.6.2"
 pad = "0.1.4"
-regex = "0.2.2"
 walkdir = "1.0.7"
+
+[dependencies.regex]
+features = ["simd-accel"]
+version = "0.2"
 
 [dependencies.clap]
 features = ["yaml"]

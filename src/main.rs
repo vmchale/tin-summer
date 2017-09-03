@@ -2,7 +2,6 @@
 extern crate clap;
 
 extern crate liboskar;
-extern crate regex;
 extern crate colored;
 
 use colored::*;

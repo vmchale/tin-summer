@@ -1,5 +1,4 @@
 extern crate pad;
-extern crate regex;
 
 use std::cmp::Ordering;
 use self::pad::PadStr;

@@ -1,6 +1,3 @@
-extern crate regex;
-extern crate colored;
-
 use regex::Regex;
 use std::process;
 use colored::*;
