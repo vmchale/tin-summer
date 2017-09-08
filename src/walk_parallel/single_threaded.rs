@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"(.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$")
+            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$)")
             .unwrap();
     }
 
@@ -76,8 +76,12 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_path.exists() || glob_exists(&parent_string) || cabal_project.exists()
             }
             _ => {
+                let mut parent_path_latex = parent_path.clone();
                 parent_path.push("../setup.py");
-                parent_path.exists() && str::ends_with(name, ".egg-info")
+                parent_path_latex.push("../*.tex");
+                (parent_path.exists() && str::ends_with(name, ".egg-info")) ||
+                    (glob_exists(&parent_path_latex.to_string_lossy()) &&
+                         str::starts_with(name, "_minted"))
             }
         }
     } else {
