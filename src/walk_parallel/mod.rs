@@ -312,7 +312,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
 
     lazy_static! {
         static ref REGEX: Regex = 
-            Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|min\.js|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef)|p_hi|p_o|prof|hide-cache|tix|synctex\.gz)$")
+            Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef)|p_hi|p_o|prof|hide-cache|tix|synctex\.gz)$")
             .unwrap();
     }
 
