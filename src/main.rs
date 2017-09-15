@@ -32,10 +32,12 @@ fn main() {
 
         let force = x.is_present("force");
 
+        println!("current version: {}", crate_version!());
+
         let s = if force {
-            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/project-init --force"
+            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer --force"
         } else {
-            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/project-init"
+            "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer"
         };
 
         let script = Command::new("bash").arg("-c").arg(s).output().expect(
