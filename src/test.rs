@@ -147,19 +147,6 @@ fn bench_get_metadata(b: &mut Bencher) {
     b.iter(|| fs::metadata("src/main.rs").unwrap())
 }
 
-#[bench]
-fn bench_extension_regex_long(b: &mut Bencher) {
-    let metadata = fs::metadata("src/main.rs").unwrap();
-    b.iter(|| {
-        is_artifact(
-            "sniff",
-            "target/arm-unknown-linux-musleabi/release/sniff",
-            &metadata,
-            &None,
-        )
-    })
-}
-
 #[test]
 fn test_parser() {
     let cli_input = "30M";
