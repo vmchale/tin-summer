@@ -40,8 +40,8 @@ matrix:
       #rust: nightly
       #- env: TARGET=s390x-unknown-linux-gnu DISABLE_TESTS=1
       #rust: nightly
-    - env: TARGET=arm-unknown-linux-gnueabi
-      rust: nightly
+      #- env: TARGET=arm-unknown-linux-gnueabi
+      #rust: nightly
       #- env: TARGET=arm-unknown-linux-musleabi
       #rust: nightly
 
