@@ -7,7 +7,7 @@ homepage = "https://github.com/vmchale/tin-summer"
 license-file = "LICENSE"
 name = "tin-summer"
 readme = "README.md"
-repository = "https://nest.pijul.com/vamchale/tin-summer"
+repository = "https://github.com/vmchale/tin-summer"
 version = "1.16.4"
 [metadata.deb]
 extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."

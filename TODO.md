@@ -54,6 +54,7 @@
 
 - [ ] `sn p` on a file shouldn't hang indefinitely
 - [x] `-j1` should work
+- [ ] `sn c --exclude` should apply to files as well as directories?
 
 # UI/Ergonomics
 
