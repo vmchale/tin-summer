@@ -68,7 +68,8 @@
 
 # Features
 
-- [ ] make a `.deb` crate
+- [ ] show raw sizes
+- [ ] make a `.deb` crate (CI)
 - [ ] optionally remove docs for elm/Idris while cleaning
 - [ ] parse Makefiles (clean)
 - [ ] cool feature: highlight extensions

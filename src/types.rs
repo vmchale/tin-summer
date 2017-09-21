@@ -8,7 +8,7 @@ use colored::*;
 
 /// This is just a wrapper around a `u64` so that we can implement our own `Display` trait for our
 /// file sizes.
-#[derive(Ord, Eq, PartialOrd, PartialEq, Debug, Copy, Clone)]
+#[derive(Ord, Eq, PartialOrd, PartialEq, Copy, Clone)]
 pub struct FileSize {
     size: u64,
 }
@@ -196,6 +196,13 @@ impl FileTree {
             println!("{}\t {}", &to_formatted.green(), path);
         }
 
+    }
+}
+
+impl fmt::Debug for FileSize {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let pre_size = format!("{}", self.size);
+        write!(f, "{} b", &pre_size.pad_to_width(8))
     }
 }
 
