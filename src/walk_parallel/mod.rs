@@ -361,6 +361,8 @@ pub fn print_parallel(w: Walk) -> () {
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);
 
+    let spawn_workers = (&w.path).is_file();
+
     // create the producer in another thread
     let child_producer = thread::spawn(move || {
 

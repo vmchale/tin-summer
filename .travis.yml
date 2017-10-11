@@ -45,6 +45,7 @@ matrix:
     - env: TARGET=arm-unknown-linux-musleabi
       rust: nightly
   allow_failures: 
+    - env: TARGET=x86_64-pc-windows-gnu
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=arm-unknown-linux-gnueabi
     - env: TARGET=sparc64-unknown-linux-gnu
