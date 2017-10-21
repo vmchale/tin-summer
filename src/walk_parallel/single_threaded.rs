@@ -129,7 +129,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|js)$")
             .unwrap();
     }
 
