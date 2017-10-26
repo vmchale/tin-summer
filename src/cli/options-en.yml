@@ -26,6 +26,10 @@ subcommands:
                 long: exclude
                 takes_value: true
                 value_name: NUM
+            - tags:
+                long: tagfiles
+                short: g
+                help: Clean tagfiles generated for vim or Emacs
     - parallel:
         visible_alias: "p"
         alias: "par"
@@ -212,6 +216,10 @@ subcommands:
                 value_name: DIRECTORY
                 multiple: true
                 help: Directory to search
+            - tags:
+                long: tagfiles
+                short: g
+                help: Clean tagfiles generated for vim or Emacs
             - threshold:
                 short: t
                 long: threshold

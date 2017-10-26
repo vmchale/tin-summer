@@ -60,6 +60,9 @@ fn main() {
 
         let regex = command.value_of("excludes").map(|r| check_regex(r));
 
+        // whether to clean up tagfiles generated for vim/emacs
+        let vimtags = command.is_present("tags");
+
         // set path to dirs
         let dirs = get_dirs(command.values_of("dir"));
 
@@ -67,7 +70,7 @@ fn main() {
 
         for dir in dirs {
             if (dir != home_dir) && !force {
-                clean_project_dirs(dir, regex.clone());
+                clean_project_dirs(dir, regex.clone(), vimtags);
             } else {
                 eprintln!(
                     "{}: not cleaning directory '{}', as it is your home directory. To clean your home directory, rerun with --force.",
@@ -162,8 +165,8 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
-                _ => read_all(&dir, 0, depth, None, &None, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
+                _ => read_all(&dir, 0, depth, None, &None, false, false),
             };
 
             // filter by depth
@@ -205,7 +208,7 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
                 _ => read_all_fast(&dir, 0, depth),
             };
 
@@ -248,8 +251,8 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
-                _ => read_all(&dir, 0, depth, None, &None, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
+                _ => read_all(&dir, 0, depth, None, &None, false, false),
             };
 
 
@@ -285,6 +288,9 @@ fn main() {
             None
         };
 
+        // whether to clean up tagfiles generated for vim/emacs
+        let vimtags = command.is_present("tags");
+
         // decide whether to sort
         let should_sort = command.is_present("sort");
 
@@ -298,7 +304,7 @@ fn main() {
 
             // get relevant filenames &c.
             let excludes = get_excludes(command.value_of("excludes"));
-            let v = read_all(&dir, 0, depth, Some(&excludes), &None, true);
+            let v = read_all(&dir, 0, depth, Some(&excludes), &None, vimtags, true);
 
             let mut v_processed = if should_sort {
                 v.sort(num_int, min_bytes, !print_files, depth)
@@ -352,8 +358,8 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false),
-                _ => read_all(&dir, 0, depth, None, &None, false),
+                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
+                _ => read_all(&dir, 0, depth, None, &None, false, false),
             };
 
             // sort them

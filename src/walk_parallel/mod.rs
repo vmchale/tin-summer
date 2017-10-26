@@ -61,6 +61,7 @@ impl Walk {
                 w.max_depth,
                 excludes,
                 &w.gitignore,
+                false,
                 w.artifacts_only,
             )
         } else {
@@ -308,7 +309,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 
 // TODO figure out why the unwrap_or is failing?
 // FIXME take optional reference to a regex
-pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
+pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, vimtags: bool) -> () {
 
     lazy_static! {
         static ref REGEX: Regex = 
@@ -332,7 +333,8 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>) -> () {
                         .file_name()
                         .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or("".to_string()),
-                ) || latex_log(&p.path())
+                ) || latex_log(&p.path()) ||
+                ((&p.path().to_string_lossy().to_string() == "tags") && vimtags)
         })
     {
         if dir.file_type().is_file() {
