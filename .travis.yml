@@ -1,6 +1,4 @@
-# Based on the "trust" template v0.1.1
-# https://github.com/japaric/trust/tree/v0.1.1
-
+---
 dist: trusty
 language: rust
 services: docker
@@ -44,7 +42,8 @@ matrix:
       rust: nightly
     - env: TARGET=arm-unknown-linux-musleabi
       rust: nightly
-  allow_failures: 
+
+  allow_failures:
     - env: TARGET=x86_64-pc-windows-gnu
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=arm-unknown-linux-gnueabi
@@ -52,6 +51,10 @@ matrix:
     - env: TARGET=armv7-unknown-linux-musleabihf
     - env: TARGET=armv7-unknown-linux-gnueabihf
     - env: TARGET=s390x-unknown-linux-gnu DISABLE_TESTS=1
+    - env: TARGET=arm-unknown-linux-gnueabi
+    - env: TARGET=arm-unknown-linux-musleabi
+    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1
+    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
 
 before_install: set -e
 
@@ -81,7 +84,7 @@ deploy:
   # - Encrypt it: `travis encrypt 0123456789012345678901234567890123456789
   # - Paste the output down here
   api_key:
-      secure: "ivQk+/3qAGHwqhhqp35ltxrOQMRpyDyfBQ2tOxNcnCPfstLRFJo8wkv8rNfMrn0h2e0u9pr1/7PXwANURjh0tPtRR33b65WesruyZWtLtVtN+uYHQWLuMxsgN+xpO/sO6/TWiEDU0pQS5U+8Ch+V2XpganSzFYyU3Z6lO5R4sC4m2cfBEJLBwFTUp89fx6fcidNkcz7KoIKOLMsyFI/wIEkQXTv8FXorKArLXQP4KrsO9psv3sKuD+AEFfkzS396ihKbAvd0vjb9OZs98V7Fih0e2M2DYzzAR2ymKSFRjpU2agi/d5KZG2mJdn+IWfVIXpo8Y7Nc4amC4M+783fyWdxGt0Ed6vzIwPIVQmSqqE6ITluKTRS3ICe2+lgWSWHzRIg6l/aG+nGZOALeKbOUr1WC58LLFbdTToykHVFVbWRWhuDCNruGRxl4dUPw2oDTicTlpLDh4qel/YcPfCvzLoRdZ3zckuwbNseQp5eBABbk9aFioJi83bd6Na2+dZVukSWGO+u9Z4Z6HOM54keFaPdaqGSjMCX81WgQE2LGxLBtflxGNRh4jzQ2M5cpPcFunH2AYIqpkiGkYTQeWJFMik1WPfkD8CXxirCEcpN8b570fND411VInTNLRCBMW/uOQDGbAMiWwtSfCLPIVdo0nA/4wg6eVNaX5P/ntvu/ht0="
+    secure: "ivQk+/3qAGHwqhhqp35ltxrOQMRpyDyfBQ2tOxNcnCPfstLRFJo8wkv8rNfMrn0h2e0u9pr1/7PXwANURjh0tPtRR33b65WesruyZWtLtVtN+uYHQWLuMxsgN+xpO/sO6/TWiEDU0pQS5U+8Ch+V2XpganSzFYyU3Z6lO5R4sC4m2cfBEJLBwFTUp89fx6fcidNkcz7KoIKOLMsyFI/wIEkQXTv8FXorKArLXQP4KrsO9psv3sKuD+AEFfkzS396ihKbAvd0vjb9OZs98V7Fih0e2M2DYzzAR2ymKSFRjpU2agi/d5KZG2mJdn+IWfVIXpo8Y7Nc4amC4M+783fyWdxGt0Ed6vzIwPIVQmSqqE6ITluKTRS3ICe2+lgWSWHzRIg6l/aG+nGZOALeKbOUr1WC58LLFbdTToykHVFVbWRWhuDCNruGRxl4dUPw2oDTicTlpLDh4qel/YcPfCvzLoRdZ3zckuwbNseQp5eBABbk9aFioJi83bd6Na2+dZVukSWGO+u9Z4Z6HOM54keFaPdaqGSjMCX81WgQE2LGxLBtflxGNRh4jzQ2M5cpPcFunH2AYIqpkiGkYTQeWJFMik1WPfkD8CXxirCEcpN8b570fND411VInTNLRCBMW/uOQDGbAMiWwtSfCLPIVdo0nA/4wg6eVNaX5P/ntvu/ht0="
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   on:
