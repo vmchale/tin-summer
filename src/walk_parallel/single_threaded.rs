@@ -153,6 +153,8 @@ pub fn is_artifact(
             } else {
                 false
             }
+        } else if path_str == "flxg_stats.txt" {
+            true
         } else {
             false
         }

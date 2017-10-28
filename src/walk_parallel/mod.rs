@@ -334,7 +334,11 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, vimtags:
                         .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or("".to_string()),
                 ) || latex_log(&p.path()) ||
-                ((&p.path().to_string_lossy().to_string() == "tags") && vimtags)
+                (vimtags && ((&p.path().to_string_lossy().to_string()).ends_with("tags"))) ||
+                ({
+                     let x = &p.path().to_string_lossy().to_string();
+                     x.ends_with("flxg_stats.txt")
+                 })
         })
     {
         if dir.file_type().is_file() {
