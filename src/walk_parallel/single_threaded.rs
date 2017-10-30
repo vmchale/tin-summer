@@ -145,8 +145,6 @@ pub fn is_artifact(
 
         if REGEX.is_match(path_str) {
             true
-        } else if path_str == "tags" && vimtags {
-            true
         } else if let &Some(ref x) = gitignore {
             if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
                 x.is_match(full_path)
