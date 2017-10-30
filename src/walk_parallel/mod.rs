@@ -313,7 +313,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, vimtags:
 
     lazy_static! {
         static ref REGEX: Regex = 
-            Regex::new(r"(\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|go\.(v|teak|xmldef)|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz)|^tags$)$")
+            Regex::new(r"(\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|go\.(v|teak|xmldef)|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz)$")
             .unwrap();
     }
 
@@ -334,12 +334,11 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, vimtags:
                         .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or("".to_string()),
                 ) || latex_log(&p.path()) ||
-                || {
-                    ({
-                         let x = &p.path().to_string_lossy().to_string();
-                         x.ends_with("/flxg_stats.txt")
-                     })
-                }
+                (vimtags && ((&p.path().to_string_lossy().to_string()).ends_with("/tags"))) ||
+                ({
+                     let x = &p.path().to_string_lossy().to_string();
+                     x.ends_with("/flxg_stats.txt")
+                 })
         })
     {
         if dir.file_type().is_file() {
