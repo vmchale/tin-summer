@@ -51,4 +51,5 @@ verbose = []
 name = "liboskar"
 path = "src/lib.rs"
 [profile.release]
+#panic="abort"
 lto = true

@@ -45,6 +45,10 @@ matrix:
 
   # Allowed failures
   allow_failures:
+    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1
+    - env: TARGET=armv7-unknown-linux-steedeabihf DISABLE_TESTS=1
+    - env: TARGET=arm-unknown-linux-steedeabi DISABLE_TESTS=1
+    - env: TARGET=aarch64-unknown-linux-steed DISABLE_TESTS=1
     - env: TARGET=x86_64-pc-windows-gnu
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=arm-unknown-linux-gnueabi
