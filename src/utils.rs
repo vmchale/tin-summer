@@ -24,7 +24,8 @@ pub fn size(m: &Metadata, _: bool) -> u64 {
     m.len()
 }
 
-#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd"))]
+#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd",
+            target_os = "solaris"))]
 pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks {
         m.blocks() * 512 // idk if this is correct on bsd/linux

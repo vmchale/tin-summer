@@ -3,7 +3,7 @@
 [![Windows build status](https://ci.appveyor.com/api/projects/status/github/vmchale/tin-summer?svg=true)](https://ci.appveyor.com/project/vmchale/tin-summer)
 [![Build Status](https://travis-ci.org/vmchale/tin-summer.svg?branch=master)](https://travis-ci.org/vmchale/tin-summer)
 [![](https://img.shields.io/crates/d/tin-summer.svg)](https://crates.io/crates/tin-summer)
-[![](https://tokei.rs/b1/github/vmchale/tin-summer?category=code)](https://github.com/Aaronepower/tin-summer)
+[![](https://tokei.rs/b1/github/vmchale/tin-summer?category=code)](https://github.com/Aaronepower/tokei)
 
 If you do a significant amount of programming, you'll probably end up with
 build artifacts scattered about. `sn` is a tool to help you find those
