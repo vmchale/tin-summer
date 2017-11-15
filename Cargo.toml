@@ -45,7 +45,8 @@ deutsch = []
 english = []
 fish = []
 francais = []
-verbose = []
+simd = [ "regex/simd-accel" ]
+pattern = [ "regex/pattern" ]
 
 [lib]
 name = "liboskar"

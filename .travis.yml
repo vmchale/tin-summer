@@ -11,13 +11,13 @@ env:
 matrix:
   include:
     # Linux
-    - env: TARGET=x86_64-unknown-linux-gnu
+    - env: TARGET=x86_64-unknown-linux-gnu FEATURES="simd pattern"
       rust: nightly
-    - env: TARGET=x86_64-unknown-linux-musl
+    - env: TARGET=x86_64-unknown-linux-musl FEATURES="simd"
       rust: nightly
 
     # OSX
-    - env: TARGET=x86_64-apple-darwin
+    - env: TARGET=x86_64-apple-darwin FEATURES="simd pattern"
       os: osx
       rust: nightly
 
