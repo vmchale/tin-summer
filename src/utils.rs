@@ -11,7 +11,8 @@ use std::fs::Metadata;
 #[cfg(target_os = "linux")]
 use std::os::linux::fs::MetadataExt;
 
-#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd"))]
+#[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd",
+            target_os = "solaris"))]
 use std::os::unix::fs::MetadataExt;
 
 #[cfg(target_os = "linux")]
