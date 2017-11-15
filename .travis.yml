@@ -11,20 +11,20 @@ env:
 matrix:
   include:
     # Linux
-    - env: TARGET=x86_64-unknown-linux-gnu FEATURES="simd pattern"
+    - env: TARGET=x86_64-unknown-linux-gnu  # FEATURES="simd pattern"
       rust: nightly
-    - env: TARGET=x86_64-unknown-linux-musl FEATURES="simd"
+    - env: TARGET=x86_64-unknown-linux-musl  # FEATURES="simd"
       rust: nightly
 
     # OSX
-    - env: TARGET=x86_64-apple-darwin FEATURES="simd pattern"
+    - env: TARGET=x86_64-apple-darwin  # FEATURES="simd pattern"
       os: osx
       rust: nightly
 
     # *BSD
-    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1  # FEATURES="simd"
       rust: nightly
-    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1  # FEATURES="simd"
       rust: nightly
 
     # Other architectures
@@ -42,15 +42,15 @@ matrix:
       rust: nightly
     - env: TARGET=arm-unknown-linux-musleabi
       rust: nightly
-    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
       rust: nightly
     - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1
       rust: nightly
     - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
       rust: nightly
-    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
       rust: nightly
-    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1  # FEATURES="simd"
       rust: nightly
     - env: TARGET=armv7-unknown-linux-steedeabihf DISABLE_TESTS=1
       rust: nightly
@@ -81,8 +81,8 @@ matrix:
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1
     - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
-    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1 FEATURES="simd"
-    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1 FEATURES="simd"
+    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
+    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
 
 before_install: set -e
 
