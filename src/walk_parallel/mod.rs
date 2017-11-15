@@ -309,7 +309,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 
 // TODO figure out why the unwrap_or is failing?
 // FIXME take optional reference to a regex
-pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, vimtags: bool) -> () {
+pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool) -> () {
 
     lazy_static! {
         static ref REGEX: Regex = 
@@ -366,7 +366,7 @@ pub fn print_parallel(w: Walk) -> () {
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);
 
-    let spawn_workers = (&w.path).is_file();
+    let _ = (&w.path).is_file();
 
     // create the producer in another thread
     let child_producer = thread::spawn(move || {
