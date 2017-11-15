@@ -42,6 +42,18 @@ matrix:
       rust: nightly
     - env: TARGET=arm-unknown-linux-musleabi
       rust: nightly
+    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=armv7-unknown-linux-steedeabihf DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=arm-unknown-linux-steedeabi DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=aarch64-unknown-linux-steed DISABLE_TESTS=1
+      rust: nightly
 
   # Allowed failures
   allow_failures:
