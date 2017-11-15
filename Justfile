@@ -4,5 +4,8 @@ name:
 check:
     git diff master origin/master
 
+minor:
+    cargo release -l minor --no-dev-version
+
 patch:
     cargo release -l patch --no-dev-version
