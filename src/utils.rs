@@ -12,7 +12,7 @@ use std::fs::Metadata;
 use std::os::linux::fs::MetadataExt;
 
 #[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd",
-            target_os = "solaris"))]
+            target_os = "dragonfly", target_os = "solaris"))]
 use std::os::unix::fs::MetadataExt;
 
 #[cfg(target_os = "linux")]
@@ -20,13 +20,13 @@ pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks { m.st_blocks() * 512 } else { m.len() }
 }
 
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "redox"))]
 pub fn size(m: &Metadata, _: bool) -> u64 {
     m.len()
 }
 
 #[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "netbsd",
-            target_os = "solaris"))]
+            target_os = "dragonfly", target_os = "solaris"))]
 pub fn size(m: &Metadata, blocks: bool) -> u64 {
     if blocks {
         m.blocks() * 512 // idk if this is correct on bsd/linux
