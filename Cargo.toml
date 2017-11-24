@@ -29,9 +29,7 @@ num_cpus = "1.6.2"
 pad = "0.1.4"
 walkdir = "1.0.7"
 
-# FIXME this should be optional (the simd part)
 [dependencies.regex]
-#features = ["simd-accel"]
 version = "0.2"
 
 [dependencies.clap]

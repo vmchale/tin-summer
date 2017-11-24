@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff)$)")
+            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|.pulp-cache)$)")
             .unwrap();
     }
 
@@ -66,6 +66,11 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             "elm-stuff" => {
                 let mut package_path = PathBuf::from(p);
                 package_path.push("../elm-package.json");
+                package_path.exists()
+            }
+            ".pulp-cache" => {
+                let mut package_path = PathBuf::from(p);
+                package_path.push("../package.json");
                 package_path.exists()
             }
             "build" | "dist" | "dist-newstyle" => {
