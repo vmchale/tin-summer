@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|.pulp-cache|.psc-package|output)$)")
+            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|.pulp-cache|.psc-package|output|bower_components)$)")
             .unwrap();
     }
 
@@ -79,6 +79,11 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_string.push_str("/../*.cabal");
                 cabal_project.push("../cabal.project");
                 parent_path.exists() || glob_exists(&parent_string) || cabal_project.exists()
+            }
+            "bower_components" => {
+                let mut package_path = PathBuf::from(p);
+                package_path.push("../bower.json");
+                package_path.exists()
             }
             _ => {
                 let mut parent_path_latex = parent_path.clone();
