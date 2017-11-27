@@ -91,6 +91,8 @@
   - [x] TeX
   - [x] elm
   - [x] python
+  - [x] purescript
+  - [ ] OCaml
 - [ ] .deb should include completions and manpages.
 
 # Tests
