@@ -17,7 +17,16 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
-    cross rustc --bin sn --target $TARGET --release -- -C lto
+    if [ "$TARGET" = "x86_64-unknown-redox" ]; then
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AA12E97F0881517F
+        sudo add-apt-repository 'deb https://static.redox-os.org/toolchain/apt /'
+        sudo apt update
+        sudo apt install x86-64-unknown-redox-gcc
+        rustup target add x86_64-unknown-redox
+        cargo build --bin hr --target $TARGET --release
+    else
+        cross rustc --bin hr --target $TARGET --release -- -C lto
+    fi
 
     cp target/$TARGET/release/sn $stage/
 
