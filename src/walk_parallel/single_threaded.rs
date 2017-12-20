@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((.stack-work|.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|.pulp-cache|.psc-package|output|bower_components)$)")
+            Regex::new(r"_minted|((\.stack-work|\.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components)$)")
             .unwrap();
     }
 
@@ -44,6 +44,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
         let mut parent_path = PathBuf::from(p);
         let mut parent_string = p.to_owned();
         match name {
+            // TODO .liquid
             ".stack-work" => {
                 let mut hpack = parent_path.clone();
                 parent_path.push("cabal.project");
@@ -140,7 +141,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|js)$")
+            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|ll|js)$")
             .unwrap();
     }
 
@@ -149,7 +150,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r"\.(a|la|lo|o|ll|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
+                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
                 .unwrap();
         }
 
@@ -181,7 +182,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|\.js)$")
+            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|ll|\.js)$")
             .unwrap();
     }
 
@@ -189,7 +190,7 @@ pub fn is_artifact(
 
         lazy_static! {
             static ref REGEX: Regex = 
-                Regex::new(r"\.(exe|a|la|o|ll|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|tix)$")
+                Regex::new(r"\.(exe|a|la|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|tix)$")
                 .unwrap();
         }
 

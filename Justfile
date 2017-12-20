@@ -1,5 +1,5 @@
 install:
-    cargo install --features="simd pattern" --force
+    cargo install tin-summer --features="simd pattern" --force
 
 name:
     github-release edit -s $(cat .git-token) -u vmchale -r tin-summer -n "$(madlang run ~/programming/madlang/releases/releases.mad)" -t "$(grep -P -o '\d+\.\d+\.\d+' Cargo.toml | head -n1)"
