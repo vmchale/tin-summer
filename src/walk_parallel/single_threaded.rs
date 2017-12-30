@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((\.stack-work|\.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components)$)")
+            Regex::new(r"_minted|((\.stack-work|\.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|\.liquid)$)")
             .unwrap();
     }
 
@@ -44,7 +44,6 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
         let mut parent_path = PathBuf::from(p);
         let mut parent_string = p.to_owned();
         match name {
-            // TODO .liquid
             ".stack-work" => {
                 let mut hpack = parent_path.clone();
                 parent_path.push("cabal.project");
@@ -59,6 +58,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             "target" => {
                 parent_path.push("../Cargo.toml");
                 parent_path.exists()
+            }
+            ".liquid" => {
+                parent_string.push_str("/../*.hs");
+                glob_exists(&parent_string)
             }
             ".reco-work" => {
                 parent_path.push("../main.go");
@@ -112,7 +115,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// Explanation of extensions:
 /// - `.a`, `.la`, `.o`, `.lo`, `.so.*`:
 /// - `.S`: assembly
-/// - .ll, `.bc`: llvm
+/// - `.bc`: llvm
 /// - `.keter`: keter
 /// - `.d`: make
 /// - `.rlib`, `.crate`: rust
