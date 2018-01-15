@@ -28,6 +28,7 @@ fn main() {
         .setting(AppSettings::SubcommandRequired)
         .get_matches();
 
+    // TODO this should install manpages?
     if let Some(x) = matches.subcommand_matches("update") {
 
         let force = x.is_present("force");

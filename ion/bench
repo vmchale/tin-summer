@@ -9,7 +9,7 @@ let CLICOLOR=0
 let reports = "false"
 let parallel = "true"
 let benchpath = "reports/bench.html"
-let path = $HOME
+let path = $HOME/programming
 for x in @args
     if test $x = "+reports"
         let reports = "true"
