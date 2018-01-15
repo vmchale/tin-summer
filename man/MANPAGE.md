@@ -16,11 +16,32 @@ optionally clean them.
 
 # OPTIONS
 
-**-h**, **--help**
+**-h**, **-\-help**
 :   Display help
 
-**-v**, **--version**
+**-v**, **-\-version**
 :   Display version information
+
+**-a**, **-\-all**
+:   Display all directory entries
+
+**-f**, **-\-files**
+:   Display files in addition to directories
+
+**-o**, **-\-sort**
+:   Sort results by size
+
+**-j**, **-\-threads**
+:   Set number of threads to be used
+
+**-d**, **-\-depth**
+:   Set maximum depth for which to print results (default 2)
+
+**-e**, **-\-exclude**
+:   Regular expression defining files or directories to exclude
+
+**-t**, **-\-threshold**
+:   Set a minimum file size for entries to be reported
 
 # SUBCOMMANDS
 

@@ -14,13 +14,48 @@ sn [OPTION]\&... <subcommand> [DIRECTORY]\&... [OPTION]\&...
 It can also optionally clean them.
 .SH OPTIONS
 .TP
-.B \f[B]\-h\f[], \f[B]\[en]help\f[]
+.B \f[B]\-h\f[], \f[B]\-\-help\f[]
 Display help
 .RS
 .RE
 .TP
-.B \f[B]\-v\f[], \f[B]\[en]version\f[]
+.B \f[B]\-v\f[], \f[B]\-\-version\f[]
 Display version information
+.RS
+.RE
+.TP
+.B \f[B]\-a\f[], \f[B]\-\-all\f[]
+Display all directory entries
+.RS
+.RE
+.TP
+.B \f[B]\-f\f[], \f[B]\-\-files\f[]
+Display files in addition to directories
+.RS
+.RE
+.TP
+.B \f[B]\-o\f[], \f[B]\-\-sort\f[]
+Sort results by size
+.RS
+.RE
+.TP
+.B \f[B]\-j\f[], \f[B]\-\-threads\f[]
+Set number of threads to be used
+.RS
+.RE
+.TP
+.B \f[B]\-d\f[], \f[B]\-\-depth\f[]
+Set maximum depth for which to print results (default 2)
+.RS
+.RE
+.TP
+.B \f[B]\-e\f[], \f[B]\-\-exclude\f[]
+Regular expression defining files or directories to exclude
+.RS
+.RE
+.TP
+.B \f[B]\-t\f[], \f[B]\-\-threshold\f[]
+Set a minimum file size for entries to be reported
 .RS
 .RE
 .SH SUBCOMMANDS
