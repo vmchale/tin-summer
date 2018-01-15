@@ -1,5 +1,5 @@
 name: The Tin Summer
-author: Vanessa McHale <vanessa.mchale@reconfigure.io>
+author: Vanessa McHale <vamchale@gmail.com>
 about: Tool to find large files and project build artifacts. Can also find directory sizes. Unlikely to shatter glass.
 after_help: >
     The Tin Summer is a replacement for du written in Rust. You can consult 'man tin-summer' for more detailed information.
