@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((\.stack-work|\.reco-work|dist|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|\.liquid)$)")
+            Regex::new(r"_minted|((\.stack-work|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
             .unwrap();
     }
 
@@ -59,6 +59,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_path.push("../Cargo.toml");
                 parent_path.exists()
             }
+            ".criterion" => {
+                parent_path.push("../Cargo.toml");
+                parent_path.exists()
+            }
             ".liquid" => {
                 parent_string.push_str("/../*.hs");
                 glob_exists(&parent_string)
@@ -77,7 +81,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.push("../psc-package.json");
                 package_path.exists()
             }
-            "build" | "dist" | "dist-newstyle" => {
+            "build" | "dist" | ".cabal-sandbox" | "dist-newstyle" => {
                 let mut cabal_project = parent_path.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
@@ -89,6 +93,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.push("../bower.json");
                 package_path.exists()
             }
+            "node_modules" => { true }
             _ => {
                 let mut parent_path_latex = parent_path.clone();
                 parent_path.push("../setup.py");
@@ -115,9 +120,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// Explanation of extensions:
 /// - `.a`, `.la`, `.o`, `.lo`, `.so.*`:
 /// - `.S`: assembly
-/// - `.bc`: llvm
+/// - `.ll`, `.bc`: llvm
 /// - `.keter`: keter
 /// - `.d`: make
+/// - `.c`: ATS
 /// - `.rlib`, `.crate`: rust
 /// - `.hi`, `.hc`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`: GHC
 /// - `.webapp`: Web app manifest
@@ -144,7 +150,7 @@ pub fn is_artifact(
 
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex = 
-            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|ll|js)$")
+            Regex::new(r"\.(stats|conf|h|c|out|cache.*|dat|pc|info|ll|js)$")
             .unwrap();
     }
 

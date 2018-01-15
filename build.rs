@@ -4,11 +4,17 @@
 
 #[macro_use]
 extern crate clap;
+extern crate cli_setup;
 
+use cli_setup::*;
 use clap::Shell;
 use clap::App;
 
+pub const MAN_SN: &'static str = include_str!("man/tin-summer.1");
+
 fn main() {
+
+    setup_manpages(MAN_SN, "tin-summer");
 
     // load configuration
     #[cfg(feature = "english")]
