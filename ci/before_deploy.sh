@@ -23,9 +23,9 @@ main() {
         sudo apt update
         sudo apt install x86-64-unknown-redox-gcc
         rustup target add x86_64-unknown-redox
-        cargo build --bin hr --target $TARGET --release
+        cargo build --bin sn --target $TARGET --release
     else
-        cross rustc --bin hr --target $TARGET --release -- -C lto
+        cross rustc --bin sn --target $TARGET --release -- -C lto
     fi
 
     cp target/$TARGET/release/sn $stage/
