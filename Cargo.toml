@@ -15,8 +15,9 @@ license-file = ["LICENSE"]
 [[bin]]
 name = "sn"
 path = "src/main.rs"
+
 [build-dependencies]
-cli-setup = "0.1.0"
+cli-setup = "0.1"
 [build-dependencies.clap]
 features = ["yaml"]
 version = "2.29.0"
