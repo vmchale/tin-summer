@@ -7,11 +7,7 @@ sn - check file size and view or clean artifacts
 
 # SYNOPSIS
 
-  sn parallel \<dir\>
-
-  sn artifacts \<dir\>
-
-  sn clean \<dir\>
+  sn [OPTION]... \<subcommand\> [DIRECTORY]... [OPTION]...
 
 # DESCRIPTION
 
@@ -25,6 +21,35 @@ optionally clean them.
 
 **-v**, **--version**
 :   Display version information
+
+# SUBCOMMANDS
+
+**artifacts**, **ar**, **r**
+:   Print out file sizes of build artifacts
+
+**clean**, **c**
+:   Clean build artifacts
+
+**files**, **l**
+:   Show all file sizes, not just directory sizes
+
+**directories**, **d**, **dir**
+:   Show only directory sizes
+
+**fat**, **f**
+:   Show only large directories
+
+**parallel**, **p**
+:   Same as **directories**, but in parallel.
+
+**sort**, **o**
+:   Sort results by size
+
+**update**, **u**
+:   Update to latest release
+
+**help**
+:   Display help
 
 # EXAMPLES
 
@@ -41,5 +66,5 @@ sn d .
 ```
 
 ```
-sn ar -e forks
+sn ar ~/work -e forks
 ```

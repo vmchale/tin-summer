@@ -2,8 +2,7 @@ name: The Tin Summer
 author: Vanessa McHale <vanessa.mchale@reconfigure.io>
 about: Tool to find large files and project build artifacts. Can also find directory sizes. Unlikely to shatter glass.
 after_help: >
-    The Tin Summer is a replacement for du written in Rust. It's currently not quite as stable,
-    but it's already faster, prettier, and easier to use.
+    The Tin Summer is a replacement for du written in Rust. You can consult 'man tin-summer' for more detailed information.
 subcommands:
     - update:
         visible_alias: "u"
