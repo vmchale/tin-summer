@@ -7,11 +7,7 @@
 sn \- check file size and view or clean artifacts
 .SH SYNOPSIS
 .PP
-sn parallel <dir>
-.PP
-sn artifacts <dir>
-.PP
-sn clean <dir>
+sn [OPTION]\&... <subcommand> [DIRECTORY]\&... [OPTION]\&...
 .SH DESCRIPTION
 .PP
 \f[B]sn\f[] is a command\-line tool to sniff out build artifacts.
@@ -27,11 +23,75 @@ Display help
 Display version information
 .RS
 .RE
+.SH SUBCOMMANDS
+.TP
+.B \f[B]artifacts\f[], \f[B]ar\f[], \f[B]r\f[]
+Print out file sizes of build artifacts
+.RS
+.RE
+.TP
+.B \f[B]clean\f[], \f[B]c\f[]
+Clean build artifacts
+.RS
+.RE
+.TP
+.B \f[B]files\f[], \f[B]l\f[]
+Show all file sizes, not just directory sizes
+.RS
+.RE
+.TP
+.B \f[B]directories\f[], \f[B]d\f[], \f[B]dir\f[]
+Show only directory sizes
+.RS
+.RE
+.TP
+.B \f[B]fat\f[], \f[B]f\f[]
+Show only large directories
+.RS
+.RE
+.TP
+.B \f[B]parallel\f[], \f[B]p\f[]
+Same as \f[B]directories\f[], but in parallel.
+.RS
+.RE
+.TP
+.B \f[B]sort\f[], \f[B]o\f[]
+Sort results by size
+.RS
+.RE
+.TP
+.B \f[B]update\f[], \f[B]u\f[]
+Update to latest release
+.RS
+.RE
+.TP
+.B \f[B]help\f[]
+Display help
+.RS
+.RE
 .SH EXAMPLES
 .IP
 .nf
 \f[C]
 sn\ p\ ~
+\f[]
+.fi
+.IP
+.nf
+\f[C]
+sn\ c
+\f[]
+.fi
+.IP
+.nf
+\f[C]
+sn\ d\ .
+\f[]
+.fi
+.IP
+.nf
+\f[C]
+sn\ ar\ ~/work\ \-e\ forks
 \f[]
 .fi
 .SH AUTHORS
