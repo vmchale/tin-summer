@@ -6,7 +6,6 @@ use std::path::PathBuf;
 /// Given a darcs boring file's contents, process it as a `RegexSet`. The second
 /// argument is a file path, included so that we print nice errors.
 pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
-
     let processed_vec: Vec<&str> = process_darcs_full(file, file_path);
     let processed_str: String = processed_vec.join("");
     let lines = processed_str.split_whitespace();
@@ -23,7 +22,6 @@ pub fn darcs_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
         let empty: Vec<&str> = Vec::new();
         RegexSet::new(empty).expect("Error creating regex from empty vector")
     }
-
 }
 
 /// Given a `.gitignore` or `.ignore` file's contents, process it as a `RegexSet`. The second

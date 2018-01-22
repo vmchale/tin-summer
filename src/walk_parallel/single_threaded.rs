@@ -1,7 +1,7 @@
 extern crate glob;
 
 use std::fs;
-use regex::{RegexSet, Regex};
+use regex::{Regex, RegexSet};
 use utils::*;
 use std::path::PathBuf;
 use colored::*;
@@ -35,8 +35,8 @@ pub fn glob_exists(s: &str) -> bool {
 pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
-        static ref REGEX_PROJECT_DIR: Regex = 
-            Regex::new(r"_minted|((\.stack-work|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
+        static ref REGEX_PROJECT_DIR: Regex =
+            Regex::new(r"_minted|((\.stack-work|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
             .unwrap();
     }
 
@@ -56,7 +56,13 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 glob_exists(&parent_string)
             }
             "target" => {
+                let mut dhall = parent_path.clone();
+                dhall.push("../atspkg.dhall");
                 parent_path.push("../Cargo.toml");
+                parent_path.exists() || dhall.exists()
+            }
+            ".atspkg" => {
+                parent_path.push("atspkg.dhall");
                 parent_path.exists()
             }
             ".criterion" => {
@@ -93,22 +99,20 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.push("../bower.json");
                 package_path.exists()
             }
-            "node_modules" => { true }
+            "node_modules" => true,
             _ => {
                 let mut parent_path_latex = parent_path.clone();
                 parent_path.push("../setup.py");
                 parent_path_latex.push("../*.tex");
-                (parent_path.exists() && str::ends_with(name, ".egg-info")) ||
-                    (glob_exists(&parent_path_latex.to_string_lossy()) &&
-                         str::starts_with(name, "_minted"))
+                (parent_path.exists() && str::ends_with(name, ".egg-info"))
+                    || (glob_exists(&parent_path_latex.to_string_lossy())
+                        && str::starts_with(name, "_minted"))
             }
         }
     } else {
         false
     }
-
 }
-
 
 /// Helper function to determine whether a path points
 ///
@@ -147,18 +151,16 @@ pub fn is_artifact(
     vimtags: bool,
     gitignore: &Option<RegexSet>,
 ) -> bool {
-
     lazy_static! {
-        static ref REGEX_GITIGNORE: Regex = 
+        static ref REGEX_GITIGNORE: Regex =
             Regex::new(r"\.(stats|conf|h|c|out|cache.*|dat|pc|info|ll|js)$")
             .unwrap();
     }
 
     // otherwise, use builtin expressions
     {
-
         lazy_static! {
-            static ref REGEX: Regex = 
+            static ref REGEX: Regex =
                 Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
                 .unwrap();
         }
@@ -188,17 +190,15 @@ pub fn is_artifact(
     _: &Metadata,
     gitignore: &Option<RegexSet>,
 ) -> bool {
-
     lazy_static! {
-        static ref REGEX_GITIGNORE: Regex = 
+        static ref REGEX_GITIGNORE: Regex =
             Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|ll|\.js)$")
             .unwrap();
     }
 
     {
-
         lazy_static! {
-            static ref REGEX: Regex = 
+            static ref REGEX: Regex =
                 Regex::new(r"\.(exe|a|la|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|tix)$")
                 .unwrap();
         }
@@ -225,7 +225,6 @@ pub fn read_size(
     vimtags: bool,
     artifacts_only: bool,
 ) -> FileSize {
-
     // attempt to read the .gitignore
     let mut size = FileSize::new(0);
     let gitignore = if artifacts_only {
@@ -236,7 +235,6 @@ pub fn read_size(
 
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
-
         // iterate over all the entries in the directory
         for p in paths {
             let val = match p {
@@ -264,24 +262,21 @@ pub fn read_size(
             // only consider path if we're not using regex excludes or
             // if they don't match the exclusion regex
             if bool_loop {
-
                 let path_type = val.file_type().unwrap(); // ok because we already checked
 
                 // append file size/name for a file
                 if path_type.is_file() {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
-                        if !artifacts_only ||
-                            {
-                                is_artifact(
-                                    val.file_name().to_str().unwrap(), // ok because we already checked
-                                    path_string,
-                                    &metadata, // FIXME check metadata only when we know it matches gitignore
-                                    vimtags,
-                                    &gitignore,
-                                )
-                            }
-                        {
+                        if !artifacts_only || {
+                            is_artifact(
+                                val.file_name().to_str().unwrap(), // ok because we already checked
+                                path_string,
+                                &metadata, // FIXME check metadata only when we know it matches gitignore
+                                vimtags,
+                                &gitignore,
+                            )
+                        } {
                             // should check size before whether it's an artifact?
                             let file_size = FileSize::new(metadata.len());
                             size.add(file_size);
@@ -290,8 +285,8 @@ pub fn read_size(
                 }
                 // otherwise, go deeper
                 else if path_type.is_dir() {
-                    let dir_size = if artifacts_only &&
-                        is_project_dir(path_string, val.file_name().to_str().unwrap())
+                    let dir_size = if artifacts_only
+                        && is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
                         read_size(&path, excludes, &gitignore, vimtags, false)
                     } else {
@@ -349,7 +344,6 @@ pub fn read_all(
     vimtags: bool,
     artifacts_only: bool,
 ) -> FileTree {
-
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
     let gitignore = if artifacts_only {
@@ -360,7 +354,6 @@ pub fn read_all(
 
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
-
         // iterate over all the entries in the directory
         for p in paths {
             // TODO consider a filter on the iterator!
@@ -391,7 +384,6 @@ pub fn read_all(
             // only consider path if we're not using regex excludes or if they don't match the
             // exclusion regex
             if bool_loop {
-
                 let path_type = val.file_type().unwrap(); // ok because we already checked
 
                 // append file size/name for a file
@@ -399,17 +391,15 @@ pub fn read_all(
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
                         // faster on Windows
-                        if !artifacts_only ||
-                            {
-                                is_artifact(
-                                    val.file_name().to_str().unwrap(), // ok because we already checked
-                                    path_string,
-                                    &metadata,
-                                    vimtags,
-                                    &gitignore,
-                                )
-                            }
-                        {
+                        if !artifacts_only || {
+                            is_artifact(
+                                val.file_name().to_str().unwrap(), // ok because we already checked
+                                path_string,
+                                &metadata,
+                                vimtags,
+                                &gitignore,
+                            )
+                        } {
                             let file_size = FileSize::new(metadata.len());
                             tree.push(path_string.to_string(), file_size, None, depth + 1, false);
                         }
@@ -419,16 +409,14 @@ pub fn read_all(
                 else if path_type.is_dir() {
                     if let Some(d) = max_depth {
                         if depth + 1 >= d && !artifacts_only {
-                            let dir_size = {
-                                read_size(&path, excludes, &gitignore, vimtags, artifacts_only)
-                            };
+                            let dir_size =
+                                { read_size(&path, excludes, &gitignore, vimtags, artifacts_only) };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
-                        } else if artifacts_only &&
-                                   is_project_dir(path_string, val.file_name().to_str().unwrap())
+                        } else if artifacts_only
+                            && is_project_dir(path_string, val.file_name().to_str().unwrap())
                         {
-                            let dir_size = {
-                                read_size(&path, excludes, &gitignore, vimtags, false)
-                            };
+                            let dir_size =
+                                { read_size(&path, excludes, &gitignore, vimtags, false) };
                             tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                         } else {
                             let mut subtree = read_all(
@@ -449,12 +437,10 @@ pub fn read_all(
                                 true,
                             );
                         }
-                    } else if artifacts_only &&
-                               is_project_dir(path_string, val.file_name().to_str().unwrap())
+                    } else if artifacts_only
+                        && is_project_dir(path_string, val.file_name().to_str().unwrap())
                     {
-                        let dir_size = {
-                            read_size(&path, excludes, &gitignore, vimtags, false)
-                        };
+                        let dir_size = { read_size(&path, excludes, &gitignore, vimtags, false) };
                         tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let mut subtree = read_all(
@@ -497,7 +483,6 @@ pub fn read_all(
     }
     // 2: check the path is actually a directory
     else if !in_paths.is_dir() {
-
         if artifacts_only {
             eprintln!(
                 "{}: {} is not a directory; not searching for artifacts",
@@ -533,13 +518,11 @@ pub fn read_no_excludes(
     _: &Option<RegexSet>,
     _: bool,
 ) -> FileSize {
-
     // attempt to read the .gitignore
     let mut size = FileSize::new(0);
 
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
-
         // iterate over all the entries in the directory
         for p in paths {
             let val = match p {
@@ -602,13 +585,11 @@ pub fn read_no_excludes(
 
 /// Function to process directory contents and return a `FileTree` struct.
 pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> FileTree {
-
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
 
     // try to read directory contents
     if let Ok(paths) = fs::read_dir(in_paths) {
-
         // iterate over all the entries in the directory
         for p in paths {
             let val = match p {
@@ -660,9 +641,7 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
                             );
                             ""
                         };
-                        let dir_size = {
-                            read_no_excludes(&path, None, &None, false)
-                        };
+                        let dir_size = { read_no_excludes(&path, None, &None, false) };
                         tree.push(path_string.to_string(), dir_size, None, depth + 1, true);
                     } else {
                         let path = val.path();
@@ -722,7 +701,6 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
     }
     // 2: check the path is actually a directory
     else if !in_paths.is_dir() {
-
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();
             let to_formatted = format!("{}", FileSize::new(size));
