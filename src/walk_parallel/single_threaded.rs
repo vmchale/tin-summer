@@ -58,8 +58,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             "target" => {
                 let mut dhall = parent_path.clone();
                 dhall.push("../atspkg.dhall");
+                let mut shake = parent_path.clone();
+                shake.push("../shake.hs");
                 parent_path.push("../Cargo.toml");
-                parent_path.exists() || dhall.exists()
+                parent_path.exists() || dhall.exists() || shake.exists()
             }
             ".atspkg" => {
                 parent_path.push("atspkg.dhall");
@@ -157,6 +159,7 @@ pub fn is_artifact(
             .unwrap();
     }
 
+    // TODO - *_dats.c and *_lats.dats
     // otherwise, use builtin expressions
     {
         lazy_static! {

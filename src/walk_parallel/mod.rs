@@ -8,13 +8,14 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::fs;
 use self::crossbeam::sync::chase_lev;
 use self::walkdir::WalkDir;
-use regex::{RegexSet, Regex};
+use regex::{Regex, RegexSet};
 use std::path::PathBuf;
 use colored::*;
 use std::process::exit;
 use utils::size;
 use std::thread;
 use error::*;
+use std::ffi::OsStr;
 use types::FileSize;
 use std::path::Path;
 
@@ -48,7 +49,6 @@ impl Walk {
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
     /// and will add the relevant directory sizes to it.
     pub fn print_dir(w: Walk, total: Arc<AtomicU64>) -> () {
-
         let excludes = match w.excludes {
             Some(ref x) => Some(x),
             _ => None,
@@ -57,7 +57,7 @@ impl Walk {
         let v = if excludes.is_some() || w.artifacts_only {
             read_all(
                 &w.path,
-                (w.start_depth as u8),
+                w.start_depth as u8,
                 w.max_depth,
                 excludes,
                 &w.gitignore,
@@ -65,7 +65,7 @@ impl Walk {
                 w.artifacts_only,
             )
         } else {
-            read_all_fast(&w.path, (w.start_depth as u8), w.max_depth)
+            read_all_fast(&w.path, w.start_depth as u8, w.max_depth)
         };
 
         let subdir_size = v.file_size.get();
@@ -157,12 +157,10 @@ impl Walk {
         worker: &mut chase_lev::Worker<Status<Walk>>,
         total: Arc<AtomicU64>,
     ) {
-
         let in_paths = &w.path;
 
         // fill up queue + print out files
         if let Ok(paths) = fs::read_dir(in_paths) {
-
             // iterate over all the entries in the directory
             for p in paths {
                 let val = match p {
@@ -230,13 +228,11 @@ impl Walk {
                                 }
                             }
                         }
-                        _ => {
-                            eprintln!(
-                                "{}: could not determine file type for: {}",
-                                "Warning".yellow(),
-                                val.path().display()
-                            )
-                        }
+                        _ => eprintln!(
+                            "{}: could not determine file type for: {}",
+                            "Warning".yellow(),
+                            val.path().display()
+                        ),
                     }
                 }
             }
@@ -244,7 +240,6 @@ impl Walk {
             // send "done" messages to all the workers
             let iter = 0..(w.get_proc());
             iter.map(|_| worker.push(Status::Done)).count();
-
         }
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
@@ -281,14 +276,24 @@ impl Walk {
                 &in_paths.display()
             );
         }
+    }
+}
 
+fn ats_cgen(p: Option<&OsStr>) -> bool {
+    lazy_static! {
+        static ref DATS_C: Regex =
+            Regex::new(r"(_dats\.c|_lats\.dats)$")
+            .unwrap();
+    }
+    match p {
+        Some(p) => DATS_C.is_match(&p.to_string_lossy().to_string()),
+        None => false,
     }
 }
 
 fn latex_log<P: AsRef<Path>>(p: P) -> bool {
-
     lazy_static! {
-        static ref LOG: Regex = 
+        static ref LOG: Regex =
             Regex::new(r"\.log$")
             .unwrap();
     }
@@ -304,15 +309,13 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
     } else {
         false
     }
-
 }
 
 // TODO figure out why the unwrap_or is failing?
 // FIXME take optional reference to a regex
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool) -> () {
-
     lazy_static! {
-        static ref REGEX: Regex = 
+        static ref REGEX: Regex =
             Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
             .unwrap();
     }
@@ -321,25 +324,24 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|p| {
-            exclude.clone().map(|e| {
-                e.is_match(&p.path().to_string_lossy().to_string())
-            }) != Some(false)
+            exclude
+                .clone()
+                .map(|e| e.is_match(&p.path().to_string_lossy().to_string()))
+                != Some(false)
         })
         .filter(|p| {
-            REGEX.is_match(&p.path().to_string_lossy().to_string()) ||
-                is_project_dir(
+            REGEX.is_match(&p.path().to_string_lossy().to_string())
+                || is_project_dir(
                     &p.path().to_string_lossy().to_string(),
                     &p.path()
                         .file_name()
                         .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or("".to_string()),
-                ) || latex_log(&p.path()) ||
-                ({
-                     let x = &p.path().to_string_lossy().to_string();
-                     x.ends_with("/flxg_stats.txt")
-                 })
-        })
-    {
+                ) || latex_log(&p.path()) || ats_cgen(p.path().file_name()) || ({
+                let x = &p.path().to_string_lossy().to_string();
+                x.ends_with("/flxg_stats.txt")
+            })
+        }) {
         if dir.file_type().is_file() {
             fs::remove_file(dir.path()).unwrap_or(());
         } else if dir.file_type().is_dir() {
@@ -351,7 +353,6 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool)
 /// Given a 'Walk' struct, traverse it concurrently and print out any relevant outputs.
 /// Currently, this only works for a depth of two, which is probably bad.
 pub fn print_parallel(w: Walk) -> () {
-
     // initialize the total at 0 and create a reference to it
     let val = AtomicU64::new(0);
     let arc = Arc::new(val);
@@ -360,8 +361,10 @@ pub fn print_parallel(w: Walk) -> () {
     let path_display = w.path.clone();
 
     // set up worker & stealer
-    let (mut worker, stealer): (chase_lev::Worker<Status<Walk>>,
-                                chase_lev::Stealer<Status<Walk>>) = chase_lev::deque();
+    let (mut worker, stealer): (
+        chase_lev::Worker<Status<Walk>>,
+        chase_lev::Stealer<Status<Walk>>,
+    ) = chase_lev::deque();
 
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);
@@ -370,7 +373,6 @@ pub fn print_parallel(w: Walk) -> () {
 
     // create the producer in another thread
     let child_producer = thread::spawn(move || {
-
         let arc_local = arc_producer.clone();
 
         // assign work to everyone
@@ -385,7 +387,6 @@ pub fn print_parallel(w: Walk) -> () {
                 };
             }
         }
-
     });
 
     // create a vector of thread handles so that it doesn't execute
@@ -394,7 +395,6 @@ pub fn print_parallel(w: Walk) -> () {
 
     // set up as many workers as we have threads
     for _ in iter {
-
         // create a new stealer
         let stealer_clone = stealer.clone();
 
@@ -402,7 +402,6 @@ pub fn print_parallel(w: Walk) -> () {
 
         // run the stealer in a new thread
         let child_consumer = thread::spawn(move || loop {
-
             if let chase_lev::Steal::Data(p) = stealer_clone.steal() {
                 match p {
                     Status::Data(d) => Walk::print_dir(d, arc_local.clone()),
@@ -412,7 +411,6 @@ pub fn print_parallel(w: Walk) -> () {
         });
 
         threads.push(child_consumer);
-
     }
 
     // join the child producer to the main thread
@@ -440,5 +438,4 @@ pub fn print_parallel(w: Walk) -> () {
         let to_formatted = format!("{}", size);
         println!("{}\t {}", &to_formatted.green(), path_display.display());
     }
-
 }
