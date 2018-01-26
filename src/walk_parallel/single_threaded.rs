@@ -64,7 +64,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_path.exists() || dhall.exists() || shake.exists()
             }
             ".atspkg" => {
-                parent_path.push("atspkg.dhall");
+                parent_path.push("../atspkg.dhall");
                 parent_path.exists()
             }
             ".criterion" => {
