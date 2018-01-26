@@ -48,26 +48,16 @@ matrix:
       rust: nightly
     - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
       rust: nightly
-    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1  # FEATURES="simd"
-      rust: nightly
-    - env: TARGET=armv7-unknown-linux-steedeabihf DISABLE_TESTS=1
-      rust: nightly
-    - env: TARGET=arm-unknown-linux-steedeabi DISABLE_TESTS=1
-      rust: nightly
-    - env: TARGET=aarch64-unknown-linux-steed DISABLE_TESTS=1
-      rust: nightly
     - env: TARGET=x86_64-pc-windows-gnu
       rust: nightly
     - env: TARGET=x86_64-unknown-redox DISABLE_TESTS=1
+      rust: nightly
+    - env: TARGET=x86_64-pc-windows-msvc DISABLE_TESTS=1
       rust: nightly
 
   # Allowed failures
   allow_failures:
     - env: TARGET=x86_64-unknown-dragonfly
-    - env: TARGET=x86_64-unknown-linux-steed DISABLE_TESTS=1
-    - env: TARGET=armv7-unknown-linux-steedeabihf DISABLE_TESTS=1
-    - env: TARGET=arm-unknown-linux-steedeabi DISABLE_TESTS=1
-    - env: TARGET=aarch64-unknown-linux-steed DISABLE_TESTS=1
     - env: TARGET=x86_64-pc-windows-gnu
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=arm-unknown-linux-gnueabi
@@ -79,9 +69,8 @@ matrix:
     - env: TARGET=arm-unknown-linux-musleabi
     - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1
     - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
-    - env: TARGET=sparcv9-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
-    - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1  # FEATURES="simd"
     - env: TARGET=x86_64-unknown-redox DISABLE_TESTS=1
+    - env: TARGET=x86_64-pc-windows-msvc DISABLE_TESTS=1
 
 before_install: set -e
 
