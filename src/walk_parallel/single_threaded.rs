@@ -47,7 +47,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             ".stack-work" => {
                 let mut stack = parent_path.clone();
                 let mut hpack = parent_path.clone();
-                parent_path.push("/../cabal.project");
+                parent_path.push("../cabal.project");
                 hpack.push("package.yaml");
                 parent_string.push_str("/../*.cabal");
                 parent_path.exists() || hpack.exists() || glob_exists(&parent_string)
