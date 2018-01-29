@@ -45,8 +45,9 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
         let mut parent_string = p.to_owned();
         match name {
             ".stack-work" => {
+                let mut stack = parent_path.clone();
                 let mut hpack = parent_path.clone();
-                parent_path.push("cabal.project");
+                parent_path.push("/../cabal.project");
                 hpack.push("package.yaml");
                 parent_string.push_str("/../*.cabal");
                 parent_path.exists() || hpack.exists() || glob_exists(&parent_string)
@@ -164,7 +165,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
+                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config)$")
                 .unwrap();
         }
 
