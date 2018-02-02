@@ -1,3 +1,9 @@
+ci:
+    tomlcheck --file Cargo.toml
+    yamllint appveyor.yml
+    yamllint .travis.yml
+    cargo check
+
 manpages:
     pandoc man/MANPAGE.md -s -t man -o man/tin-summer.1
 

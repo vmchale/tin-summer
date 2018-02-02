@@ -1,6 +1,4 @@
-# Based on the "trust" template v0.1.1
-# https://github.com/japaric/trust/tree/v0.1.1
-
+---
 environment:
   global:
     RUST_VERSION: nightly
@@ -47,7 +45,7 @@ before_deploy:
 deploy:
   artifact: /.*\.zip/
   auth_token:
-      secure: GmKAQNxSIcdI6rigCu6DZmYt6tSNR62cQdcogvhItCE5ONoG69Uhdm5s6g5ROOsA
+    secure: GmKAQNxSIcdI6rigCu6DZmYt6tSNR62cQdcogvhItCE5ONoG69Uhdm5s6g5ROOsA
   description: ''
   on:
     RUST_VERSION: nightly
