@@ -144,9 +144,8 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.elmo`, `.elmi`: Elm
 /// - `.mod`: FORTRAN
 /// - `.ji`, `.jld`: julia
-/// - `.go.v`: Go-compiled verilog
-/// - `.go.teak`: Go-generated teak
-#[cfg(not(target_os = "windows"))]
+/// - `.exe`: Windows executable
+/// - `.sandbox.config`: Cabal sandbox configuration
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
@@ -165,7 +164,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config)$")
+                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|exe)$")
                 .unwrap();
         }
 
@@ -181,40 +180,6 @@ pub fn is_artifact(
             }
         } else if path_str == "flxg_stats.txt" {
             true
-        } else {
-            false
-        }
-    }
-}
-
-#[cfg(target_os = "windows")]
-pub fn is_artifact(
-    path_str: &str,
-    full_path: &str,
-    _: &Metadata,
-    gitignore: &Option<RegexSet>,
-) -> bool {
-    lazy_static! {
-        static ref REGEX_GITIGNORE: Regex =
-            Regex::new(r"\.(stats|conf|h|out|cache.*|dat|pc|info|ll|\.js)$")
-            .unwrap();
-    }
-
-    {
-        lazy_static! {
-            static ref REGEX: Regex =
-                Regex::new(r"\.(exe|a|la|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|pyc|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|tix)$")
-                .unwrap();
-        }
-
-        if REGEX.is_match(&path_str) {
-            true
-        } else if let &Some(ref x) = gitignore {
-            if REGEX_GITIGNORE.is_match(path_str) {
-                x.is_match(full_path)
-            } else {
-                false
-            }
         } else {
             false
         }

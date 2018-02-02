@@ -282,7 +282,7 @@ impl Walk {
 fn ats_cgen(p: Option<&OsStr>) -> bool {
     lazy_static! {
         static ref DATS_C: Regex =
-            Regex::new(r"(_dats\.c|_lats\.dats|_sats\.c)$")
+            Regex::new(r"(_dats\.c|_lats\.dats|_sats\.c|_stub\.h)$")
             .unwrap();
     }
     match p {
@@ -316,7 +316,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool) -> () {
     lazy_static! {
         static ref REGEX: Regex =
-            Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl)$")
+            Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config)$")
             .unwrap();
     }
 

@@ -17,25 +17,25 @@ name = "sn"
 path = "src/main.rs"
 
 [build-dependencies]
-cli-setup = "0.1"
+cli-setup = "0.1.2"
 [build-dependencies.clap]
 features = ["yaml"]
-version = "2.29.0"
+version = "2.29.2"
 
 [dependencies]
 colored = "1.6.0"
-crossbeam = "0.3.0"
+crossbeam = "0.3.2"
 glob = "0.2.11"
 lazy_static = "1.0.0"
 nom = "3.2.1"
 num_cpus = "1.8.0"
 pad = "0.1.4"
-walkdir = "2.0.1"
+walkdir = "2.1.3"
 regex = "0.2.5"
 
 [dependencies.clap]
 features = ["yaml"]
-version = "2.29.0"
+version = "2.29.2"
 
 [features]
 bash = []
