@@ -13,6 +13,7 @@ use clap::App;
 pub const MAN_SN: &'static str = include_str!("man/tin-summer.1");
 
 fn main() {
+    setup_thefuck();
 
     setup_manpages(MAN_SN, "tin-summer");
 
@@ -26,11 +27,11 @@ fn main() {
     let mut app = App::from_yaml(yaml).version(crate_version!());
 
     // generate bash completions if desired
-    #[cfg(feature = "bash")] app.gen_completions("sn", Shell::Bash, env!("BASH_COMPLETIONS_DIR"));
+    #[cfg(feature = "bash")]
+    app.gen_completions("sn", Shell::Bash, env!("BASH_COMPLETIONS_DIR"));
 
     // generate fish completions if desired
     let mut app_snd = App::from_yaml(yaml).version(crate_version!());
     #[cfg(feature = "fish")]
     app_snd.gen_completions("sn", Shell::Fish, env!("FISH_COMPLETIONS_DIR"));
-
 }
