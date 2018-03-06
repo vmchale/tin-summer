@@ -4,8 +4,9 @@ extern crate walkdir;
 pub mod single_threaded;
 
 use std::sync::Arc;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{Ordering};
 use std::fs;
+
 use self::crossbeam::sync::chase_lev;
 use self::walkdir::WalkDir;
 use regex::{Regex, RegexSet};
@@ -20,6 +21,24 @@ use types::FileSize;
 use std::path::Path;
 
 pub use walk_parallel::single_threaded::*;
+
+// Ideally we should use AtomicU64, but it's unstable at the moment, and
+// available only on 64-bit architectures anyway, so let's use AtomicUsize
+// instead, and add a couple of casts!
+#[cfg(target_pointer_width = "64")]
+use std::sync::atomic::AtomicUsize as AtomicU64;
+
+#[cfg(target_pointer_width = "64")]
+fn as_u64(x: usize) -> u64{
+    x as u64
+}
+
+#[cfg(target_pointer_width = "64")]
+fn as_usize(x: u64) -> usize {
+    x as usize
+}
+
+
 
 /// Enum for messaging between workers/stealers
 pub enum Status<T> {
@@ -70,7 +89,7 @@ impl Walk {
 
         let subdir_size = v.file_size.get();
 
-        total.fetch_add(subdir_size, Ordering::Relaxed);
+        total.fetch_add(as_usize(subdir_size), Ordering::Relaxed);
 
         let mut to_print = if let Some(m) = w.threshold {
             subdir_size > m
@@ -210,7 +229,7 @@ impl Walk {
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
                                     let size = size(&l, w.get_blocks); // l.len();
-                                    total.fetch_add(size, Ordering::Relaxed);
+                                    total.fetch_add(as_usize(size), Ordering::Relaxed);
                                     if w.show_files && size != 0 {
                                         let to_formatted = format!("{}", FileSize::new(size));
                                         println!(
@@ -431,7 +450,7 @@ pub fn print_parallel(w: Walk) -> () {
 
     // get the total size
     let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?
-    let size = FileSize::new(m);
+    let size = FileSize::new(as_u64(m));
 
     // print directory total.
     if size != FileSize::new(0) {
