@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex =
-            Regex::new(r"_minted|((\.stack-work|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
+            Regex::new(r"_minted|((\.stack-work|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
             .unwrap();
     }
 
@@ -45,7 +45,6 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
         let mut parent_string = p.to_owned();
         match name {
             ".stack-work" => {
-                let mut stack = parent_path.clone();
                 let mut hpack = parent_path.clone();
                 parent_path.push("../cabal.project");
                 hpack.push("package.yaml");
@@ -64,7 +63,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_path.push("../Cargo.toml");
                 parent_path.exists() || dhall.exists() || shake.exists()
             }
-            ".atspkg" | "ats-deps" => {
+            ".atspkg" | "ats-deps" | "cbits" | "gen" => {
                 parent_path.push("../atspkg.dhall");
                 parent_path.exists()
             }
@@ -90,7 +89,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.push("../psc-package.json");
                 package_path.exists()
             }
-            "build" | "dist" | ".cabal-sandbox" | "dist-newstyle" => {
+            "build" | "dist" | ".cabal-sandbox" | "dist-newstyle" | "dist-newstyle-meta" => {
                 let mut cabal_project = parent_path.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
@@ -159,7 +158,6 @@ pub fn is_artifact(
             .unwrap();
     }
 
-    // TODO - *_dats.c and *_lats.dats
     // otherwise, use builtin expressions
     {
         lazy_static! {

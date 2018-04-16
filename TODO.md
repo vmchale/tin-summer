@@ -52,6 +52,7 @@
 
 # Bugs
 
+- [ ] `sn p` hangs indefinitely on dir that doesn't exist.
 - [ ] `.h` files are not artifacts in `clash-gch` repo but are treated as such
 - [ ] `sn p` on a file shouldn't hang indefinitely
 - [x] `-j1` should work

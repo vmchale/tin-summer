@@ -282,7 +282,7 @@ impl Walk {
 fn ats_cgen(p: Option<&OsStr>) -> bool {
     lazy_static! {
         static ref DATS_C: Regex =
-            Regex::new(r"(_dats\.c|_lats\.dats|_sats\.c|_stub\.h)$")
+            Regex::new(r"(_(d|h)ats\.c|_lats\.dats|_sats\.c|_stub\.h)$")
             .unwrap();
     }
     match p {
