@@ -1,7 +1,5 @@
 //! This is the library providing supporting functionality for the `sn` binary. The APIs here
 //! aren't stable, but you may find useful documentation of how to use `sn`.
-#![feature(test)]
-#![feature(integer_atomics)]
 #![allow(match_ref_pats)]
 #![allow(too_many_arguments)]
 #![allow(unknown_lints)]
@@ -18,6 +16,7 @@ extern crate lazy_static;
 extern crate regex;
 extern crate colored;
 
+#[cfg(test)]
 pub mod test;
 pub mod types;
 pub mod error;
