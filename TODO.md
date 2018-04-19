@@ -71,6 +71,7 @@
 
 # Features
 
+- [ ] `.cmi`, `.cmo`, `.cmx`
 - [ ] show raw sizes
 - [ ] make a `.deb` crate (CI)
 - [ ] optionally remove docs for elm/Idris while cleaning
