@@ -3,22 +3,22 @@ extern crate walkdir;
 
 pub mod single_threaded;
 
-use std::sync::Arc;
-use std::sync::atomic::{Ordering};
 use std::fs;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
 
 use self::crossbeam::sync::chase_lev;
 use self::walkdir::WalkDir;
-use regex::{Regex, RegexSet};
-use std::path::PathBuf;
 use colored::*;
-use std::process::exit;
-use utils::size;
-use std::thread;
 use error::*;
+use regex::{Regex, RegexSet};
 use std::ffi::OsStr;
-use types::FileSize;
 use std::path::Path;
+use std::path::PathBuf;
+use std::process::exit;
+use std::thread;
+use types::FileSize;
+use utils::size;
 
 pub use walk_parallel::single_threaded::*;
 
@@ -29,7 +29,7 @@ pub use walk_parallel::single_threaded::*;
 use std::sync::atomic::AtomicUsize as AtomicU64;
 
 #[cfg(target_pointer_width = "64")]
-fn as_u64(x: usize) -> u64{
+fn as_u64(x: usize) -> u64 {
     x as u64
 }
 
@@ -37,8 +37,6 @@ fn as_u64(x: usize) -> u64{
 fn as_usize(x: u64) -> usize {
     x as usize
 }
-
-
 
 /// Enum for messaging between workers/stealers
 pub enum Status<T> {
@@ -301,8 +299,7 @@ impl Walk {
 fn ats_cgen(p: Option<&OsStr>) -> bool {
     lazy_static! {
         static ref DATS_C: Regex =
-            Regex::new(r"(_(d|h)ats\.c|_lats\.dats|_sats\.c|_stub\.h)$")
-            .unwrap();
+            Regex::new(r"(_(d|h)ats\.c|_lats\.dats|_sats\.c|_stub\.h)$").unwrap();
     }
     match p {
         Some(p) => DATS_C.is_match(&p.to_string_lossy().to_string()),
@@ -312,9 +309,7 @@ fn ats_cgen(p: Option<&OsStr>) -> bool {
 
 fn latex_log<P: AsRef<Path>>(p: P) -> bool {
     lazy_static! {
-        static ref LOG: Regex =
-            Regex::new(r"\.log$")
-            .unwrap();
+        static ref LOG: Regex = Regex::new(r"\.log$").unwrap();
     }
 
     if LOG.is_match(&p.as_ref().to_string_lossy().to_string()) {
@@ -335,7 +330,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool) -> () {
     lazy_static! {
         static ref REGEX: Regex =
-            Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config)$")
+            Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog)$")
             .unwrap();
     }
 

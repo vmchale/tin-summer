@@ -1,16 +1,16 @@
 extern crate glob;
 
-use std::fs;
-use regex::{Regex, RegexSet};
-use utils::*;
-use std::path::PathBuf;
-use colored::*;
-use std::process::exit;
-use types::*;
-use std::fs::Metadata;
-use error::*;
 use self::glob::glob;
+use colored::*;
+use error::*;
+use regex::{Regex, RegexSet};
+use std::fs;
+use std::fs::Metadata;
+use std::path::PathBuf;
+use std::process::exit;
 use std::result::Result;
+use types::*;
+use utils::*;
 
 #[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::PermissionsExt;
@@ -145,6 +145,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.ji`, `.jld`: julia
 /// - `.exe`: Windows executable
 /// - `.sandbox.config`: Cabal sandbox configuration
+/// - `.eventlog`: GHC event log
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
@@ -154,15 +155,14 @@ pub fn is_artifact(
 ) -> bool {
     lazy_static! {
         static ref REGEX_GITIGNORE: Regex =
-            Regex::new(r"\.(stats|conf|h|c|out|cache.*|dat|pc|info|ll|js)$")
-            .unwrap();
+            Regex::new(r"\.(stats|conf|h|c|out|cache.*|dat|pc|info|ll|js)$").unwrap();
     }
 
     // otherwise, use builtin expressions
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|exe)$")
+                Regex::new(r"\.(a|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog)$")
                 .unwrap();
         }
 
