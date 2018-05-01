@@ -44,7 +44,6 @@ deutsch = []
 english = []
 fish = []
 francais = []
-# simd = [ "regex/simd-accel" ]
 pattern = [ "regex/pattern" ]
 
 [lib]
