@@ -20,4 +20,4 @@ minor:
     cargo release -l minor --no-dev-version
 
 patch:
-    cargo release -l patch --no-dev-version
+    cargo release --no-dev-version patch
