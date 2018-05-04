@@ -1,5 +1,4 @@
 use colored::*;
-use nom::IResult;
 use std::process::exit;
 use std::path::PathBuf;
 use regex::Regex;
@@ -96,7 +95,7 @@ pub fn threshold(s: Option<&str>) -> Option<u64> {
 
 fn pre_threshold(t_from_cli: &str) -> u64 {
     match get_threshold(t_from_cli.as_bytes()) {
-        IResult::Done(_, n) => n,
+        Result::Ok((_, n)) => n,
         _ => {
             eprintln!(
                 "{}: failed to parse threshold. defaulting to 1M",

@@ -1,6 +1,5 @@
 use colored::*;
 use regex::RegexSet;
-use nom::IResult;
 use std::path::PathBuf;
 
 /// Given a darcs boring file's contents, process it as a `RegexSet`. The second
@@ -49,7 +48,7 @@ pub fn file_contents_to_regex(file: &str, file_path: &PathBuf) -> RegexSet {
 
 fn process_to_vector<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process(input) {
-        IResult::Done(_, result) => result,
+        Result::Ok((_, result)) => result,
         _ => {
             eprintln!(
                 "{}: Failed to parse gitignore at: {}",
@@ -63,7 +62,7 @@ fn process_to_vector<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
 
 fn process_darcs_full<'a>(input: &'a str, file_path: &PathBuf) -> Vec<&'a str> {
     match process_darcs(input) {
-        IResult::Done(_, result) => result,
+        Result::Ok((_, result)) => result,
         _ => {
             eprintln!(
                 "{}: Failed to parse darcs boring file at: {}",
