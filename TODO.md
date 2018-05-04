@@ -52,12 +52,10 @@
 
 # Bugs
 
-- [ ] `sn p` hangs indefinitely on dir that doesn't exist.
+- [ ] `sn p` hangs indefinitely on dir that doesn't exist or single file
 - [ ] `.h` files are not artifacts in `clash-gch` repo but are treated as such
-- [ ] `sn p` on a file shouldn't hang indefinitely
 - [x] `-j1` should work
 - [ ] `sn c --exclude` should apply to files as well as directories?
-- [ ] remove `.cabal-sandbox` directories as well.
 
 # UI/Ergonomics
 

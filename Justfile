@@ -8,7 +8,7 @@ manpages:
     pandoc man/MANPAGE.md -s -t man -o man/tin-summer.1
 
 install:
-    cargo install --features="simd" --force
+    cargo install --features="pattern" --force
 
 name:
     github-release edit -s $(cat .git-token) -u vmchale -r tin-summer -n "$(madlang run ~/programming/madlang/releases/releases.mad)" -t "$(grep -P -o '\d+\.\d+\.\d+' Cargo.toml | head -n1)"
