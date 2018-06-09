@@ -25,15 +25,15 @@ pub use walk_parallel::single_threaded::*;
 // Ideally we should use AtomicU64, but it's unstable at the moment, and
 // available only on 64-bit architectures anyway, so let's use AtomicUsize
 // instead, and add a couple of casts!
-#[cfg(target_pointer_width = "64")]
+// #[cfg(target_pointer_width = "64")]
 use std::sync::atomic::AtomicUsize as AtomicU64;
 
-#[cfg(target_pointer_width = "64")]
+// #[cfg(target_pointer_width = "64")]
 fn as_u64(x: usize) -> u64 {
     x as u64
 }
 
-#[cfg(target_pointer_width = "64")]
+// #[cfg(target_pointer_width = "64")]
 fn as_usize(x: u64) -> usize {
     x as usize
 }
