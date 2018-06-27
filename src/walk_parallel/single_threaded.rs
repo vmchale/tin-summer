@@ -323,7 +323,6 @@ pub fn read_all(
     if let Ok(paths) = fs::read_dir(in_paths) {
         // iterate over all the entries in the directory
         for p in paths {
-            // TODO consider a filter on the iterator!
             let val = match p {
                 Ok(x) => x,
                 _ => {

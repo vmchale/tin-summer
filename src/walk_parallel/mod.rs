@@ -19,24 +19,9 @@ use std::process::exit;
 use std::thread;
 use types::FileSize;
 use utils::size;
+use std::sync::atomic::AtomicUsize;
 
 pub use walk_parallel::single_threaded::*;
-
-// Ideally we should use AtomicU64, but it's unstable at the moment, and
-// available only on 64-bit architectures anyway, so let's use AtomicUsize
-// instead, and add a couple of casts!
-// #[cfg(target_pointer_width = "64")]
-use std::sync::atomic::AtomicUsize as AtomicU64;
-
-// #[cfg(target_pointer_width = "64")]
-fn as_u64(x: usize) -> u64 {
-    x as u64
-}
-
-// #[cfg(target_pointer_width = "64")]
-fn as_usize(x: u64) -> usize {
-    x as usize
-}
 
 /// Enum for messaging between workers/stealers
 pub enum Status<T> {
@@ -65,7 +50,7 @@ pub struct Walk {
 impl Walk {
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
     /// and will add the relevant directory sizes to it.
-    pub fn print_dir(w: Walk, total: Arc<AtomicU64>) -> () {
+    pub fn print_dir(w: Walk, total: Arc<AtomicUsize>) -> () {
         let excludes = match w.excludes {
             Some(ref x) => Some(x),
             _ => None,
@@ -87,7 +72,7 @@ impl Walk {
 
         let subdir_size = v.file_size.get();
 
-        total.fetch_add(as_usize(subdir_size), Ordering::Relaxed);
+        total.fetch_add(subdir_size as usize, Ordering::Relaxed);
 
         let mut to_print = if let Some(m) = w.threshold {
             subdir_size > m
@@ -172,7 +157,7 @@ impl Walk {
     pub fn push_subdir(
         w: &Walk,
         worker: &mut chase_lev::Worker<Status<Walk>>,
-        total: Arc<AtomicU64>,
+        total: Arc<AtomicUsize>,
     ) {
         let in_paths = &w.path;
 
@@ -226,8 +211,8 @@ impl Walk {
                                 worker.push(Status::Data(new_walk)); // pass a vector of Arc's to do 2-level traversals?
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
-                                    let size = size(&l, w.get_blocks); // l.len();
-                                    total.fetch_add(as_usize(size), Ordering::Relaxed);
+                                    let size = size(&l, w.get_blocks);
+                                    total.fetch_add(size as usize, Ordering::Relaxed);
                                     if w.show_files && size != 0 {
                                         let to_formatted = format!("{}", FileSize::new(size));
                                         println!(
@@ -368,7 +353,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool)
 /// Currently, this only works for a depth of two, which is probably bad.
 pub fn print_parallel(w: Walk) -> () {
     // initialize the total at 0 and create a reference to it
-    let val = AtomicU64::new(0);
+    let val = AtomicUsize::new(0);
     let arc = Arc::new(val);
     let arc_producer = arc.clone();
     let arc_child = arc.clone();
@@ -445,7 +430,7 @@ pub fn print_parallel(w: Walk) -> () {
 
     // get the total size
     let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?
-    let size = FileSize::new(as_u64(m));
+    let size = FileSize::new(m as u64);
 
     // print directory total.
     if size != FileSize::new(0) {
