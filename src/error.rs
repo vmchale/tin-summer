@@ -17,15 +17,15 @@ pub enum Internal {
 impl fmt::Display for Internal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 
-        match self {
-            &Internal::IoError => {
+        match *self {
+            Internal::IoError => {
                 write!(
                     f,
                     "{}: IO error when trying to read directory contents",
                     "Error".red()
                 )
             }
-            &Internal::ParseNum => {
+            Internal::ParseNum => {
                 write!(
                     f,
                     "{}: Please enter a positive whole number.",

@@ -22,7 +22,7 @@ impl FileSize {
         self.size += other.size;
     }
 
-    pub fn get(&self) -> u64 {
+    pub fn get(self) -> u64 {
         self.size
     }
 }
@@ -91,7 +91,7 @@ impl FileTree {
                 .filter(|a| {
                     (if dirs_only { a.is_dir } else { true }) &&
                         Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                        (!max_depth.is_some() || Some(a.depth) <= max_depth)
+                        (max_depth.is_none() || Some(a.depth) <= max_depth)
                 })
                 .take(n)
                 .collect::<Vec<NamePair>>();
@@ -108,7 +108,7 @@ impl FileTree {
                 .filter(|a| {
                     (if dirs_only { a.is_dir } else { true }) &&
                         Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                        (!max_depth.is_some() || Some(a.depth) <= max_depth)
+                        (max_depth.is_none() || Some(a.depth) <= max_depth)
                 })
                 .collect::<Vec<NamePair>>();
             FileTree {
@@ -136,7 +136,7 @@ impl FileTree {
             .filter(|a| {
                 (if dirs_only { a.is_dir } else { true }) &&
                     Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                    (!max_depth.is_some() || Some(a.depth) <= max_depth)
+                    (max_depth.is_none() || Some(a.depth) <= max_depth)
             })
             .collect::<Vec<NamePair>>();
 
@@ -179,7 +179,7 @@ impl FileTree {
 
     }
 
-    pub fn display_tree(&mut self, init_dir: PathBuf) -> () {
+    pub fn display_tree(&mut self, init_dir: &PathBuf) -> () {
 
         // display stuff
         let vec = &self.files;

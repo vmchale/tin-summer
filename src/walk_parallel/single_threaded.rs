@@ -166,21 +166,15 @@ pub fn is_artifact(
                 .unwrap();
         }
 
-        if REGEX.is_match(path_str) {
+        if REGEX.is_match(path_str) || (path_str == "tags" && vimtags) {
             true
-        } else if path_str == "tags" && vimtags {
-            true
-        } else if let &Some(ref x) = gitignore {
+        } else if let Some(ref x) = *gitignore {
             if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
                 x.is_match(full_path)
             } else {
                 false
             }
-        } else if path_str == "flxg_stats.txt" {
-            true
-        } else {
-            false
-        }
+        } else { path_str == "flxg_stats.txt" }
     }
 }
 

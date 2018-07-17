@@ -11,8 +11,10 @@ use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 
+#[allow(print_literal)]
 #[allow(unknown_lints)]
 #[allow(cyclomatic_complexity)]
+#[allow(unreadable_literal)]
 fn main() {
 
     // command-line parser
@@ -71,7 +73,7 @@ fn main() {
 
         for dir in dirs {
             if (dir != home_dir) && !force {
-                clean_project_dirs(dir, regex.clone(), vimtags);
+                clean_project_dirs(dir, &regex, vimtags);
             } else {
                 eprintln!(
                     "{}: not cleaning directory '{}', as it is your home directory. To clean your home directory, rerun with --force.",
@@ -174,7 +176,7 @@ fn main() {
             let mut v_filtered = v.filtered(Some(min_bytes), !print_files, depth);
 
             // display results
-            v_filtered.display_tree(dir);
+            v_filtered.display_tree(&dir);
         }
     }
     // find large files
@@ -218,7 +220,7 @@ fn main() {
             let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
 
             // display results
-            v_filtered.display_tree(dir);
+            v_filtered.display_tree(&dir);
         }
 
     } else if let Some(command) = matches.subcommand_matches("files") {
@@ -261,7 +263,7 @@ fn main() {
             let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
 
             // display results
-            v_filtered.display_tree(dir);
+            v_filtered.display_tree(&dir);
         }
 
     } else if let Some(command) = matches.subcommand_matches("artifacts") {
@@ -313,7 +315,7 @@ fn main() {
                 v.filtered(min_bytes, !print_files, depth)
             };
 
-            v_processed.display_tree(dir);
+            v_processed.display_tree(&dir);
         }
     }
     // sort entities by size
@@ -367,7 +369,7 @@ fn main() {
             let mut v_sorted = v.sort(num_int, min_bytes, !print_files, depth);
 
             // display sorted filenames
-            v_sorted.display_tree(dir);
+            v_sorted.display_tree(&dir);
         }
     }
 }

@@ -50,7 +50,7 @@ pub struct Walk {
 impl Walk {
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
     /// and will add the relevant directory sizes to it.
-    pub fn print_dir(w: Walk, total: Arc<AtomicUsize>) -> () {
+    pub fn print_dir(w: &Walk, total: &Arc<AtomicUsize>) -> () {
         let excludes = match w.excludes {
             Some(ref x) => Some(x),
             _ => None,
@@ -88,7 +88,7 @@ impl Walk {
             // filter by depth
             let mut v_filtered = v.filtered(w.threshold, !w.show_files, w.max_depth);
 
-            v_filtered.display_tree(w.path);
+            v_filtered.display_tree(&w.path);
         }
     }
 
@@ -157,7 +157,7 @@ impl Walk {
     pub fn push_subdir(
         w: &Walk,
         worker: &mut chase_lev::Worker<Status<Walk>>,
-        total: Arc<AtomicUsize>,
+        total: &Arc<AtomicUsize>,
     ) {
         let in_paths = &w.path;
 
@@ -312,7 +312,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 
 // TODO figure out why the unwrap_or is failing?
 // FIXME take optional reference to a regex
-pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool) -> () {
+pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool) -> () {
     lazy_static! {
         static ref REGEX: Regex =
             Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog)$")
@@ -335,7 +335,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: Option<Regex>, _: bool)
                     &p.path()
                         .file_name()
                         .map(|x| x.to_string_lossy().to_string())
-                        .unwrap_or("".to_string()),
+                        .unwrap_or_else(|| "".to_string()),
                 ) || latex_log(&p.path()) || ats_cgen(p.path().file_name()) || ({
                 let x = &p.path().to_string_lossy().to_string();
                 x.ends_with("/flxg_stats.txt")
@@ -375,13 +375,13 @@ pub fn print_parallel(w: Walk) -> () {
         let arc_local = arc_producer.clone();
 
         // assign work to everyone
-        Walk::push_subdir(&w, &mut worker, arc_local.clone());
+        Walk::push_subdir(&w, &mut worker, &arc_local);
 
         // start popping off values in the worker's thread
         loop {
             if let Some(p) = worker.try_pop() {
                 match p {
-                    Status::Data(d) => Walk::print_dir(d, arc_local.clone()),
+                    Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
                 };
             }
@@ -403,7 +403,7 @@ pub fn print_parallel(w: Walk) -> () {
         let child_consumer = thread::spawn(move || loop {
             if let chase_lev::Steal::Data(p) = stealer_clone.steal() {
                 match p {
-                    Status::Data(d) => Walk::print_dir(d, arc_local.clone()),
+                    Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
                 };
             }

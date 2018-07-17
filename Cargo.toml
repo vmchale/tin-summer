@@ -1,5 +1,5 @@
 [package]
-authors = ["Vanessa McHale <vanessa.mchale@reconfigure.io>"]
+authors = ["Vanessa McHale <vanessa.mchale@iohk.io>"]
 build = "build.rs"
 description = "Command-line tool to find build artifacts and thing occupying space on your computer. Shatters records not glass."
 documentation = "https://github.com/vmchale/tin-summer#README"
@@ -50,5 +50,4 @@ pattern = [ "regex/pattern" ]
 name = "liboskar"
 path = "src/lib.rs"
 [profile.release]
-#panic="abort"
 lto = true
