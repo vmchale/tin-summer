@@ -6,9 +6,9 @@
 extern crate clap;
 extern crate cli_setup;
 
-use cli_setup::*;
-use clap::Shell;
 use clap::App;
+use clap::Shell;
+use cli_setup::*;
 
 pub const MAN_SN: &'static str = include_str!("man/tin-summer.1");
 

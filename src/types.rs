@@ -1,10 +1,10 @@
 extern crate pad;
 
-use std::cmp::Ordering;
 use self::pad::PadStr;
+use colored::*;
+use std::cmp::Ordering;
 use std::fmt;
 use std::path::PathBuf;
-use colored::*;
 
 /// This is just a wrapper around a `u64` so that we can implement our own `Display` trait for our
 /// file sizes.
@@ -76,7 +76,6 @@ impl FileTree {
         dirs_only: bool,
         max_depth: Option<u8>,
     ) -> FileTree {
-
         let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
             self.file_size
         } else {
@@ -86,12 +85,13 @@ impl FileTree {
         // filter by depth & truncate
         if let Some(n) = maybe_num {
             self.files.sort_by(|a, b| sort_by_size(b, a));
-            let new = self.files
+            let new = self
+                .files
                 .into_iter()
                 .filter(|a| {
-                    (if dirs_only { a.is_dir } else { true }) &&
-                        Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                        (max_depth.is_none() || Some(a.depth) <= max_depth)
+                    (if dirs_only { a.is_dir } else { true })
+                        && Some(a.bytes) > min_bytes.map(FileSize::new)
+                        && (max_depth.is_none() || Some(a.depth) <= max_depth)
                 })
                 .take(n)
                 .collect::<Vec<NamePair>>();
@@ -103,12 +103,13 @@ impl FileTree {
         // sort by size and filter by depth
         else {
             self.files.sort_by(|a, b| sort_by_size(a, b));
-            let new = self.files
+            let new = self
+                .files
                 .into_iter()
                 .filter(|a| {
-                    (if dirs_only { a.is_dir } else { true }) &&
-                        Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                        (max_depth.is_none() || Some(a.depth) <= max_depth)
+                    (if dirs_only { a.is_dir } else { true })
+                        && Some(a.bytes) > min_bytes.map(FileSize::new)
+                        && (max_depth.is_none() || Some(a.depth) <= max_depth)
                 })
                 .collect::<Vec<NamePair>>();
             FileTree {
@@ -124,19 +125,19 @@ impl FileTree {
         dirs_only: bool,
         max_depth: Option<u8>,
     ) -> FileTree {
-
         let self_size = if Some(self.file_size) > min_bytes.map(FileSize::new) {
             self.file_size
         } else {
             FileSize::new(0)
         };
 
-        self.files = self.files
+        self.files = self
+            .files
             .into_iter()
             .filter(|a| {
-                (if dirs_only { a.is_dir } else { true }) &&
-                    Some(a.bytes) > min_bytes.map(FileSize::new) &&
-                    (max_depth.is_none() || Some(a.depth) <= max_depth)
+                (if dirs_only { a.is_dir } else { true })
+                    && Some(a.bytes) > min_bytes.map(FileSize::new)
+                    && (max_depth.is_none() || Some(a.depth) <= max_depth)
             })
             .collect::<Vec<NamePair>>();
 
@@ -165,7 +166,6 @@ impl FileTree {
         depth: u8,
         is_dir: bool,
     ) -> () {
-
         // add to total
         self.file_size.add(size);
 
@@ -176,11 +176,9 @@ impl FileTree {
 
         // return new file tree
         self.files.push(NamePair::new(path, size, depth, is_dir));
-
     }
 
     pub fn display_tree(&mut self, init_dir: &PathBuf) -> () {
-
         // display stuff
         let vec = &self.files;
         for name_pair in vec {
@@ -195,7 +193,6 @@ impl FileTree {
             let path = init_dir.display();
             println!("{}\t {}", &to_formatted.green(), path);
         }
-
     }
 }
 
@@ -208,7 +205,6 @@ impl fmt::Debug for FileSize {
 
 impl fmt::Display for FileSize {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
         if self.size < 1024 {
             let pre_size = format!("{}", self.size);
             write!(f, "{} b", &pre_size.pad_to_width(4))

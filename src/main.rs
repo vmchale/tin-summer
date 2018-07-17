@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate clap;
 
-extern crate liboskar;
 extern crate colored;
+extern crate liboskar;
 
+use clap::{App, AppSettings};
 use colored::*;
 use liboskar::prelude::*;
-use clap::{App, AppSettings};
 use std::env;
 use std::path::PathBuf;
 use std::process::Command;
@@ -16,7 +16,6 @@ use std::process::Command;
 #[allow(cyclomatic_complexity)]
 #[allow(unreadable_literal)]
 fn main() {
-
     // command-line parser
     #[cfg(feature = "english")]
     let yaml = load_yaml!("cli/options-en.yml");
@@ -32,7 +31,6 @@ fn main() {
 
     // TODO this should install manpages?
     if let Some(x) = matches.subcommand_matches("update") {
-
         let force = x.is_present("force");
 
         println!("current version: {}", crate_version!());
@@ -43,16 +41,16 @@ fn main() {
             "curl -LSfs https://japaric.github.io/trust/install.sh | sh -s -- --git vmchale/tin-summer"
         };
 
-        let script = Command::new("bash").arg("-c").arg(s).output().expect(
-            "failed to execute update script.",
-        );
+        let script = Command::new("bash")
+            .arg("-c")
+            .arg(s)
+            .output()
+            .expect("failed to execute update script.");
 
         let script_string = String::from_utf8(script.stderr).unwrap();
 
         println!("{}", script_string);
-
     } else if let Some(command) = matches.subcommand_matches("clean") {
-
         // check that we aren't in the home dir
         let home_dir_str = match env::var("HOME") {
             Ok(val) => val,
@@ -85,7 +83,6 @@ fn main() {
     }
     // test stuff
     else if let Some(command) = matches.subcommand_matches("parallel") {
-
         // set flag to print everything
         let print_all = command.is_present("all");
 
@@ -104,7 +101,6 @@ fn main() {
         let regex = command.value_of("excludes").map(|r| check_regex(r));
 
         for dir in dirs {
-
             let mut w = Walk::new(dir, nproc);
             if let Some(b) = min_bytes {
                 w.set_threshold(b);
@@ -128,11 +124,9 @@ fn main() {
 
             print_parallel(w);
         }
-
     }
     // find large files
     else if let Some(command) = matches.subcommand_matches("fat") {
-
         // set threshold
         let min_bytes = match threshold(command.value_of("threshold")) {
             Some(t) => t,
@@ -165,7 +159,6 @@ fn main() {
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
-
             // get relevant filenames &c.
             let v = match regex {
                 Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
@@ -181,7 +174,6 @@ fn main() {
     }
     // find large files
     else if let Some(command) = matches.subcommand_matches("directories") {
-
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
 
@@ -208,13 +200,11 @@ fn main() {
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
-
             // get relevant filenames &c.
             let v = match regex {
                 Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
                 _ => read_all_fast(&dir, 0, depth),
             };
-
 
             // filter by depth
             let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
@@ -222,9 +212,7 @@ fn main() {
             // display results
             v_filtered.display_tree(&dir);
         }
-
     } else if let Some(command) = matches.subcommand_matches("files") {
-
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
 
@@ -251,13 +239,11 @@ fn main() {
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
-
             // get relevant filenames &c.
             let v = match regex {
                 Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
                 _ => read_all(&dir, 0, depth, None, &None, false, false),
             };
-
 
             // filter by depth
             let mut v_filtered = v.filtered(min_bytes, !print_files, depth);
@@ -265,9 +251,7 @@ fn main() {
             // display results
             v_filtered.display_tree(&dir);
         }
-
     } else if let Some(command) = matches.subcommand_matches("artifacts") {
-
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
 
@@ -304,7 +288,6 @@ fn main() {
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
-
             // get relevant filenames &c.
             let excludes = get_excludes(command.value_of("excludes"));
             let v = read_all(&dir, 0, depth, Some(&excludes), &None, vimtags, true);
@@ -320,7 +303,6 @@ fn main() {
     }
     // sort entities by size
     else if let Some(command) = matches.subcommand_matches("sort") {
-
         // set threshold
         let min_bytes = threshold(command.value_of("threshold"));
 
@@ -351,7 +333,6 @@ fn main() {
         let dirs = get_dirs(command.values_of("dir"));
 
         for dir in dirs {
-
             // set regex for exclusions
             let regex = if let Some(n) = command.value_of("excludes") {
                 Some(n)

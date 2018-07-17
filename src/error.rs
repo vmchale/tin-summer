@@ -1,7 +1,7 @@
-use regex::Regex;
-use std::process;
 use colored::*;
+use regex::Regex;
 use std::fmt;
+use std::process;
 
 #[derive(Debug)]
 pub enum Internal {
@@ -16,22 +16,17 @@ pub enum Internal {
 
 impl fmt::Display for Internal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
         match *self {
-            Internal::IoError => {
-                write!(
-                    f,
-                    "{}: IO error when trying to read directory contents",
-                    "Error".red()
-                )
-            }
-            Internal::ParseNum => {
-                write!(
-                    f,
-                    "{}: Please enter a positive whole number.",
-                    "Error".red()
-                )
-            }
+            Internal::IoError => write!(
+                f,
+                "{}: IO error when trying to read directory contents",
+                "Error".red()
+            ),
+            Internal::ParseNum => write!(
+                f,
+                "{}: Please enter a positive whole number.",
+                "Error".red()
+            ),
             _ => write!(f, "other error"),
         }
     }

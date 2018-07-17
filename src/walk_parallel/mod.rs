@@ -16,10 +16,10 @@ use std::ffi::OsStr;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
+use std::sync::atomic::AtomicUsize;
 use std::thread;
 use types::FileSize;
 use utils::size;
-use std::sync::atomic::AtomicUsize;
 
 pub use walk_parallel::single_threaded::*;
 

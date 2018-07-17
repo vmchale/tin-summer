@@ -1,6 +1,6 @@
 use colored::*;
-use regex::RegexSet;
 use nom::IResult;
+use regex::RegexSet;
 use std::path::PathBuf;
 
 /// Given a darcs boring file's contents, process it as a `RegexSet`. The second

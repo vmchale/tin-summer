@@ -13,15 +13,15 @@ extern crate nom;
 #[macro_use]
 extern crate lazy_static;
 
-extern crate regex;
 extern crate colored;
+extern crate regex;
 
+pub mod cli_helpers;
+pub mod error;
+pub mod gitignore;
 #[cfg(test)]
 pub mod test;
 pub mod types;
-pub mod error;
-pub mod cli_helpers;
-pub mod gitignore;
 pub mod utils;
 pub mod walk_parallel;
 

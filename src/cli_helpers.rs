@@ -1,10 +1,10 @@
-use colored::*;
-use nom::IResult;
-use std::process::exit;
-use std::path::PathBuf;
-use regex::Regex;
-use error::*;
 use clap::Values;
+use colored::*;
+use error::*;
+use nom::IResult;
+use regex::Regex;
+use std::path::PathBuf;
+use std::process::exit;
 use utils::get_processors;
 
 /// Parse a string into a regular expression for the 'artifacts' subcommand. Adds ignores for
@@ -46,7 +46,6 @@ pub fn get_num(num_from_cli: Option<&str>) -> usize {
         8
     }
 }
-
 
 /// If the user has supplied a string, parse it, otherwise, read the number of processors.
 pub fn get_threads(num_from_cli: Option<&str>) -> usize {
@@ -108,7 +107,6 @@ fn pre_threshold(t_from_cli: &str) -> u64 {
 }
 
 fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
-
     let pre: String = nums.into_iter().collect();
     let n = if let Ok(n) = pre.parse::<u64>() {
         n
@@ -124,7 +122,6 @@ fn to_u64(nums: Vec<char>, size_tag: &[u8]) -> u64 {
         b"b" | b"B" => n,
         _ => exit(0x0f01),
     }
-
 }
 
 named!(digit_char<&[u8], char>,

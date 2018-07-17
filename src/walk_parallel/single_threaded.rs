@@ -174,7 +174,9 @@ pub fn is_artifact(
             } else {
                 false
             }
-        } else { path_str == "flxg_stats.txt" }
+        } else {
+            path_str == "flxg_stats.txt"
+        }
     }
 }
 

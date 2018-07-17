@@ -10,8 +10,8 @@ use test::test::Bencher;
 
 use clap::App;
 
-use liboskar::prelude::*;
 use liboskar::gitignore::*;
+use liboskar::prelude::*;
 
 #[bench]
 fn bench_cli_options(b: &mut Bencher) {
@@ -32,9 +32,7 @@ fn bench_to_string(b: &mut Bencher) {
 #[bench]
 fn bench_gitignore(b: &mut Bencher) {
     let file_contents = include_str!("../src/testdata/.gitignore");
-    b.iter(|| {
-        file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore"))
-    })
+    b.iter(|| file_contents_to_regex(file_contents, &PathBuf::from("testdata/.gitignore")))
 }
 
 #[bench]
@@ -123,7 +121,11 @@ fn get_entries_is_file(b: &mut Bencher) {
         for p in paths {
             let val = p.unwrap();
             let t = val.file_type().unwrap();
-            let _ = if t.is_file() { true } else { t.is_dir() };
+            let _ = if t.is_file() {
+                true
+            } else {
+                t.is_dir()
+            };
         }
     })
 }

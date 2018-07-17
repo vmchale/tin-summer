@@ -1,6 +1,6 @@
-use std::path::PathBuf;
-use prelude::*;
 use gitignore::*;
+use prelude::*;
+use std::path::PathBuf;
 
 #[test]
 fn cabal_regex_ignore() {
