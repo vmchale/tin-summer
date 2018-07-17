@@ -72,6 +72,7 @@ matrix:
     - env: TARGET=x86_64-sun-solaris DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-redox DISABLE_TESTS=1
     - env: TARGET=x86_64-pc-windows-msvc DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
 
 before_install: set -e
 
