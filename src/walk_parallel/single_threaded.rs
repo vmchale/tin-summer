@@ -146,6 +146,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.exe`: Windows executable
 /// - `.sandbox.config`: Cabal sandbox configuration
 /// - `.eventlog`: GHC event log
+/// - `.ipa`: iOS applicative archive
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
@@ -162,7 +163,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa)$")
                 .unwrap();
         }
 
