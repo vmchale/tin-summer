@@ -121,11 +121,7 @@ fn get_entries_is_file(b: &mut Bencher) {
         for p in paths {
             let val = p.unwrap();
             let t = val.file_type().unwrap();
-            let _ = if t.is_file() {
-                true
-            } else {
-                t.is_dir()
-            };
+            let _ = if t.is_file() { true } else { t.is_dir() };
         }
     })
 }

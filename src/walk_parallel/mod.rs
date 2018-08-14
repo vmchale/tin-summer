@@ -327,8 +327,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
                 .clone()
                 .map(|e| e.is_match(&p.path().to_string_lossy().to_string()))
                 != Some(false)
-        })
-        .filter(|p| {
+        }).filter(|p| {
             REGEX.is_match(&p.path().to_string_lossy().to_string())
                 || is_project_dir(
                     &p.path().to_string_lossy().to_string(),
@@ -336,10 +335,13 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
                         .file_name()
                         .map(|x| x.to_string_lossy().to_string())
                         .unwrap_or_else(|| "".to_string()),
-                ) || latex_log(&p.path()) || ats_cgen(p.path().file_name()) || ({
-                let x = &p.path().to_string_lossy().to_string();
-                x.ends_with("/flxg_stats.txt")
-            })
+                )
+                || latex_log(&p.path())
+                || ats_cgen(p.path().file_name())
+                || ({
+                    let x = &p.path().to_string_lossy().to_string();
+                    x.ends_with("/flxg_stats.txt")
+                })
         }) {
         if dir.file_type().is_file() {
             fs::remove_file(dir.path()).unwrap_or(());
@@ -425,8 +427,7 @@ pub fn print_parallel(w: Walk) -> () {
             } else if let Err(e) = result {
                 panic!("{:?}", e)
             }
-        })
-        .count();
+        }).count();
 
     // get the total size
     let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?
