@@ -49,5 +49,6 @@ pattern = [ "regex/pattern" ]
 [lib]
 name = "liboskar"
 path = "src/lib.rs"
+
 [profile.release]
 lto = true

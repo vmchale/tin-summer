@@ -60,8 +60,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 dhall.push("../atspkg.dhall");
                 let mut shake = parent_path.clone();
                 shake.push("../shake.hs");
+                let mut elba = parent_path.clone();
+                elba.push("../elba.toml");
                 parent_path.push("../Cargo.toml");
-                parent_path.exists() || dhall.exists() || shake.exists()
+                parent_path.exists() || dhall.exists() || shake.exists() || elba.exists()
             }
             ".atspkg" | "ats-deps" | "cbits" | "gen" => {
                 parent_path.push("../atspkg.dhall");
@@ -232,15 +234,16 @@ pub fn read_size(
                 if path_type.is_file() {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
-                        if !artifacts_only || {
-                            is_artifact(
-                                val.file_name().to_str().unwrap(), // ok because we already checked
-                                path_string,
-                                &metadata, // FIXME check metadata only when we know it matches gitignore
-                                vimtags,
-                                &gitignore,
-                            )
-                        } {
+                        if !artifacts_only
+                            || {
+                                is_artifact(
+                                    val.file_name().to_str().unwrap(), // ok because we already checked
+                                    path_string,
+                                    &metadata, // FIXME check metadata only when we know it matches gitignore
+                                    vimtags,
+                                    &gitignore,
+                                )
+                            } {
                             // should check size before whether it's an artifact?
                             let file_size = FileSize::new(metadata.len());
                             size.add(file_size);
@@ -249,13 +252,14 @@ pub fn read_size(
                 }
                 // otherwise, go deeper
                 else if path_type.is_dir() {
-                    let dir_size = if artifacts_only
-                        && is_project_dir(path_string, val.file_name().to_str().unwrap())
-                    {
-                        read_size(&path, excludes, &gitignore, vimtags, false)
-                    } else {
-                        read_size(&path, excludes, &gitignore, vimtags, artifacts_only)
-                    };
+                    let dir_size =
+                        if artifacts_only
+                            && is_project_dir(path_string, val.file_name().to_str().unwrap())
+                        {
+                            read_size(&path, excludes, &gitignore, vimtags, false)
+                        } else {
+                            read_size(&path, excludes, &gitignore, vimtags, artifacts_only)
+                        };
                     size.add(dir_size);
                 }
             }
