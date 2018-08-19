@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex =
-            Regex::new(r"_minted|((\.stack-work|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
+            Regex::new(r"_minted|((\.stack-work|build|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
             .unwrap();
     }
 
@@ -93,10 +93,15 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             }
             "build" | "dist" | ".cabal-sandbox" | "dist-newstyle" | "dist-newstyle-meta" => {
                 let mut cabal_project = parent_path.clone();
+                let mut parent_string_blod = parent_string.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
                 cabal_project.push("../cabal.project");
-                parent_path.exists() || glob_exists(&parent_string) || cabal_project.exists()
+                parent_string_blod.push_str("/../*.blod");
+                parent_path.exists()
+                    || glob_exists(&parent_string)
+                    || cabal_project.exists()
+                    || glob_exists(&parent_string_blod)
             }
             "bower_components" => {
                 let mut package_path = PathBuf::from(p);
@@ -149,6 +154,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.sandbox.config`: Cabal sandbox configuration
 /// - `.eventlog`: GHC event log
 /// - `.ipa`: iOS applicative archive
+/// - `.ttc`: Blodwen compiled module
 pub fn is_artifact(
     path_str: &str,
     full_path: &str,
@@ -165,7 +171,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc)$")
                 .unwrap();
         }
 
@@ -234,16 +240,15 @@ pub fn read_size(
                 if path_type.is_file() {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
-                        if !artifacts_only
-                            || {
-                                is_artifact(
-                                    val.file_name().to_str().unwrap(), // ok because we already checked
-                                    path_string,
-                                    &metadata, // FIXME check metadata only when we know it matches gitignore
-                                    vimtags,
-                                    &gitignore,
-                                )
-                            } {
+                        if !artifacts_only || {
+                            is_artifact(
+                                val.file_name().to_str().unwrap(), // ok because we already checked
+                                path_string,
+                                &metadata, // FIXME check metadata only when we know it matches gitignore
+                                vimtags,
+                                &gitignore,
+                            )
+                        } {
                             // should check size before whether it's an artifact?
                             let file_size = FileSize::new(metadata.len());
                             size.add(file_size);
