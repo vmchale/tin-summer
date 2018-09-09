@@ -465,8 +465,7 @@ pub fn read_all(
 
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();
-            let to_formatted = format!("{}", FileSize::new(size));
-            println!("{}\t {}", &to_formatted.green(), in_paths.display());
+            display_item(&in_paths.display(), FileSize::new(size));
         } else {
             panic!("{}", Internal::IoError);
         }
@@ -675,8 +674,7 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
     else if !in_paths.is_dir() {
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();
-            let to_formatted = format!("{}", FileSize::new(size));
-            println!("{}\t {}", &to_formatted.green(), in_paths.display());
+            display_item(&in_paths.display(), FileSize::new(size));
         } else {
             panic!("{}", Internal::IoError);
         }

@@ -18,7 +18,7 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::sync::atomic::AtomicUsize;
 use std::thread;
-use types::FileSize;
+use types::{FileSize, display_item};
 use utils::size;
 
 pub use walk_parallel::single_threaded::*;
@@ -264,8 +264,7 @@ impl Walk {
 
             if let Ok(l) = in_paths.metadata() {
                 let size = size(&l, w.get_blocks); // l.len();
-                let to_formatted = format!("{}", FileSize::new(size));
-                println!("{}\t {}", &to_formatted.green(), in_paths.display());
+                display_item(&in_paths.display(), FileSize::new(size));
             } else {
                 panic!("{}", Internal::IoError);
             }
@@ -434,8 +433,5 @@ pub fn print_parallel(w: Walk) -> () {
     let size = FileSize::new(m as u64);
 
     // print directory total.
-    if size != FileSize::new(0) {
-        let to_formatted = format!("{}", size);
-        println!("{}\t {}", &to_formatted.green(), path_display.display());
-    }
+    display_item(&path_display.display(), size);
 }
