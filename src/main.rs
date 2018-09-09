@@ -89,6 +89,9 @@ fn main() {
         // set whether to print files too
         let print_files = command.is_present("files");
 
+        // set whether to display bytes
+        let display_bytes = command.is_present("bytes");
+
         // get the number of processors to be used
         let nproc = get_threads(command.value_of("threads"));
 

@@ -8,13 +8,13 @@ subcommands:
             - dir:
                 value_name: VERZEICHNIS
                 help: Verzeichnis indem gesucht wird
-            - count: 
+            - count:
                 short: n
                 long: count
                 takes_value: true
                 value_name: ANZAHL
                 help: Anzahl an Dateien die gefunden werden sollen (Standard 20)
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
@@ -36,6 +36,10 @@ subcommands:
                 takes_value: true
                 value_name: DATEIGRÖßE
                 help: Schwellwert für Dateigröße (Standard 1MB)
+            - bytes:
+                short: b
+                long: Bytes
+                help: Bytes anzeigen
     - fat:
         about: Große Dateien/Verzeichnisse anzeigen
         args:
@@ -58,12 +62,16 @@ subcommands:
                 takes_value: true
                 value_name: PFAD
                 help: Pfade die ignoriert werden sollen
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: ANZAHL
                 help: Wie tief verschachtelt gesucht werden soll
+            - bytes:
+                short: b
+                long: Bytes
+                help: Bytes anzeigen
     - all:
         about: Alle Datein/Verzeichnis anzeigen
         args:
@@ -86,12 +94,16 @@ subcommands:
                 takes_value: true
                 value_name: PFAD
                 help: Pfade die ignoriert werden sollen
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: ANZAHL
                 help: Wie tief verschachtelt gesucht werden soll
+            - bytes:
+                short: b
+                long: Bytes
+                help: Bytes anzeigen
     - ar:
         about: Verzeichnis mit Artefakte anzeigen
         args:
@@ -128,9 +140,13 @@ subcommands:
                 takes_value: true
                 value_name: REGEX
                 help: Eigenen reguläreren Ausdruck verwenden um Artefakte zu finden. So kann z.B. `sniff ar -r .*?rlib$` verwendet werden, um `.rlib` Dateien zu finden.
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: ANZAHL
                 help: Wie tief verschachtelt gesucht werden soll
+            - bytes:
+                short: b
+                long: Bytes
+                help: Bytes anzeigen

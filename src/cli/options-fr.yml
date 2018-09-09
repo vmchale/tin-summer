@@ -7,13 +7,13 @@ subcommands:
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Répertoire à rechercher. 
-            - count: 
+                help: Répertoire à rechercher.
+            - count:
                 short: n
                 takes_value: true
                 value_name: NUMÉRO
                 help: Numéro de fichiers à trouver.
-            - depth: 
+            - depth:
                 short: p
                 long: profondeur
                 takes_value: true
@@ -35,12 +35,16 @@ subcommands:
                 takes_value: true
                 value_name: TAILLE
                 help: Seuil de taille du fichier
+            - bytes:
+                short: o
+                long: octets
+                help: Affiche les octets
     - fat:
-        about: Afficher grands fichiers/répertoires 
+        about: Afficher grands fichiers/répertoires
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Répertoire à rechercher. 
+                help: Répertoire à rechercher.
             - threshold:
                 short: s
                 long: seuil
@@ -57,18 +61,22 @@ subcommands:
                 takes_value: true
                 value_name: CHEMIN
                 help: Expression régulière imposant chemins à exclure
-            - depth: 
+            - depth:
                 short: p
                 long: profondeur
                 takes_value: true
                 value_name: NUMÉRO
                 help: Profondeur à chercher (par défaut 2)
+            - bytes:
+                short: o
+                long: octets
+                help: Affiche les octets
     - all:
-        about: Affiche tout 
+        about: Affiche tout
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Répertoire à rechercher. 
+                help: Répertoire à rechercher.
             - threshold:
                 short: s
                 long: seuil
@@ -85,18 +93,22 @@ subcommands:
                 takes_value: true
                 value_name: CHEMIN
                 help: Expression régulière imposant chemins à exclure
-            - depth: 
+            - depth:
                 short: p
                 long: profondeur
                 takes_value: true
                 value_name: NUMÉRO
                 help: Profondeur à chercher (par défaut 2)
+            - bytes:
+                short: o
+                long: octets
+                help: Affiche les octets
     - ar:
         about: Affiche artefacts de construction
         args:
             - dir:
                 value_name: RÉPERTOIRE
-                help: Répertoire à rechercher. 
+                help: Répertoire à rechercher.
             - threshold:
                 short: s
                 long: seuil
@@ -116,7 +128,7 @@ subcommands:
             - sort:
                 short: t
                 long: trier
-                help: Trier les résultats par taille. 
+                help: Trier les résultats par taille.
             - gitignore:
                 short: g
                 long: sans-gitignore
@@ -127,9 +139,13 @@ subcommands:
                 takes_value: true
                 value_name: REGEX
                 help: Expréssion régulière pour décider si c'est un artefact. Comme exemple, pour trouver fichiers '.rlib', on pourra utiliser 'sniff ar -r .*?rlib$'.
-            - depth: 
+            - depth:
                 short: p
                 long: profondeur
                 takes_value: true
                 value_name: NUMÉRO
                 help: Profondeur à chercher (par défaut 2)
+            - bytes:
+                short: o
+                long: octets
+                help: Affiche les octets
