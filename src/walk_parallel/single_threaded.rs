@@ -316,6 +316,7 @@ pub fn read_all(
     maybe_gitignore: &Option<RegexSet>,
     vimtags: bool,
     artifacts_only: bool,
+    display_bytes: bool,
 ) -> FileTree {
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
@@ -399,6 +400,7 @@ pub fn read_all(
                                 &gitignore,
                                 vimtags,
                                 artifacts_only,
+                                display_bytes,
                             );
                             let dir_size = subtree.file_size;
                             tree.push(
@@ -423,6 +425,7 @@ pub fn read_all(
                             &gitignore,
                             vimtags,
                             artifacts_only,
+                            display_bytes,
                         );
                         let dir_size = subtree.file_size;
                         tree.push(
@@ -465,7 +468,7 @@ pub fn read_all(
 
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();
-            display_item(&in_paths.display(), FileSize::new(size));
+            display_item(&in_paths.display(), FileSize::new(size), display_bytes);
         } else {
             panic!("{}", Internal::IoError);
         }
@@ -555,7 +558,7 @@ pub fn read_no_excludes(
 }
 
 /// Function to process directory contents and return a `FileTree` struct.
-pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> FileTree {
+pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>, display_bytes: bool) -> FileTree {
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
 
@@ -626,7 +629,7 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
                             );
                             ""
                         };
-                        let mut subtree = read_all_fast(&path, depth + 1, max_depth);
+                        let mut subtree = read_all_fast(&path, depth + 1, max_depth, display_bytes);
                         let dir_size = subtree.file_size;
                         tree.push(
                             path_string.to_string(),
@@ -648,7 +651,7 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
                         );
                         ""
                     };
-                    let mut subtree = read_all_fast(&path, depth + 1, max_depth);
+                    let mut subtree = read_all_fast(&path, depth + 1, max_depth, display_bytes);
                     let dir_size = subtree.file_size;
                     tree.push(
                         path_string.to_string(),
@@ -674,7 +677,7 @@ pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>) -> Fi
     else if !in_paths.is_dir() {
         if let Ok(l) = in_paths.metadata() {
             let size = l.len();
-            display_item(&in_paths.display(), FileSize::new(size));
+            display_item(&in_paths.display(), FileSize::new(size), display_bytes);
         } else {
             panic!("{}", Internal::IoError);
         }

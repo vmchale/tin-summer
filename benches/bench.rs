@@ -49,14 +49,14 @@ fn bench_traversal_size(b: &mut Bencher) {
 #[bench]
 fn bench_traversal(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, &None, false, false))
+    b.iter(|| read_all(&p, 4, None, None, &None, false, false, false))
 }
 
 #[bench]
 fn bench_traversal_sort(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
     b.iter(|| {
-        let v = read_all(&p, 4, None, None, &None, false, false);
+        let v = read_all(&p, 4, None, None, &None, false, false, false);
         v.sort(None, None, false, None)
     })
 }
@@ -64,7 +64,7 @@ fn bench_traversal_sort(b: &mut Bencher) {
 #[bench]
 fn bench_traversal_artifacts(b: &mut Bencher) {
     let p = PathBuf::from("src/testdata");
-    b.iter(|| read_all(&p, 4, None, None, &None, false, true))
+    b.iter(|| read_all(&p, 4, None, None, &None, false, true, false))
 }
 
 #[bench]
