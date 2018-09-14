@@ -57,8 +57,11 @@ pub struct FileTree {
 
 pub fn display_item<T: fmt::Display>(name: &T, bytes: FileSize, display_bytes: bool) {
     if bytes != FileSize::new(0) {
-        let to_formatted = if display_bytes { format!("{:?}", bytes) }
-                           else { format!("{}", bytes) };
+        let to_formatted = if display_bytes {
+            format!("{:?}", bytes)
+        } else {
+            format!("{}", bytes)
+        };
         println!("{}\t {}", &to_formatted.green(), name);
     }
 }

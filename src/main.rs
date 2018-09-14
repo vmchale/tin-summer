@@ -170,7 +170,16 @@ fn main() {
         for dir in dirs {
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false, display_bytes),
+                Some(r) => read_all(
+                    &dir,
+                    0,
+                    depth,
+                    Some(&check_regex(r)),
+                    &None,
+                    false,
+                    false,
+                    display_bytes,
+                ),
                 _ => read_all(&dir, 0, depth, None, &None, false, false, display_bytes),
             };
 
@@ -214,7 +223,16 @@ fn main() {
         for dir in dirs {
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false, display_bytes),
+                Some(r) => read_all(
+                    &dir,
+                    0,
+                    depth,
+                    Some(&check_regex(r)),
+                    &None,
+                    false,
+                    false,
+                    display_bytes,
+                ),
                 _ => read_all_fast(&dir, 0, depth, display_bytes),
             };
 
@@ -256,7 +274,16 @@ fn main() {
         for dir in dirs {
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false, display_bytes),
+                Some(r) => read_all(
+                    &dir,
+                    0,
+                    depth,
+                    Some(&check_regex(r)),
+                    &None,
+                    false,
+                    false,
+                    display_bytes,
+                ),
                 _ => read_all(&dir, 0, depth, None, &None, false, false, display_bytes),
             };
 
@@ -308,7 +335,16 @@ fn main() {
         for dir in dirs {
             // get relevant filenames &c.
             let excludes = get_excludes(command.value_of("excludes"));
-            let v = read_all(&dir, 0, depth, Some(&excludes), &None, vimtags, true, display_bytes);
+            let v = read_all(
+                &dir,
+                0,
+                depth,
+                Some(&excludes),
+                &None,
+                vimtags,
+                true,
+                display_bytes,
+            );
 
             let mut v_processed = if should_sort {
                 v.sort(num_int, min_bytes, !print_files, depth)
@@ -363,7 +399,16 @@ fn main() {
 
             // get relevant filenames &c.
             let v = match regex {
-                Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false, display_bytes),
+                Some(r) => read_all(
+                    &dir,
+                    0,
+                    depth,
+                    Some(&check_regex(r)),
+                    &None,
+                    false,
+                    false,
+                    display_bytes,
+                ),
                 _ => read_all(&dir, 0, depth, None, &None, false, false, display_bytes),
             };
 

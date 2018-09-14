@@ -240,15 +240,16 @@ pub fn read_size(
                 if path_type.is_file() {
                     // if this fails, it's probably because `path` is a broken symlink
                     if let Ok(metadata) = val.metadata() {
-                        if !artifacts_only || {
-                            is_artifact(
-                                val.file_name().to_str().unwrap(), // ok because we already checked
-                                path_string,
-                                &metadata, // FIXME check metadata only when we know it matches gitignore
-                                vimtags,
-                                &gitignore,
-                            )
-                        } {
+                        if !artifacts_only
+                            || {
+                                is_artifact(
+                                    val.file_name().to_str().unwrap(), // ok because we already checked
+                                    path_string,
+                                    &metadata, // FIXME check metadata only when we know it matches gitignore
+                                    vimtags,
+                                    &gitignore,
+                                )
+                            } {
                             // should check size before whether it's an artifact?
                             let file_size = FileSize::new(metadata.len());
                             size.add(file_size);
@@ -558,7 +559,12 @@ pub fn read_no_excludes(
 }
 
 /// Function to process directory contents and return a `FileTree` struct.
-pub fn read_all_fast(in_paths: &PathBuf, depth: u8, max_depth: Option<u8>, display_bytes: bool) -> FileTree {
+pub fn read_all_fast(
+    in_paths: &PathBuf,
+    depth: u8,
+    max_depth: Option<u8>,
+    display_bytes: bool,
+) -> FileTree {
     // attempt to read the .gitignore
     let mut tree = FileTree::new();
 

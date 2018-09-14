@@ -18,7 +18,7 @@ use std::path::PathBuf;
 use std::process::exit;
 use std::sync::atomic::AtomicUsize;
 use std::thread;
-use types::{FileSize, display_item};
+use types::{display_item, FileSize};
 use utils::size;
 
 pub use walk_parallel::single_threaded::*;
@@ -225,7 +225,11 @@ impl Walk {
                                     let size = size(&l, w.get_blocks);
                                     total.fetch_add(size as usize, Ordering::Relaxed);
                                     if w.show_files {
-                                        display_item(&val.path().display(), FileSize::new(size), w.display_bytes);
+                                        display_item(
+                                            &val.path().display(),
+                                            FileSize::new(size),
+                                            w.display_bytes,
+                                        );
                                     }
                                 } else {
                                     eprintln!(
