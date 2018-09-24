@@ -1,9 +1,9 @@
 //! This is the library providing supporting functionality for the `sn` binary. The APIs here
 //! aren't stable, but you may find useful documentation of how to use `sn`.
-#![allow(too_many_arguments)]
+#![feature(tool_lints)]
+#![allow(clippy::too_many_arguments)]
 #![allow(unknown_lints)]
-#![allow(useless_attribute)]
-#![allow(unreadable_literal)]
+#![allow(clippy::unreadable_literal)]
 
 #[allow(unused_imports)]
 #[macro_use]

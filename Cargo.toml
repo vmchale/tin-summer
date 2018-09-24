@@ -9,9 +9,11 @@ name = "tin-summer"
 readme = "README.md"
 repository = "https://github.com/vmchale/tin-summer"
 version = "1.21.6"
+
 [metadata.deb]
 extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."
 license-file = ["LICENSE"]
+
 [[bin]]
 name = "sn"
 path = "src/main.rs"
@@ -24,7 +26,7 @@ version = "2.29.2"
 
 [dependencies]
 colored = "1.6.0"
-crossbeam = "0.3.2"
+crossbeam = "0.4.1"
 glob = "0.2.11"
 lazy_static = "1.0.0"
 nom = "3.2"

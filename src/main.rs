@@ -1,3 +1,4 @@
+#![feature(tool_lints)]
 #[macro_use]
 extern crate clap;
 
@@ -11,10 +12,9 @@ use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 
-#[allow(print_literal)]
 #[allow(unknown_lints)]
-#[allow(cyclomatic_complexity)]
-#[allow(unreadable_literal)]
+#[allow(clippy::cyclomatic_complexity)]
+#[allow(clippy::unreadable_literal)]
 fn main() {
     // command-line parser
     #[cfg(feature = "english")]

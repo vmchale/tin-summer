@@ -3,20 +3,20 @@ extern crate walkdir;
 
 pub mod single_threaded;
 
-use std::fs;
-use std::sync::atomic::Ordering;
-use std::sync::Arc;
-
-use self::crossbeam::sync::chase_lev;
+use self::crossbeam::deque::fifo;
+use self::crossbeam::deque::Worker;
 use self::walkdir::WalkDir;
 use colored::*;
 use error::*;
 use regex::{Regex, RegexSet};
 use std::ffi::OsStr;
+use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::exit;
 use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
 use std::thread;
 use types::FileSize;
 use utils::size;
@@ -154,11 +154,7 @@ impl Walk {
     /// creating new work for each subdirectory. It's not the most efficient concurrency
     /// imaginable, but it's fast and easy-ish to use. It *also* takes in an 'Arc<AtomicU64>',
     /// which it updates with any file sizes in the directory.
-    pub fn push_subdir(
-        w: &Walk,
-        worker: &mut chase_lev::Worker<Status<Walk>>,
-        total: &Arc<AtomicUsize>,
-    ) {
+    pub fn push_subdir(w: &Walk, worker: &mut Worker<Status<Walk>>, total: &Arc<AtomicUsize>) {
         let in_paths = &w.path;
 
         // fill up queue + print out files
@@ -315,7 +311,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool) -> () {
     lazy_static! {
         static ref REGEX: Regex =
-            Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*-\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog|ipa|ttc)$")
+            Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog|ipa|ttc)$")
             .unwrap();
     }
 
@@ -362,10 +358,7 @@ pub fn print_parallel(w: Walk) -> () {
     let path_display = w.path.clone();
 
     // set up worker & stealer
-    let (mut worker, stealer): (
-        chase_lev::Worker<Status<Walk>>,
-        chase_lev::Stealer<Status<Walk>>,
-    ) = chase_lev::deque();
+    let (mut worker, stealer) = fifo();
 
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);
@@ -381,7 +374,7 @@ pub fn print_parallel(w: Walk) -> () {
 
         // start popping off values in the worker's thread
         loop {
-            if let Some(p) = worker.try_pop() {
+            if let Some(p) = worker.pop() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
@@ -403,7 +396,7 @@ pub fn print_parallel(w: Walk) -> () {
 
         // run the stealer in a new thread
         let child_consumer = thread::spawn(move || loop {
-            if let chase_lev::Steal::Data(p) = stealer_clone.steal() {
+            if let Some(p) = stealer_clone.steal() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
