@@ -323,7 +323,8 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
                 .clone()
                 .map(|e| e.is_match(&p.path().to_string_lossy().to_string()))
                 != Some(false)
-        }).filter(|p| {
+        })
+        .filter(|p| {
             REGEX.is_match(&p.path().to_string_lossy().to_string())
                 || is_project_dir(
                     &p.path().to_string_lossy().to_string(),
@@ -420,7 +421,8 @@ pub fn print_parallel(w: Walk) -> () {
             } else if let Err(e) = result {
                 panic!("{:?}", e)
             }
-        }).count();
+        })
+        .count();
 
     // get the total size
     let m = arc.load(Ordering::SeqCst); // TODO - check if this works with Relaxed?
