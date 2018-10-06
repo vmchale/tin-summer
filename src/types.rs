@@ -92,7 +92,8 @@ impl FileTree {
                     (if dirs_only { a.is_dir } else { true })
                         && Some(a.bytes) > min_bytes.map(FileSize::new)
                         && (max_depth.is_none() || Some(a.depth) <= max_depth)
-                }).take(n)
+                })
+                .take(n)
                 .collect::<Vec<NamePair>>();
             FileTree {
                 file_size: self_size,
@@ -109,7 +110,8 @@ impl FileTree {
                     (if dirs_only { a.is_dir } else { true })
                         && Some(a.bytes) > min_bytes.map(FileSize::new)
                         && (max_depth.is_none() || Some(a.depth) <= max_depth)
-                }).collect::<Vec<NamePair>>();
+                })
+                .collect::<Vec<NamePair>>();
             FileTree {
                 file_size: self_size,
                 files: new,
@@ -136,7 +138,8 @@ impl FileTree {
                 (if dirs_only { a.is_dir } else { true })
                     && Some(a.bytes) > min_bytes.map(FileSize::new)
                     && (max_depth.is_none() || Some(a.depth) <= max_depth)
-            }).collect::<Vec<NamePair>>();
+            })
+            .collect::<Vec<NamePair>>();
 
         FileTree {
             file_size: self_size,

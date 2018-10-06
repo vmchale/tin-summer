@@ -138,7 +138,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.d`: make
 /// - `.c`: ATS
 /// - `.rlib`, `.crate`: rust
-/// - `.hi`, `.hc`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`: GHC
+/// - `.hi`, `.hc`, `.chi`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`: GHC
 /// - `.webapp`: Web app manifest
 /// - `.js.externs`, `.jsexe`, `.min.js`:
 /// - `.ibc`: Idris
@@ -171,7 +171,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc)$")
                 .unwrap();
         }
 
@@ -269,12 +269,12 @@ pub fn read_size(
                 }
             }
             /*else {
-                eprintln!(
-                        "{}: ignoring symlink at {}",
-                        "Warning".yellow(),
-                        path.display()
-                    );
-                }*/
+            eprintln!(
+                    "{}: ignoring symlink at {}",
+                    "Warning".yellow(),
+                    path.display()
+                );
+            }*/
         }
     }
     // if we can't read the directory contents, figure out why
@@ -437,12 +437,12 @@ pub fn read_all(
             }
         }
     /*else {
-                eprintln!(
-                    "{}: ignoring symlink at {}",
-                    "Warning".yellow(),
-                    path.display()
-                );
-            }*/
+        eprintln!(
+            "{}: ignoring symlink at {}",
+            "Warning".yellow(),
+            path.display()
+        );
+    }*/
     }
     // if we can't read the directory contents, figure out why
     // 1: check the path exists
