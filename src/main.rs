@@ -1,4 +1,3 @@
-#![feature(tool_lints)]
 #[macro_use]
 extern crate clap;
 
