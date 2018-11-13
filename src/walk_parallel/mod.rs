@@ -4,6 +4,8 @@ extern crate walkdir;
 pub mod single_threaded;
 
 use self::crossbeam::deque::fifo;
+use self::crossbeam::deque::Pop;
+use self::crossbeam::deque::Steal;
 use self::crossbeam::deque::Worker;
 use self::walkdir::WalkDir;
 use colored::*;
@@ -375,11 +377,11 @@ pub fn print_parallel(w: Walk) -> () {
 
         // start popping off values in the worker's thread
         loop {
-            if let Some(p) = worker.pop() {
+            if let Pop::Data(p) = worker.pop() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
-                };
+                }
             }
         }
     });
@@ -397,11 +399,11 @@ pub fn print_parallel(w: Walk) -> () {
 
         // run the stealer in a new thread
         let child_consumer = thread::spawn(move || loop {
-            if let Some(p) = stealer_clone.steal() {
+            if let Steal::Data(p) = stealer_clone.steal() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
                     _ => break,
-                };
+                }
             }
         });
 
