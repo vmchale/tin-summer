@@ -18,7 +18,7 @@ impl FileSize {
         FileSize { size: i }
     }
 
-    pub fn add(&mut self, other: FileSize) -> () {
+    pub fn add(&mut self, other: FileSize) {
         self.size += other.size;
     }
 
@@ -154,7 +154,7 @@ impl FileTree {
         }
     }
 
-    pub fn add(&mut self, size: FileSize) -> () {
+    pub fn add(&mut self, size: FileSize) {
         self.file_size.add(size);
     }
 
@@ -165,7 +165,7 @@ impl FileTree {
         subtree: Option<&mut FileTree>,
         depth: u8,
         is_dir: bool,
-    ) -> () {
+    ) {
         // add to total
         self.file_size.add(size);
 
@@ -178,7 +178,7 @@ impl FileTree {
         self.files.push(NamePair::new(path, size, depth, is_dir));
     }
 
-    pub fn display_tree(&mut self, init_dir: &PathBuf) -> () {
+    pub fn display_tree(&mut self, init_dir: &PathBuf) {
         // display stuff
         let vec = &self.files;
         for name_pair in vec {

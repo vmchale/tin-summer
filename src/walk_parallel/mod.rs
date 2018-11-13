@@ -52,7 +52,7 @@ pub struct Walk {
 impl Walk {
     /// function to make output from a 'Walk', using one thread. It also takes an 'Arc<AtomicU64>'
     /// and will add the relevant directory sizes to it.
-    pub fn print_dir(w: &Walk, total: &Arc<AtomicUsize>) -> () {
+    pub fn print_dir(w: &Walk, total: &Arc<AtomicUsize>) {
         let excludes = match w.excludes {
             Some(ref x) => Some(x),
             _ => None,
@@ -95,32 +95,32 @@ impl Walk {
     }
 
     /// set the maximum depth to display
-    pub fn set_depth(&mut self, d: u8) -> () {
+    pub fn set_depth(&mut self, d: u8) {
         self.max_depth = Some(d);
     }
 
     /// set the regex for excludes
-    pub fn set_regex(&mut self, r: Regex) -> () {
+    pub fn set_regex(&mut self, r: Regex) {
         self.excludes = Some(r);
     }
 
     /// set the minumum file size
-    pub fn set_threshold(&mut self, n: u64) -> () {
+    pub fn set_threshold(&mut self, n: u64) {
         self.threshold = Some(n);
     }
 
     /// include files when printing
-    pub fn with_files(&mut self) -> () {
+    pub fn with_files(&mut self) {
         self.show_files = true;
     }
 
     /// include files when printing
-    pub fn blocks(&mut self) -> () {
+    pub fn blocks(&mut self) {
         self.get_blocks = true;
     }
 
     /// include files when printing
-    pub fn artifacts_only(&mut self) -> () {
+    pub fn artifacts_only(&mut self) {
         self.artifacts_only = true;
     }
 
@@ -148,7 +148,7 @@ impl Walk {
         }
     }
 
-    fn bump_depth(&mut self) -> () {
+    fn bump_depth(&mut self) {
         self.start_depth += 1;
     }
 
@@ -291,11 +291,7 @@ fn ats_cgen(p: Option<&OsStr>) -> bool {
 }
 
 fn latex_log<P: AsRef<Path>>(p: P) -> bool {
-    lazy_static! {
-        static ref LOG: Regex = Regex::new(r"\.log$").unwrap();
-    }
-
-    if LOG.is_match(&p.as_ref().to_string_lossy().to_string()) {
+    if p.as_ref().to_string_lossy().ends_with(".log") {
         let mut parent = (&p.as_ref())
             .parent()
             .unwrap()
@@ -310,7 +306,7 @@ fn latex_log<P: AsRef<Path>>(p: P) -> bool {
 
 // TODO figure out why the unwrap_or is failing?
 // FIXME take optional reference to a regex
-pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool) -> () {
+pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool) {
     lazy_static! {
         static ref REGEX: Regex =
             Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog|ipa|ttc)$")
@@ -352,7 +348,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
 
 /// Given a 'Walk' struct, traverse it concurrently and print out any relevant outputs.
 /// Currently, this only works for a depth of two, which is probably bad.
-pub fn print_parallel(w: Walk) -> () {
+pub fn print_parallel(w: Walk) {
     // initialize the total at 0 and create a reference to it
     let val = AtomicUsize::new(0);
     let arc = Arc::new(val);
