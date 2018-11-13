@@ -158,6 +158,7 @@ impl Walk {
     /// which it updates with any file sizes in the directory.
     pub fn push_subdir(w: &Walk, worker: &mut Worker<Status<Walk>>, total: &Arc<AtomicUsize>) {
         let in_paths = &w.path;
+        let procs = 0..(w.get_proc());
 
         // fill up queue + print out files
         if let Ok(paths) = fs::read_dir(in_paths) {
@@ -236,10 +237,6 @@ impl Walk {
                     }
                 }
             }
-
-            // send "done" messages to all the workers
-            let iter = 0..(w.get_proc());
-            iter.map(|_| worker.push(Status::Done)).count();
         }
         // if we can't read the directory contents, figure out why
         // 1: check the path exists
@@ -276,6 +273,9 @@ impl Walk {
                 &in_paths.display()
             );
         }
+
+        // send "done" messages to all the workers
+        procs.map(|_| worker.push(Status::Done)).count();
     }
 }
 
@@ -380,7 +380,7 @@ pub fn print_parallel(w: Walk) -> () {
             if let Pop::Data(p) = worker.pop() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
-                    _ => break,
+                    Status::Done => break,
                 }
             }
         }
@@ -402,7 +402,7 @@ pub fn print_parallel(w: Walk) -> () {
             if let Steal::Data(p) = stealer_clone.steal() {
                 match p {
                     Status::Data(d) => Walk::print_dir(&d, &arc_local),
-                    _ => break,
+                    Status::Done => break,
                 }
             }
         });
