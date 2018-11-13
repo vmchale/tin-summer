@@ -11,6 +11,7 @@ use self::walkdir::WalkDir;
 use colored::*;
 use error::*;
 use regex::{Regex, RegexSet};
+use std::borrow::Cow;
 use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
@@ -285,7 +286,7 @@ fn ats_cgen(p: Option<&OsStr>) -> bool {
             Regex::new(r"(_(d|h)ats\.c|_lats\.dats|_sats\.c|_stub\.h)$").unwrap();
     }
     match p {
-        Some(p) => DATS_C.is_match(&p.to_string_lossy().to_string()),
+        Some(p) => DATS_C.is_match(&p.to_string_lossy()),
         None => false,
     }
 }
@@ -319,22 +320,22 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
         .filter(|p| {
             exclude
                 .clone()
-                .map(|e| e.is_match(&p.path().to_string_lossy().to_string()))
+                .map(|e| e.is_match(&p.path().to_string_lossy()))
                 != Some(false)
         })
         .filter(|p| {
-            REGEX.is_match(&p.path().to_string_lossy().to_string())
+            REGEX.is_match(&p.path().to_string_lossy())
                 || is_project_dir(
-                    &p.path().to_string_lossy().to_string(),
+                    &p.path().to_string_lossy(),
                     &p.path()
                         .file_name()
-                        .map(|x| x.to_string_lossy().to_string())
-                        .unwrap_or_else(|| "".to_string()),
+                        .map(OsStr::to_string_lossy)
+                        .unwrap_or(Cow::Borrowed("")),
                 )
                 || latex_log(&p.path())
                 || ats_cgen(p.path().file_name())
                 || ({
-                    let x = &p.path().to_string_lossy().to_string();
+                    let x = &p.path().to_string_lossy();
                     x.ends_with("/flxg_stats.txt")
                 })
         }) {
