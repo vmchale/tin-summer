@@ -10,6 +10,10 @@ env:
 
 matrix:
   include:
+    # Minimum stable Rust
+    - env: TARGET=x86_64-unknown-linux-gnu  # FEATURES="simd pattern"
+      rust: 1.26.2
+
     # Linux
     - env: TARGET=x86_64-unknown-linux-gnu  # FEATURES="simd pattern"
       rust: nightly

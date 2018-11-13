@@ -1,3 +1,9 @@
+#![cfg_attr(feature = "cargo-clippy", allow(
+    renamed_and_removed_lints,
+    cyclomatic_complexity,
+    unreadable_literal,
+))]
+
 #[macro_use]
 extern crate clap;
 
@@ -11,9 +17,6 @@ use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 
-#[allow(unknown_lints)]
-#[allow(clippy::cyclomatic_complexity)]
-#[allow(clippy::unreadable_literal)]
 fn main() {
     // command-line parser
     #[cfg(feature = "english")]
