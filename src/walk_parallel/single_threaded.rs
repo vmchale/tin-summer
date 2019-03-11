@@ -195,7 +195,7 @@ pub fn is_artifact(
         if REGEX.is_match(path_str) || (path_str == "tags" && vimtags) {
             true
         } else if let Some(ref x) = *gitignore {
-            if is_executable(path_str, metadata) || REGEX_GITIGNORE.is_match(path_str) {
+            if is_executable(path_str, metadata) && REGEX_GITIGNORE.is_match(path_str) {
                 x.is_match(full_path)
             } else {
                 false
