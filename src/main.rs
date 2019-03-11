@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate clap;
 
+#[cfg(target = "windows")]
+extern crate ansi_term;
+
 extern crate colored;
 extern crate liboskar;
 
@@ -27,6 +30,15 @@ fn main() {
         .set_term_width(90)
         .setting(AppSettings::SubcommandRequired)
         .get_matches();
+
+    #[cfg(not(target = "windows"))]
+    let color_ok = true;
+    #[cfg(target = "windows")]
+    let color_ok = !ansi_term::enable_ansi_support().is_ok();
+
+    if !color_ok {
+        colored::control::set_override(false);
+    }
 
     // TODO this should install manpages?
     if let Some(x) = matches.subcommand_matches("update") {
