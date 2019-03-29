@@ -16,6 +16,11 @@
 # Features
 
 - [ ] `.cmi`, `.cmo`, `.cmx`
+- [ ] `.bbl`, `.blg`
+- [ ] `.chi`, `.chs.h`
+- [ ] `.hie`
+- [ ] Remove `.pyre` directory
+- [ ] Remove `.history` from Dhall REPL
 - [ ] show raw sizes
 - [ ] make a `.deb` crate (CI)
 - [ ] optionally remove docs for elm/Idris while cleaning
@@ -29,6 +34,7 @@
 - [x] autoclean option
   - [ ] OCaml
 - [ ] .deb should include completions and manpages.
+- [ ] `.pmc` files
 
 # Tests
 
