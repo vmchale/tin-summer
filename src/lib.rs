@@ -1,8 +1,12 @@
 //! This is the library providing supporting functionality for the `sn` binary. The APIs here
 //! aren't stable, but you may find useful documentation of how to use `sn`.
-#![allow(clippy::too_many_arguments)]
+
 #![allow(unknown_lints)]
-#![allow(clippy::unreadable_literal)]
+#![cfg_attr(feature = "cargo-clippy", allow(
+    renamed_and_removed_lints,
+    too_many_arguments,
+    unreadable_literal,
+))]
 
 #[allow(unused_imports)]
 #[macro_use]
