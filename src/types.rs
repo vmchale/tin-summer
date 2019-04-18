@@ -55,9 +55,13 @@ pub struct FileTree {
     files: Vec<NamePair>,
 }
 
-pub fn display_item(name: &str, bytes: FileSize) {
+pub fn display_item<T: fmt::Display>(name: &T, bytes: FileSize, display_bytes: bool) {
     if bytes != FileSize::new(0) {
-        let to_formatted = format!("{}", bytes);
+        let to_formatted = if display_bytes {
+            format!("{:?}", bytes)
+        } else {
+            format!("{}", bytes)
+        };
         println!("{}\t {}", &to_formatted.green(), name);
     }
 }
@@ -178,21 +182,14 @@ impl FileTree {
         self.files.push(NamePair::new(path, size, depth, is_dir));
     }
 
-    pub fn display_tree(&mut self, init_dir: &PathBuf) -> () {
+    pub fn display_tree(&mut self, init_dir: &PathBuf, with_bytes: bool) -> () {
         // display stuff
         let vec = &self.files;
         for name_pair in vec {
-            if name_pair.bytes != FileSize::new(0) {
-                let to_formatted = format!("{}", name_pair.bytes);
-                println!("{}\t {}", &to_formatted.green(), name_pair.name);
-            }
+            display_item(&name_pair.name, name_pair.bytes, with_bytes);
         }
 
-        if self.file_size != FileSize::new(0) {
-            let to_formatted = format!("{}", self.file_size);
-            let path = init_dir.display();
-            println!("{}\t {}", &to_formatted.green(), path);
-        }
+        display_item(&init_dir.display(), self.file_size, with_bytes);
     }
 }
 

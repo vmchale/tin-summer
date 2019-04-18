@@ -32,7 +32,7 @@ subcommands:
     - parallel:
         visible_alias: "p"
         alias: "par"
-        about: Same as 'all', but concurrently. 
+        about: Same as 'all', but concurrently.
         args:
             - dir:
                 value_name: DIRECTORY
@@ -53,7 +53,7 @@ subcommands:
                 takes_value: true
                 value_name: PATH
                 help: Regex for paths to exclude
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
@@ -69,6 +69,10 @@ subcommands:
                 takes_value: true
                 value_name: SIZE
                 help: Specify a threshold for file size
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values
     - sort:
         visible_alias: "o"
         about: Find the biggest directories (optionally include files).
@@ -77,7 +81,7 @@ subcommands:
                 value_name: DIRECTORY
                 multiple: true
                 help: Directory to search
-            - count: 
+            - count:
                 short: n
                 long: count
                 takes_value: true
@@ -87,7 +91,7 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
@@ -111,6 +115,10 @@ subcommands:
                 takes_value: true
                 value_name: SIZE
                 help: Specify a threshold for file size
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values
     - fat:
         visible_alias: "f"
         about: Find the biggest directories (optionally include files).
@@ -138,12 +146,16 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values
     - directories:
         visible_aliases: ["d", "dir"]
         aliases: ["a", "all"]
@@ -172,12 +184,16 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values
     - files:
         visible_aliases: ["l"]
         about: Show all files/directories.
@@ -201,12 +217,16 @@ subcommands:
                 short: a
                 long: all
                 help: Print all directory entries (no max depth)
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values
     - artifacts:
         visible_aliases: ["r", "ar"]
         about: Show directories with build artifacts
@@ -233,7 +253,7 @@ subcommands:
                 short: f
                 long: files
                 help: Whether to print files in addition to directories (default false)
-            - count: 
+            - count:
                 short: n
                 long: count
                 takes_value: true
@@ -249,9 +269,13 @@ subcommands:
                 short: o
                 long: sort
                 help: Sort results by size
-            - depth: 
+            - depth:
                 short: d
                 long: depth
                 takes_value: true
                 value_name: NUMBER
                 help: How far to recurse (default 2)
+            - bytes:
+                short: b
+                long: bytes
+                help: Print byte values

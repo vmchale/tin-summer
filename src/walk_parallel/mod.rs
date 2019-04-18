@@ -20,7 +20,7 @@ use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::thread;
-use types::FileSize;
+use types::{display_item, FileSize};
 use utils::size;
 
 pub use walk_parallel::single_threaded::*;
@@ -47,6 +47,7 @@ pub struct Walk {
     get_blocks: bool,
     follow_symlinks: bool,
     artifacts_only: bool,
+    display_bytes: bool,
 }
 
 impl Walk {
@@ -67,9 +68,10 @@ impl Walk {
                 &w.gitignore,
                 false,
                 w.artifacts_only,
+                w.display_bytes,
             )
         } else {
-            read_all_fast(&w.path, w.start_depth as u8, w.max_depth)
+            read_all_fast(&w.path, w.start_depth as u8, w.max_depth, w.display_bytes)
         };
 
         let subdir_size = v.file_size.get();
@@ -90,7 +92,7 @@ impl Walk {
             // filter by depth
             let mut v_filtered = v.filtered(w.threshold, !w.show_files, w.max_depth);
 
-            v_filtered.display_tree(&w.path);
+            v_filtered.display_tree(&w.path, w.display_bytes);
         }
     }
 
@@ -112,6 +114,11 @@ impl Walk {
     /// include files when printing
     pub fn with_files(&mut self) -> () {
         self.show_files = true;
+    }
+
+    /// display bytes when printing
+    pub fn with_bytes(&mut self) -> () {
+        self.display_bytes = true;
     }
 
     /// include files when printing
@@ -145,6 +152,7 @@ impl Walk {
             get_blocks: false,
             follow_symlinks: false,
             artifacts_only: false,
+            display_bytes: false,
         }
     }
 
@@ -206,17 +214,19 @@ impl Walk {
                                 if let Some(b) = w.threshold {
                                     new_walk.set_threshold(b);
                                 }
+                                if w.display_bytes {
+                                    new_walk.with_bytes();
+                                }
                                 worker.push(Status::Data(new_walk)); // pass a vector of Arc's to do 2-level traversals?
                             } else if t.is_file() {
                                 if let Ok(l) = val.metadata() {
                                     let size = size(&l, w.get_blocks);
                                     total.fetch_add(size as usize, Ordering::Relaxed);
-                                    if w.show_files && size != 0 {
-                                        let to_formatted = format!("{}", FileSize::new(size));
-                                        println!(
-                                            "{}\t {}",
-                                            &to_formatted.green(),
-                                            val.path().display()
+                                    if w.show_files {
+                                        display_item(
+                                            &val.path().display(),
+                                            FileSize::new(size),
+                                            w.display_bytes,
                                         );
                                     }
                                 } else {
@@ -262,8 +272,7 @@ impl Walk {
 
             if let Ok(l) = in_paths.metadata() {
                 let size = size(&l, w.get_blocks); // l.len();
-                let to_formatted = format!("{}", FileSize::new(size));
-                println!("{}\t {}", &to_formatted.green(), in_paths.display());
+                display_item(&in_paths.display(), FileSize::new(size), w.display_bytes);
             } else {
                 panic!("{}", Internal::IoError);
             }
@@ -368,6 +377,8 @@ pub fn print_parallel(w: Walk) -> () {
 
     let _ = (&w.path).is_file();
 
+    let display_bytes = w.display_bytes;
+
     // create the producer in another thread
     let child_producer = thread::spawn(move || {
         let arc_local = arc_producer.clone();
@@ -431,8 +442,5 @@ pub fn print_parallel(w: Walk) -> () {
     let size = FileSize::new(m as u64);
 
     // print directory total.
-    if size != FileSize::new(0) {
-        let to_formatted = format!("{}", size);
-        println!("{}\t {}", &to_formatted.green(), path_display.display());
-    }
+    display_item(&path_display.display(), size, display_bytes);
 }
