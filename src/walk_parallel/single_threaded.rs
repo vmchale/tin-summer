@@ -142,7 +142,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.webapp`: Web app manifest
 /// - `.js.externs`, `.jsexe`, `.min.js`:
 /// - `.ibc`: Idris
-/// - `.toc`, `.aux`, `.fdb_latexmk`, `.fls`: TeX
+/// - `.toc`, `.aux`, `.fdb_latexmk`, `.fls`, `.bbl`, `.bbg`: TeX
 /// - `.egg-info`, `.whl`, `.pyc`: python
 /// - `.js_a`, `.js_hi`, `.js_o`: GHCJS
 /// - `.vmb`: Vim
@@ -171,7 +171,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|S|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc)$")
                 .unwrap();
         }
 
@@ -257,14 +257,13 @@ pub fn read_size(
                 }
                 // otherwise, go deeper
                 else if path_type.is_dir() {
-                    let dir_size =
-                        if artifacts_only
-                            && is_project_dir(path_string, val.file_name().to_str().unwrap())
-                        {
-                            read_size(&path, excludes, &gitignore, vimtags, false)
-                        } else {
-                            read_size(&path, excludes, &gitignore, vimtags, artifacts_only)
-                        };
+                    let dir_size = if artifacts_only
+                        && is_project_dir(path_string, val.file_name().to_str().unwrap())
+                    {
+                        read_size(&path, excludes, &gitignore, vimtags, false)
+                    } else {
+                        read_size(&path, excludes, &gitignore, vimtags, artifacts_only)
+                    };
                     size.add(dir_size);
                 }
             }

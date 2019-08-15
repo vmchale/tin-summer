@@ -12,7 +12,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 #[allow(unknown_lints)]
-#[allow(clippy::cyclomatic_complexity)]
+#[allow(clippy::cognitive_complexity)]
 #[allow(clippy::unreadable_literal)]
 fn main() {
     // command-line parser
