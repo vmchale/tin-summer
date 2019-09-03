@@ -16,9 +16,9 @@
 # Features
 
 - [ ] `.cmi`, `.cmo`, `.cmx`
-- [ ] `.bbl`, `.blg`
-- [ ] `.chi`, `.chs.h`
+- [ ] `.info` files from Alex
 - [ ] `.hie`
+- [ ] `.hs` files but only when `.agda` exists
 - [ ] Remove `.pyre` directory
 - [ ] Remove `.history` from Dhall REPL
 - [ ] show raw sizes
