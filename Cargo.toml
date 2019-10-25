@@ -27,7 +27,7 @@ version = "2.29.2"
 [dependencies]
 colored = "1.6.0"
 crossbeam = "0.6.0"
-glob = "0.2.11"
+glob = "0.3"
 lazy_static = "1.0.0"
 nom = "3.2"
 num_cpus = "1.8.0"
