@@ -1,0 +1,3 @@
+#!/usr/bin/env bash 
+
+pandoc man/MANPAGE.md -s -t man -o man/tin-summer.1
