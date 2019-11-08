@@ -316,6 +316,9 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
             Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|mod|vo|beam|agdai|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|sandbox\.config|hp|eventlog|ipa|ttc|chs\.h|chi)$")
             .unwrap();
     }
+    lazy_static! {
+        static ref SRC_CONTROL: Regex = Regex::new(r"(_darcs|\.(git|hg|pijul))").unwrap();
+    }
 
     for dir in WalkDir::new(p)
         .into_iter()
@@ -326,6 +329,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
                 .map(|e| e.is_match(&p.path().to_string_lossy().to_string()))
                 != Some(false)
         })
+        .filter(|p| !SRC_CONTROL.is_match(&p.path().to_string_lossy().to_string()))
         .filter(|p| {
             REGEX.is_match(&p.path().to_string_lossy().to_string())
                 || is_project_dir(
