@@ -138,7 +138,8 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
 /// - `.d`: make
 /// - `.c`: ATS
 /// - `.rlib`, `.crate`: rust
-/// - `.hi`, `.hc`, `.chi`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`: GHC
+/// - `.hi`, `.hc`, `.chi`, `.dyn_hi`, `.dyn_o`, `.p_hi`, `.p_o`, `.prof`, `.dump-.*`, `.tix`,
+/// `.mix`, `.pix`: GHC
 /// - `.webapp`: Web app manifest
 /// - `.js.externs`, `.jsexe`, `.min.js`:
 /// - `.ibc`: Idris
@@ -172,7 +173,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|tix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc|chs\.h|chi)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|(t|p|m)ix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc|chs\.h|chi)$")
                 .unwrap();
         }
 
