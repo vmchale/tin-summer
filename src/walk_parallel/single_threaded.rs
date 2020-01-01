@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex =
-            Regex::new(r"_minted|((\.stack-work|build|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|\.liquid)$)")
+            Regex::new(r"_minted|((\.stack-work|build|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|__pycache__|\.liquid)$)")
             .unwrap();
     }
 
@@ -108,6 +108,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 package_path.push("../bower.json");
                 package_path.exists()
             }
+            "__pycache__" => true,
             "node_modules" => true,
             _ => {
                 let mut parent_path_latex = parent_path.clone();
