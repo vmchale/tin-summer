@@ -36,7 +36,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
     // for project directories
     lazy_static! {
         static ref REGEX_PROJECT_DIR: Regex =
-            Regex::new(r"_minted|((\.stack-work|build|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|__pycache__|\.liquid)$)")
+            Regex::new(r"_minted|((\.stack-work|build|gen|cbits|ats-deps|\.atspkg|target|\.reco-work|\.cabal-sandbox|dist|\.criterion|dist-newstyle.*|target|\.egg-info|elm-stuff|\.pulp-cache|\.psc-package|output|bower_components|node_modules|__pycache__|lib|\.liquid)$)")
             .unwrap();
     }
 
@@ -79,6 +79,10 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             }
             ".reco-work" => {
                 parent_path.push("../main.go");
+                parent_path.exists()
+            }
+            "lib" => {
+                parent_path.push("../futhark.pkg");
                 parent_path.exists()
             }
             "elm-stuff" => {
@@ -175,7 +179,7 @@ pub fn is_artifact(
     {
         lazy_static! {
             static ref REGEX: Regex =
-                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|(t|p|m)ix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc|chs\.h|chi|1\.actual|1\.expected)$")
+                Regex::new(r"\.(a|i|ii|la|lo|o|keter|bc|dyn_o|d|rlib|crate|hi|hc|chi|dyn_hi|jsexe|webapp|js\.externs|ibc|toc|aux|fdb_latexmk|bbl|blg|fls|egg-info|whl|js_a|js_hi|jld|ji|js_o|so.*|dump-.*|vmb|crx|orig|elmo|elmi|hspec-failures|pyc|vo|agdai|beam|mod|go\.(v|teak|xmldef|rewrittenast|rewrittengo|simplego|tree-(bind|eval|finish|parse))|p_hi|p_o|prof|hide-cache|ghc\.environment\..*\d.\d.\d|(t|p|m)ix|synctex\.gz|hl|hp|sandbox\.config|exe|eventlog|ipa|ttc|chs\.h|chi|\d+\.actual|\d+\.expected)$")
                 .unwrap();
         }
 
