@@ -30,5 +30,4 @@ pub mod prelude {
     pub use error::*;
     pub use utils::*;
     pub use walk_parallel::*;
-
 }
