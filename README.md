@@ -50,7 +50,7 @@ To list directory and file sizes for the current directory:
 $ sn f
 ```
 
-To get a list of directory sizes concurrently, excluding version control: 
+To get a list of directory sizes concurrently, excluding version control:
 
 ```
  $ sn p --exclude '\.git|\.pijul|_darcs|\.hg'
@@ -172,3 +172,7 @@ The *intent* is to support basically anything, so feel free to open a PR or star
 `sn` can clean up your artifacts for you, but only for the above-indicated
 languages. It is still experimental, but it has been tested and should not
 delete unwanted files (though it may not clean everything it should).
+
+### Where did the great name come from?
+
+sn is the atomic symbol for tin. "The tin summer" is a pun on ["The Tin Drum"](https://en.wikipedia.org/wiki/The_Tin_Drum) and stuff the character "liboskar" references the book.
