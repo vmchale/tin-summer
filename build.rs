@@ -10,7 +10,7 @@ use clap::App;
 use clap::Shell;
 use cli_setup::*;
 
-pub const MAN_SN: &'static str = include_str!("man/tin-summer.1");
+pub const MAN_SN: &str = include_str!("man/tin-summer.1");
 
 fn main() {
     setup_thefuck();

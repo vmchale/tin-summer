@@ -57,7 +57,7 @@ pub fn mk_ignores(in_paths: &PathBuf, maybe_ignore: &Option<RegexSet>) -> Option
     } else if let (ignore_path, Ok(mut file)) = {
         let mut ignore_path = in_paths.clone();
         ignore_path.push(".ignore");
-        (ignore_path.clone(), File::open(ignore_path.clone()))
+        (ignore_path.clone(), File::open(ignore_path))
     } {
         let mut contents = String::new();
         file.read_to_string(&mut contents)
