@@ -33,13 +33,7 @@ page](https://github.com/vmchale/tin-summer/releases).
 If your platform doesn't have binaries, or you just want to build from source, get [cargo](https://rustup.rs/). Then:
 
 ```bash
- $ cargo install tin-summer
-```
-
-Make sure you are on nightly; otherwise
-
-```bash
- $ rustup run nightly cargo install tin-summer
+$ cargo install tin-summer
 ```
 
 ## Use
