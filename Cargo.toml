@@ -46,6 +46,7 @@ deutsch = []
 english = []
 fish = []
 francais = []
+zsh = []
 
 [lib]
 name = "liboskar"
