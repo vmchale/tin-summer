@@ -103,7 +103,7 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_string.push_str("/../*.cabal");
                 cabal_project.push("../cabal.project");
                 parent_string_blod.push_str("/../*.blod");
-                parent_string_idr2.push_str("../*.ipkg");
+                parent_string_idr2.push_str("/../*.ipkg");
                 parent_path.exists()
                     || glob_exists(&parent_string)
                     || cabal_project.exists()
