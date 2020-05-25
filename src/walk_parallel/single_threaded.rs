@@ -98,14 +98,17 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
             "build" | "dist" | ".cabal-sandbox" | "dist-newstyle" | "dist-newstyle-meta" => {
                 let mut cabal_project = parent_path.clone();
                 let mut parent_string_blod = parent_string.clone();
+                let mut parent_string_idr2 = parent_string.clone();
                 parent_path.push("../setup.py");
                 parent_string.push_str("/../*.cabal");
                 cabal_project.push("../cabal.project");
                 parent_string_blod.push_str("/../*.blod");
+                parent_string_idr2.push_str("../*.ipkg");
                 parent_path.exists()
                     || glob_exists(&parent_string)
                     || cabal_project.exists()
                     || glob_exists(&parent_string_blod)
+                    || glob_exists(&parent_string_idr2)
             }
             "bower_components" => {
                 let mut package_path = PathBuf::from(p);
