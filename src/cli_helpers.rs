@@ -14,10 +14,10 @@ pub fn get_excludes(cli_excludes: Option<&str>) -> Regex {
         Some(s) => {
             let mut x = "(".to_string();
             x.push_str(s);
-            x.push_str(r")|(\.git|\.pijul|_darcs|\.hg)$");
+            x.push_str(r")|(\.git|\.pijul|_darcs|\.hg|\.gnupg)$");
             check_regex(&x)
         }
-        _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg)$").unwrap(), // ok because static
+        _ => Regex::new(r"(\.git|\.pijul|_darcs|\.hg|\.gnupg)$").unwrap(), // ok because static
     }
 }
 

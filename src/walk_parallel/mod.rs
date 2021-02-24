@@ -317,7 +317,7 @@ pub fn clean_project_dirs<P: AsRef<Path>>(p: P, exclude: &Option<Regex>, _: bool
             .unwrap();
     }
     lazy_static! {
-        static ref SRC_CONTROL: Regex = Regex::new(r"(_darcs|\.(git|hg|pijul))").unwrap();
+        static ref SRC_CONTROL: Regex = Regex::new(r"(_darcs|\.(git|hg|pijul|gnupg))").unwrap();
     }
 
     for dir in WalkDir::new(p)
