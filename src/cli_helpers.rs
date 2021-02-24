@@ -144,11 +144,11 @@ named!(get_threshold<&[u8],u64>,
         nums:     many1!(digit_char) >>
         size_tag: alt!(tag!("M") |
                        tag!("G") |
-                       tag!("k") | 
-                       tag!("b") | 
-                       tag!("B") | 
-                       tag!("K") | 
-                       tag!("g") | 
+                       tag!("k") |
+                       tag!("b") |
+                       tag!("B") |
+                       tag!("K") |
+                       tag!("g") |
                        tag!("m")) >>
         (to_u64(nums, size_tag))
     )

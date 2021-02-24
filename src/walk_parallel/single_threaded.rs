@@ -82,8 +82,8 @@ pub fn is_project_dir(p: &str, name: &str) -> bool {
                 parent_path.exists()
             }
             // "lib" => {
-                // parent_path.push("../futhark.pkg");
-                // parent_path.exists()
+            // parent_path.push("../futhark.pkg");
+            // parent_path.exists()
             // }
             "elm-stuff" => {
                 let mut package_path = PathBuf::from(p);
