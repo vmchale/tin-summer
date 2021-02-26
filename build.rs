@@ -24,14 +24,25 @@ fn main() {
     let yaml = load_yaml!("src/cli/options-fr.yml");
     #[cfg(feature = "deutsch")]
     let yaml = load_yaml!("src/cli/options-de.yml");
-    let mut app = App::from_yaml(yaml).version(crate_version!());
 
     // generate bash completions if desired
     #[cfg(feature = "bash")]
-    app.gen_completions("sn", Shell::Bash, env!("BASH_COMPLETIONS_DIR"));
+    {
+        let mut app = App::from_yaml(yaml).version(crate_version!());
+        app.gen_completions("sn", Shell::Bash, env!("BASH_COMPLETIONS_DIR"));
+    }
 
     // generate fish completions if desired
-    let mut app_snd = App::from_yaml(yaml).version(crate_version!());
     #[cfg(feature = "fish")]
-    app_snd.gen_completions("sn", Shell::Fish, env!("FISH_COMPLETIONS_DIR"));
+    {
+        let mut app = App::from_yaml(yaml).version(crate_version!());
+        app.gen_completions("sn", Shell::Fish, env!("FISH_COMPLETIONS_DIR"));
+    }
+
+    // generate fish completions if desired
+    #[cfg(feature = "zsh")]
+    {
+        let mut app = App::from_yaml(yaml).version(crate_version!());
+        app.gen_completions("sn", Shell::Zsh, env!("ZSH_COMPLETIONS_DIR"));
+    }
 }

@@ -11,7 +11,7 @@ repository = "https://github.com/vmchale/tin-summer"
 version = "1.21.14"
 
 [metadata.deb]
-extended-description = "Command-line tool written as a partial replacement for du. Automitically sniffs our build artifacts and can optionally clean them as well."
+extended-description = "Command-line tool written as a partial replacement for du. Automatically sniffs our build artifacts and can optionally clean them as well."
 license-file = ["LICENSE"]
 
 [[bin]]
@@ -46,6 +46,7 @@ deutsch = []
 english = []
 fish = []
 francais = []
+zsh = []
 
 [lib]
 name = "liboskar"
