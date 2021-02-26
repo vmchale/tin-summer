@@ -39,7 +39,7 @@ If your platform doesn't have binaries, or you just want to build from source, g
 Make sure you are on nightly; otherwise
 
 ```bash
- $ rustup run nightly cargo install tin-summer
+ $ cargo +nightly install tin-summer
 ```
 
 ## Use
