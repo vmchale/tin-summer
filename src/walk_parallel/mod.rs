@@ -371,8 +371,6 @@ pub fn print_parallel(w: Walk) {
     // set up our iterator for the workers
     let iter = 0..(&w.get_proc() - 1);
 
-    let _ = (&w.path).is_file();
-
     // create the producer in another thread
     let child_producer = thread::spawn(move || {
         let arc_local = arc_producer.clone();
