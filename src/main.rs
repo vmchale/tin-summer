@@ -4,7 +4,7 @@ extern crate clap;
 extern crate colored;
 extern crate liboskar;
 
-use clap::{App, AppSettings};
+use clap::App;
 use colored::*;
 use liboskar::prelude::*;
 use std::env;
@@ -25,7 +25,6 @@ fn main() {
     let matches = App::from_yaml(yaml)
         .version(crate_version!())
         .set_term_width(90)
-        .setting(AppSettings::SubcommandRequired)
         .get_matches();
 
     // TODO this should install manpages?
@@ -351,5 +350,29 @@ fn main() {
             // display sorted filenames
             v_sorted.display_tree(&dir);
         }
+    } else {
+        // set threshold
+        let min_bytes = None;
+        // set depth
+        let depth = None;
+        // set number to print out
+        let num_int = Some(8);
+        // set whether to print files too
+        let print_files = false;
+
+        // set regex for exclusions
+        let regex = None;
+        let dir = PathBuf::from(".");
+        // get relevant filenames &c.
+        let v = match regex {
+            Some(r) => read_all(&dir, 0, depth, Some(&check_regex(r)), &None, false, false),
+            _ => read_all(&dir, 0, depth, None, &None, false, false),
+        };
+
+        // sort them
+        let mut v_sorted = v.sort(num_int, min_bytes, !print_files, depth);
+
+        // display sorted filenames
+        v_sorted.display_tree(&dir);
     }
 }
