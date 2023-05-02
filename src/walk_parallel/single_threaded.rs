@@ -15,6 +15,16 @@ use utils::*;
 #[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::PermissionsExt;
 
+#[cfg(not(target_os = "windows"))]
+fn is_readable(metadata: &Metadata) -> bool {
+    metadata.permissions().mode() == 0o755
+}
+
+#[cfg(target_os = "windows")]
+fn is_readable(metadata: &Metadata) -> bool {
+    metadata.permissions().readonly()
+}
+
 pub fn glob_exists(s: &str) -> bool {
     glob(s).unwrap().filter_map(Result::ok).count() != 0 // ok because panic on IO Errors shouldn't happen.
 }
@@ -189,7 +199,7 @@ pub fn is_artifact(
         if REGEX.is_match(path_str) || (path_str == "tags" && vimtags) {
             true
         } else if let Some(ref x) = *gitignore {
-            if metadata.permissions().mode() == 0o755 || REGEX_GITIGNORE.is_match(path_str) {
+            if is_readable(metadata) || REGEX_GITIGNORE.is_match(path_str) {
                 x.is_match(full_path)
             } else {
                 false
